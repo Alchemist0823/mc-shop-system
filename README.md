@@ -1,5 +1,7 @@
 mc-shop-system
 ==============
-  this is our Minecraft Shop System project.
-  src/webserver : php Server Source
-  src/gameserver : Minecraft Server Source
+  this is our Minecraft Shop System project.<br />
+File System
+--------------
+  src/webserver : php Server Source<br />
+  src/gameserver : Minecraft Server Source<br />
