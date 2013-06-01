@@ -21,14 +21,17 @@ Help
 
 Reference
 --------------
+### General
+  Google 代码规范 http://code.google.com/p/google-styleguide/<br />
 ### Web
   互联网协会（各种标准） The World Wide Web Consortium (W3C) http://www.w3.org/<br />
   支付宝接口 Alipay Interface http://b.alipay.com/order/techService.htm<br />
   php Http Client API http://scripts.incutio.com/httpclient/<br />
-### Java
-  MC服务器 Wiki Bukkit http://wiki.bukkit.org/<br />
+  Java Http Server API http://download.oracle.com/javase/6/docs/jre/api/net/httpserver/spec/<br />
+### Game
+  MC服务器 Bukkit Wiki百科 http://wiki.bukkit.org/<br />
   MC服务器 Bukkit Plugin 教程 http://wiki.bukkit.org/Plugin_Tutorial<br />
   MC服务器 Bukkit 开发人员教程 http://wiki.bukkit.org/Portal:Developers<br />
   MC服务器 Common API 和用户 插件 Bukkit Vault https://github.com/MilkBowl/Vault/<br />
-  Java Http Server API http://download.oracle.com/javase/6/docs/jre/api/net/httpserver/spec/<br />
   MC冰封领域服务器地址 Frozenminecraft.com<br />
+  
