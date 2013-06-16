@@ -1,0 +1,139 @@
+<?php
+
+/**
+ * @file
+ * Module file for MC Shop System.
+ */
+
+ 
+/**
+ * Implements hook_variable_info().
+ * in the Variable module
+ */
+ 
+function mcshop_variable_info($options) {
+
+	$variables['mcshop_server_host'] = array(
+		// 'name' isn't really necessary, as it will get populated from the key of this array above.
+		'name' => 'mcshop_server_host',
+		'title' => t('MCShop Host Name'),
+		'description' => t('Specify MCShop Host Name or IP'),
+		'default' => 'localhost',
+		'type' => 'string',
+		'group' => 'mcshop_settings',
+		'token' => False,
+	);
+	
+	
+	$variables['mcshop_server_port'] = array(
+		// 'name' isn't really necessary, as it will get populated from the key of this array above.
+		'name' => 'mcshop_server_port',
+		'title' => t('MCShop Host Port'),
+		'description' => t('Specify MCShop Host Port'),
+		'default' => 10808,
+		'type' => 'number',
+		'group' => 'mcshop_settings',
+		'token' => False,
+	);
+	
+	return $variables;
+}
+ 
+/**
+ * Implements hook_form_alter().
+ */
+function mcshop_form_alter(&$form, &$form_state, $form_id) {
+    if($form_id == "user_register_form" /*|| $form_id == "user_profile_form"*/)
+    {
+		//dsm($form_state);
+        $form['#validate'][] = '_mc_user_validate';
+    }
+}
+
+/**
+ * Callback minecraft user validation
+ */
+function _mc_user_validate($form, &$form_state) {
+	if ($form['#user_category'] == 'account' || $form['#user_category'] == 'register') {
+		if (isset($form_state['values']['name']) && isset($form_state['values']['field_mcpwd']['und'][0]['value'])) {
+			
+			require_once('MCConnector.php');
+			
+			form_set_error('name', t('the MC Server connection is under construction.'));
+			// TODO: test the MC User
+			
+			
+		}
+		else
+			form_set_error('field_mcpwd[und][0][value]', t('MC password is empty.'));
+	}
+}
+ 
+/**
+ * Implements hook_user_view().
+ */
+function mcshop_user_view($account, $view_mode, $langcode) {
+  $account->content['profile_mc'] = array(
+    '#type' => 'user_profile_category',
+    '#title' => 'MC Game Information',
+	//'#attributes' => array('class' => array('user-mc',),),
+	'#weight' => 5,
+  );
+  $account->content['profile_mc']['mc_name'] = array(
+    '#type' => 'user_profile_item',
+    '#title' => 'Your MC Account:',
+	'#markup' => '<b>'.t('!username',array('!username' => format_username($account))).'</b>',
+    '#prefix' => '<a id="profile-mc"></a>',
+  );
+}
+
+/**
+ * Implements hook_menu().
+ */
+function mcshop_menu() {
+
+  // A simple example which defines a page callback and a menu entry.
+
+  // Menu items are defined by placing them in an $items array. The array key
+  // (in this case 'menu_example') is the path that defines the menu router
+  // entry, so the page will be accessible from the URL
+  // example.com/examples/menu_example.
+  /*
+  $items['mcshop'] = array(
+    // We are using the default menu type, so this can be omitted.
+    // 'type' => MENU_NORMAL_ITEM,
+
+    // The menu title. Do NOT use t() which is called by default. You can
+    // override the use of t() by defining a 'title callback'. This is explained
+    // in the 'menu_example/title_callbacks' example below.
+    'title' => 'MC Shop',
+
+    // Description (hover flyover for menu link). Does NOT use t(), which is
+    // called automatically.
+    'description' => 'Simplest possible menu type, and the parent menu entry for others',
+
+    // Function to be called when this path is accessed.
+    'page callback' => '_menu_example_basic_instructions',
+
+    // Arguments to the page callback. Here's we'll use them just to provide
+    // content for our page.
+    'page arguments' => array(t('This page is displayed by the simplest (and base) menu example. Note that the title of the page is the same as the link title. You can also <a href="!link">visit a similar page with no menu link</a>. Also, note that there is a hook_menu_alter() example that has changed the path of one of the menu items.', array('!link' => url('examples/menu_example/path_only')))),
+
+    // If the page is meant to be accessible to all users, you can set 'access
+    // callback' to TRUE. This bypasses all access checks. For an explanation on
+    // how to use the permissions system to restrict access for certain users,
+    // see the example 'examples/menu_example/permissioned/controlled' below.
+    'access callback' => TRUE,
+
+    // If the page callback is located in another file, specify it here and
+    // that file will be automatically loaded when needed.
+    // 'file' => 'menu_example.module',
+
+    // We can choose which menu gets the link. The default is 'navigation'.
+    // 'menu_name' => 'navigation',
+
+    // Show the menu link as expanded.
+    'expanded' => TRUE,
+  );*/
+  //return items;
+}
