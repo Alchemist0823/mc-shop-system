@@ -115,21 +115,28 @@
 			return $buf;
 		}
 
-		
+		//MCShopSystem SPECIFIC
 
-		/*------------------MCShopSystem SPECIFIC (6.17)-------------------
-			----Functions----
-			0x1 checkServerConnection()
-			0x2 checkPlayerAccount($accountName, $accountPass)
-			0x3 doCommand($cmmd)
-			0x4 getPlayerStatus($accountName)
-			0x5 getServerStatus()
-		------------------------------------------------------------------*/
-		
-		public function checkServerConnection() //return true if successfully connected
+		/**
+		* Run a command as if the specified player typed it into the chat.
+		*
+		* @param string $cmmd Command and arguments to run.
+		* @param string $playerName Exact name of the player to run it as.
+		* @return true if the command and player were found, else false
+		*/
+		public function doCommandAsPlayer($cmmd, $playerName)
 		{
 			$this->writeRawByte(1);
-			
+			$this->writeString($cmmd);
+			if(isset($playerName))
+			{
+				$this->writeString($playerName);
+			}
+			else
+			{
+				$this->writeString("null");
+			}
+
 			if($this->readRawInt() == 1)
 			{
 				return true;
@@ -139,28 +146,16 @@
 				return false;
 			}
 		}
-		
-		
-		public function checkPlayerAccount($accountName, $accountPass) //return true if valid
+
+		/**
+		* Run a command as if it were typed into the console.
+		*
+		* @param string $cmmd Command and arguments to run.
+		* @return true if the command was found, else false
+		*/
+		public function doCommandAsConsole($cmmd)
 		{
 			$this->writeRawByte(2);
-			$this->writeRawString($accountName); //length of strings are sent in writeRawString
-			$this->writeRawString($accountPass);
-			
-			if($this->readRawInt() == 1)
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-		
-		
-		public function doCommand($cmmd) //return true if command was found
-		{
-			$this->writeRawByte(3);
 			$this->writeString($cmmd);
 
 			if($this->readRawInt() == 1)
@@ -172,27 +167,97 @@
 				return false;
 			}
 		}
+
+		/**
+		* Run a script.
+		* The script has to be in the MCShopSystem scripts directory and has to be compiled and loaded before this is runned.
+		*
+		* @param string $scriptName Name of the script.
+		*/
+		public function doScript($scriptName)
+		{
+			$this->writeRawByte(3);
+			$this->writeString($scriptName);
+		}
 		
-		
-		public function getPlayerStatus($accountName) //return string message
+		/**
+		* Start plugin output capture
+		*
+		* @param string $pluginName Name of the plugin.
+		*/
+		public function startPluginOutputListening($pluginName)
 		{
 			$this->writeRawByte(4);
-			$this->writeRawString($accountName); //length of strings are sent in writeRawString
-			$statusMessageLen = $this->readRawInt(); //need to receive length of message
-			$statusMessage = $this->readChars($statusMessageLen);
-			
-			return $statusMessage;
+			$this->writeString($pluginName);
 		}
-
 		
-		public function getServerStatus() //return string message
+		/**
+		* Stop plugin output capture
+		*
+		* @param string $pluginName Name of the plugin.
+		* @return array of strings that contains output.
+		*/
+		public function stopPluginOutputListening($pluginName)
 		{
 			$this->writeRawByte(5);
-			$statusMessageLen = $this->readRawInt(); //need to receive length of message
-			$statusMessage = $this->readChars($statusMessageLen);
-			
-			return $statusMessage;
+			$this->writeString($pluginName);
+			$size = $this->readRawInt();
+			$data = array();
+			for($i = 0; $i<$size;$i++){
+				$messageSize = $this->readRawInt();
+				$data[$i] = $this->readChars($messageSize);
+			}
+			return $data;
 		}
 		
+		/**
+		* Print output to the console window. Invisible to players.
+		*/
+		public function writeOutputToConsole($message)
+		{
+			$this->writeRawByte(10);
+			$this->writeString($message);
+		}
+
+		/**
+		* Prints output to specified player.
+		*
+		* @param string $message Message to be shown.
+		* @param string $playerName Exact name of the player to print the message to.
+		* @return true if the player was found, else false
+		*/
+		public function writeOutputToPlayer($message, $playerName)
+		{
+			$this->writeRawByte(11);
+			$this->writeString($message);
+			if(isset($playerName))
+			{
+				$this->writeString($playerName);
+			}
+			else
+			{
+				$this->writeString("null");
+			}
+
+			if($this->readRawInt() == 1)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+		/**
+		* Prints a message to all players and the console.
+		*
+		* @param string $message Message to be shown.
+		*/
+		public function broadcast($message)
+		{
+			$this->writeRawByte(12);
+			$this->writeString($message);
+		}
 	}
 ?>
