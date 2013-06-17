@@ -124,6 +124,7 @@
 			0x3 doCommand($cmmd)
 			0x4 getPlayerStatus($accountName)
 			0x5 getServerStatus()
+			0x6 doBroadcast($message)
 		------------------------------------------------------------------*/
 		
 		public function checkServerConnection() //return true if successfully connected
@@ -192,6 +193,28 @@
 			$statusMessage = $this->readChars($statusMessageLen);
 			
 			return $statusMessage;
+		}
+		
+
+		/**
+		 * Prints a message to all players and the console.
+		 *
+		 * @param string $message Message to be shown.
+		 * @return bool is it success.
+		 */
+		public function doBroadcast($message)
+		{
+			$this->writeRawByte(6);
+			$this->writeString($message);
+
+			if($this->readRawInt() == 1)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
 		}
 		
 	}
