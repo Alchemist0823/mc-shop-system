@@ -13,12 +13,23 @@
 
 		/**
 		* Connects to a MCShopSystem server.
+		* @param string $password
+		* @return bool $state
+		*         true  success
+		*         false  fail
 		*/
 		public function connect($password)
 		{
 			$this->stream = fsockopen($this->host, $this->port);
+			if(!$this->stream)
+				return false;
 			$this->writeRawByte(21);
 			$this->writeString($password);
+			
+			if($this->readRawInt() == 1)
+				return true;
+			else
+				return false;
 		}
 
 		/**

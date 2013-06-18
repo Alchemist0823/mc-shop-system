@@ -54,31 +54,21 @@ function mcshop_menu() {
 
     'title' => 'MC Shop',
 
-    // Description (hover flyover for menu link). Does NOT use t(), which is
-    // called automatically.
     'description' => 'Simplest possible menu type, and the parent menu entry for others',
 
-    // Function to be called when this path is accessed.
     'page callback' => '_menu_example_basic_instructions',
 
     // Arguments to the page callback. Here's we'll use them just to provide
     // content for our page.
     'page arguments' => array(t('This page is displayed by the simplest (and base) menu example. Note that the title of the page is the same as the link title. You can also <a href="!link">visit a similar page with no menu link</a>. Also, note that there is a hook_menu_alter() example that has changed the path of one of the menu items.', array('!link' => url('examples/menu_example/path_only')))),
 
-    // If the page is meant to be accessible to all users, you can set 'access
-    // callback' to TRUE. This bypasses all access checks. For an explanation on
-    // how to use the permissions system to restrict access for certain users,
     // see the example 'examples/menu_example/permissioned/controlled' below.
     'access callback' => TRUE,
 
-    // If the page callback is located in another file, specify it here and
-    // that file will be automatically loaded when needed.
     // 'file' => 'menu_example.module',
 
-    // We can choose which menu gets the link. The default is 'navigation'.
     // 'menu_name' => 'navigation',
 
-    // Show the menu link as expanded.
     'expanded' => TRUE,
   );*/
   //return items;
