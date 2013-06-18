@@ -115,7 +115,7 @@ function _mc_checkout_validate($form, &$form_state) {
 	if($connector->connect(variable_get_value('mcshop_server_pass'))) {
 		;// Test Success
 	}
-	else form_set_error('customer_profile_custom_user_p[field_mcplayer][und][0][value]' , t('Sorry, Our MC Server is not online. We can not guarantee the validity of your billing information.'));
+	else form_set_error('customer_profile_custom_user_p[field_mcplayer][und][0][value]' , t('Sorry, Our MC Server is not offline. We can not guarantee the validity of your billing information.'));
 }
  
 /**
@@ -134,7 +134,7 @@ function _mc_user_validate($form, &$form_state) {
 				if(!result)
 					form_set_error('name', t('Your acount information is incorrect.'));
 			}
-			else form_set_error('name', t('Sorry, Our MC Server is not online. We can not guarantee the validity of your account information.'));
+			else form_set_error('name', t('Sorry, Our MC Server is offline. We can not guarantee the validity of your account information.'));
 			// TODO: test the MC User
 			
 		}
