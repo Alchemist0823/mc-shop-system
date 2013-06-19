@@ -8,11 +8,13 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.logging.Level;
 
-import com.n8lm.MCShopSystemPlugin.PacketHandler;
 import com.n8lm.MCShopSystemPlugin.MainPlugin;
 import com.n8lm.MCShopSystemPlugin.server.CommunicationHelper;
+import com.n8lm.MCShopSystemPlugin.server.PacketHandler;
 
 /**
+ * This is a example of packetHandler. we need fix it in some way.
+ * 
  * @author Alchemist
  *
  */
@@ -20,7 +22,7 @@ public class DoCommandPacketHandler extends PacketHandler {
 
 	public DoCommandPacketHandler()
 	{
-		super((byte) 0x01);
+		super((byte) 3);
 	}
 
 	@Override

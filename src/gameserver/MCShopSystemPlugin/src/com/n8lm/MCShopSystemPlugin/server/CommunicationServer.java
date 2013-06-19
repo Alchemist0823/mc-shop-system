@@ -1,19 +1,12 @@
 package com.n8lm.MCShopSystemPlugin.server;
 
 import com.n8lm.MCShopSystemPlugin.MainPlugin;
-import com.n8lm.MCShopSystemPlugin.PacketHandler;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
 import java.util.logging.Level;
 
 /**
@@ -27,97 +20,10 @@ public class CommunicationServer extends Thread
 	private boolean connected = false;
 	private boolean authenticated = false;
 	private ServerSocket serverSkt;
-	private HashMap<Byte, PacketHandler> PacketHandlers = new HashMap<Byte, PacketHandler>();
 	
 	public CommunicationServer()
 	{
-	}
-	
-	public void init()
-	{
-		getPacketHandlers("com.n8lm.MCShopSystemPlugin.packets");
-	}
-	
-	/**
-	 * Scans all classes accessible from the context class loader which belong to the given package and subpackages.
-	 *
-	 * @param packageName The base package
-	 * @throws ClassNotFoundException
-	 * @throws IOException
-	 */
-	private void getPacketHandlers(String packageName)
-	{
-	    ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-	    assert classLoader != null;
-	    String path = packageName.replace('.', '/');
-	    Enumeration<URL> resources;
-		try {
-			resources = classLoader.getResources(path);
-		    List<File> dirs = new ArrayList<File>();
-		    while (resources.hasMoreElements()) {
-		        URL resource = resources.nextElement();
-		        dirs.add(new File(resource.getFile()));
-		    }
-		    ArrayList<Class<?>> classes = new ArrayList<Class<?>>();
-		    for (File directory : dirs) {
-		        try {
-					classes.addAll(findClasses(directory, packageName));
-				} catch (ClassNotFoundException e) {
-					MainPlugin.getMainLogger().log(Level.SEVERE, "Server encountered an error.", e);
-					e.printStackTrace();
-				}
-		    }
-		    for (Class<?> phclass: classes)
-		    {
-		    	try {
-					this.addPacketHandler((PacketHandler) phclass.newInstance());
-				} catch (InstantiationException e) {
-					MainPlugin.getMainLogger().log(Level.SEVERE, "Server encountered an error.", e);
-					e.printStackTrace();
-				} catch (IllegalAccessException e) {
-					MainPlugin.getMainLogger().log(Level.SEVERE, "Server encountered an error.", e);
-					e.printStackTrace();
-				}
-		    }
-		} catch (IOException e1) {
-			MainPlugin.getMainLogger().log(Level.SEVERE, "Server encountered an error.", e1);
-			e1.printStackTrace();
-		}
-	    
-	    
-	}
-	
-	/**
-	 * Recursive method used to find all classes in a given directory and subdirs.
-	 *
-	 * @param directory   The base directory
-	 * @param packageName The package name for classes found inside the base directory
-	 * @return The classes
-	 * @throws ClassNotFoundException
-	 */
-	private static List<Class<?>> findClasses(File directory, String packageName) throws ClassNotFoundException {
-	    List<Class<?>> classes = new ArrayList<Class<?>>();
-	    if (!directory.exists()) {
-	        return classes;
-	    }
-	    File[] files = directory.listFiles();
-	    for (File file : files) {
-	        if (file.isDirectory()) {
-	            assert !file.getName().contains(".");
-	            classes.addAll(findClasses(file, packageName + "." + file.getName()));
-	        } else if (file.getName().endsWith(".class")) {
-	            classes.add(Class.forName(packageName + '.' + file.getName().substring(0, file.getName().length() - 6)));
-	        }
-	    }
-	    return classes;
-	}
-	/**
-	 * Add PacketHandler
-	 * @param PacketHandler customhandler
-	 */
-	public void addPacketHandler(PacketHandler wph)
-	{
-		PacketHandlers.put(wph.getHeader(), wph);
+		PacketManager.setupPacketHandlers();
 	}
 	
 	@Override
@@ -220,7 +126,20 @@ public class CommunicationServer extends Thread
 					while (connected)
 					{
 						byte packetHeader = in.readByte();
-						if (packetHeader == 20)
+						if (packetHeader == 21)
+						{
+							if (MainPlugin.getSettings().isDebugMode())
+							{
+								MainPlugin.getMainLogger().log(Level.INFO, "Got packet header: Disconnect");
+							}
+							authenticated = parsePasswordPacket(in, out);
+							if (!authenticated)
+							{
+								MainPlugin.getMainLogger().log(Level.INFO, "Password is incorrect! Client disconnected!");
+								connected = false;
+							}
+						}
+						else if (packetHeader == 20)
 						{
 							if (MainPlugin.getSettings().isDebugMode())
 							{
@@ -228,13 +147,13 @@ public class CommunicationServer extends Thread
 							}
 							connected = false;
 						}
-						else if (PacketHandlers.containsKey(packetHeader))
+						else if (PacketManager.packetHandlers.containsKey(packetHeader))
 						{
 							if (MainPlugin.getSettings().isDebugMode())
 							{
-								MainPlugin.getMainLogger().log(Level.INFO, "Got custom packet header: " + packetHeader);
+								MainPlugin.getMainLogger().log(Level.INFO, "Got packet header: " + packetHeader);
 							}
-							PacketHandlers.get(packetHeader).onHeaderReceived(in, out);
+							PacketManager.packetHandlers.get(packetHeader).onHeaderReceived(in, out);
 						}
 						else
 						{
@@ -259,7 +178,7 @@ public class CommunicationServer extends Thread
 			{
 				MainPlugin.getMainLogger().log(Level.WARNING, "Connection request from unauthorized address!");
 				MainPlugin.getMainLogger().log(Level.WARNING, "Address: " + skt.getInetAddress());
-				MainPlugin.getMainLogger().log(Level.WARNING, "Add this address to trusted.txt to allow access.");
+				MainPlugin.getMainLogger().log(Level.WARNING, "Add this address to config.txt");
 			}
 			skt.close();
 		}
@@ -280,6 +199,16 @@ public class CommunicationServer extends Thread
 	private static boolean parsePasswordPacket(DataInputStream in, DataOutputStream out) throws IOException
 	{
 		String inPass = CommunicationHelper.readString(in);
-		return inPass.equals(MainPlugin.getSettings().getPassword());
+		if(inPass.equals(MainPlugin.getSettings().getPassword()))
+		{
+			CommunicationHelper.writeInt(out, 1);
+			return true;
+		}
+		else
+		{
+			CommunicationHelper.writeInt(out, 0);
+			return false;
+		}
 	}
+	
 }

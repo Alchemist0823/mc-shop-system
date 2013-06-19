@@ -64,9 +64,7 @@ public final class MainPlugin extends JavaPlugin {
 		// Start server
 		if (settings.isServerActive())
 		{
-
 			server = new CommunicationServer();
-			server.init();
 			server.start();// TODO Insert code to start CommunicationServer
 		}
 		
@@ -103,6 +101,9 @@ public final class MainPlugin extends JavaPlugin {
 	public static Server getBukkitServer() {
 		return bukkitServer;
 	}
-    
+
+	public static CommunicationServer getCommunicationServer() {
+		return server;
+	}
     
 }

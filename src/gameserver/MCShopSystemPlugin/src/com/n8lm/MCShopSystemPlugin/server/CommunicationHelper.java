@@ -30,5 +30,9 @@ public final class CommunicationHelper {
 		out.writeInt(string.length());
 		out.writeChars(string);
 	}
-
+	
+	public static void writeInt(DataOutputStream out, int i) throws IOException
+	{
+		out.writeInt(i);
+	}
 }

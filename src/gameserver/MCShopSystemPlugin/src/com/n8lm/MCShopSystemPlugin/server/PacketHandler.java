@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.n8lm.MCShopSystemPlugin;
+package com.n8lm.MCShopSystemPlugin.server;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
