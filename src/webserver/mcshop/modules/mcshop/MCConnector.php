@@ -174,7 +174,7 @@
 		{
 			$this->writeRawByte(3);
 			$this->writeString($cmmd);
-
+			
 			if($this->readRawInt() == 1)
 			{
 				return true;

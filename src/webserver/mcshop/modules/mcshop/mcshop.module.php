@@ -56,8 +56,12 @@ function _mcshop_sendcmd($cmd, $args)
   
   $connector = new MCConnector(variable_get_value('mcshop_server_host'), variable_get_value('mcshop_server_port'));
   if($connector->connect(variable_get_value('mcshop_server_pass'))) {
-  	$connector->doCommand($cmd);
-  	return true;
+  	$success = $connector->doCommand($cmd);
+  	$connector->disconnect();
+  	if($success)
+  		return true;
+  	else
+  		return false;
   }
   else return false;
   // TODO: doCommand
@@ -83,6 +87,7 @@ function mcshop_commerce_checkout_complete($order) {
 	
 	if(_mcshop_sendcmd($cmd,$args))
 		$order->status = 'completed';
+	// TODO: change order status
   }
 }
 
@@ -112,7 +117,7 @@ function _mc_checkout_validate($form, &$form_state) {
 	// TODO: Connect MC Server
 	$connector = new MCConnector(variable_get_value('mcshop_server_host'), variable_get_value('mcshop_server_port'));
 	if($connector->connect(variable_get_value('mcshop_server_pass'))) {
-		;// Test Success
+		$connector->disconnect();// Test Success
 	}
 	else form_set_error('customer_profile_custom_user_p[field_mcplayer][und][0][value]' , t('Sorry, Our MC Server is not offline. We can not guarantee the validity of your billing information.'));
 }
@@ -132,6 +137,7 @@ function _mc_user_validate($form, &$form_state) {
 				$result = $connector->checkPlayerAccount($form_state['values']['name'], $form_state['values']['field_mcpwd']['und'][0]['value']);
 				if(!result)
 					form_set_error('name', t('Your acount information is incorrect.'));
+				$connector->disconnect();
 			}
 			else form_set_error('name', t('Sorry, Our MC Server is offline. We can not guarantee the validity of your account information.'));
 			// TODO: test the MC User
