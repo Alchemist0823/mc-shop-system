@@ -44,6 +44,16 @@ function mcshop_variable_info($options) {
 }
 
 /**
+ * Implements hook_cron().
+ * 
+ * Get Information form Minecraft Server periodically 
+ */
+function mcshop_cron()
+{
+	
+}
+
+/**
  * Function Send Cmd Through MCConnecter
  * @param string $cmd
  * @param string $args

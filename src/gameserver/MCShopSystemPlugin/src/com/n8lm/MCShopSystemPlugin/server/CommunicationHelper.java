@@ -35,4 +35,14 @@ public final class CommunicationHelper {
 	{
 		out.writeInt(i);
 	}
+
+	public static String stringArrayToString(String[] strings)
+	{
+		StringBuilder buffer = new StringBuilder();
+		for (int i = 0; i < strings.length; i++)
+		{
+			buffer.append(strings[i]);
+		}
+		return buffer.toString();
+	}
 }
