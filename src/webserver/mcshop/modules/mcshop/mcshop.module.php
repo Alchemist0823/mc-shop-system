@@ -74,7 +74,6 @@ function mcshop_commerce_checkout_complete($order) {
     $product = commerce_product_load($product_id);
     $cmd = $product->field_buycmd['und'][0]['value'];
 	
-	
 	global $user;
 	
 	$args = array(
@@ -83,7 +82,7 @@ function mcshop_commerce_checkout_complete($order) {
 	);
 	
 	if(_mcshop_sendcmd($cmd,$args))
-		$order->status = 'Complete';
+		$order->status = 'completed';
   }
 }
 
