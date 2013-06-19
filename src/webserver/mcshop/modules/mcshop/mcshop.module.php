@@ -52,8 +52,6 @@ function mcshop_variable_info($options) {
 function _mcshop_sendcmd($cmd, $args)
 {
   
-  require_once('MCConnector.php');
-  
   $connector = new MCConnector(variable_get_value('mcshop_server_host'), variable_get_value('mcshop_server_port'));
   if($connector->connect(variable_get_value('mcshop_server_pass'))) {
   	$success = $connector->doCommand($cmd);
@@ -113,7 +111,6 @@ function mcshop_form_alter(&$form, &$form_state, $form_id) {
 function _mc_checkout_validate($form, &$form_state) {
 	//dsm($form);
 	//dsm($form_state);
-	require_once('MCConnector.php');
 	// TODO: Connect MC Server
 	$connector = new MCConnector(variable_get_value('mcshop_server_host'), variable_get_value('mcshop_server_port'));
 	if($connector->connect(variable_get_value('mcshop_server_pass'))) {
@@ -128,8 +125,6 @@ function _mc_checkout_validate($form, &$form_state) {
 function _mc_user_validate($form, &$form_state) {
 	if ($form['#user_category'] == 'account' || $form['#user_category'] == 'register') {
 		if (isset($form_state['values']['name']) && isset($form_state['values']['field_mcpwd']['und'][0]['value'])) {
-			
-			require_once('MCConnector.php');
 			
 
 			$connector = new MCConnector(variable_get_value('mcshop_server_host'), variable_get_value('mcshop_server_port'));

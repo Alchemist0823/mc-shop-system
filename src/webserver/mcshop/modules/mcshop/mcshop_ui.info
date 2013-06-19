@@ -2,6 +2,9 @@ name = Minecraft Shop System UI
 description = Minecraft Shop System created by No.8 Lightning Man Workgroup
 package = Minecraft Shop System
 core = 7.x
+
+files[] = includes/mcshop.mcconnector.inc
+
 dependencies[] = mcshop
 dependencies[] = variable
 dependencies[] = commerce

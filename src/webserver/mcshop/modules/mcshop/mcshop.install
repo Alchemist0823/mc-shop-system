@@ -1,0 +1,11 @@
+
+
+/**
+ * Implements hook_uninstall().
+ */
+ 
+function mcshop_uninstall() {
+  variable_del('mcshop_server_host');
+  variable_del('mcshop_server_port');
+  variable_del('mcshop_server_pass');
+}

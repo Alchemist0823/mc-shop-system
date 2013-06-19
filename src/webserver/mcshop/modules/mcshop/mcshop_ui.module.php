@@ -70,7 +70,7 @@ function mcshop_menu() {
 
     //'expanded' => TRUE
   );
-  //return items;
+  return $items;
 }
 
 function _mcshop_admin_instructions()
