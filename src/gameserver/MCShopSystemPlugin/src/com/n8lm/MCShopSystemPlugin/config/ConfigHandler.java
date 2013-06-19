@@ -65,7 +65,7 @@ public class ConfigHandler
 		writer.println("#Help: PASS: change the password to one of your choice (set the same in the server php file).");
 		writer.println("#Help: DEBUG_MCSHOP: shows debugging messages for easier tracking of bugs.");
 		writer.println("#Help: SALT: adds a salt to the hashed password when sending over bukkit -> php connection.");
-		writer.println("PASS=YourPassHere");
+		writer.println("PASS=123456");
 		writer.println("#Trusted domains can connect to mcshop via php->mcshop.");
 		writer.println("#Domains are allowed in either IP or hostname form.");
 		writer.println("HOST_ADD=http://www.n8lm.cn/");
@@ -118,7 +118,7 @@ public class ConfigHandler
 				try
 				{
 					convertedValue = Integer.parseInt(value.trim());
-					if (convertedValue == MainPlugin.getInstance().getServer().getPort())
+					if (convertedValue == MainPlugin.getBukkitServer().getPort())
 					{
 						MainPlugin.getMainLogger().log(Level.WARNING, "You are trying to host mcshop on the minecraft server port! Choose a different port.");
 					}

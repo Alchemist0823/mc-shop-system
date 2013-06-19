@@ -6,8 +6,12 @@ package com.n8lm.MCShopSystemPlugin;
 import java.io.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.bukkit.Server;
 import org.bukkit.plugin.java.JavaPlugin;
+
 import com.n8lm.MCShopSystemPlugin.config.*;
+import com.n8lm.MCShopSystemPlugin.server.CommunicationServer;
 
 /**
  * @author Alchemist
@@ -17,6 +21,8 @@ public final class MainPlugin extends JavaPlugin {
 	
 	private static Logger logger;
 	private static MainPlugin plugin;
+	private static Server bukkitServer;
+	private static CommunicationServer server;
 	
 	private static Settings settings;
 	
@@ -27,6 +33,7 @@ public final class MainPlugin extends JavaPlugin {
 		
 		needSetup = false;
 		plugin = this;
+		bukkitServer = this.getServer();
 		logger = this.getLogger();
 		
 		ConfigHandler configHandler = new ConfigHandler();
@@ -57,7 +64,10 @@ public final class MainPlugin extends JavaPlugin {
 		// Start server
 		if (settings.isServerActive())
 		{
-			// TODO Insert code to start CommunicationServer
+
+			server = new CommunicationServer();
+			server.init();
+			server.start();// TODO Insert code to start CommunicationServer
 		}
 		
 		
@@ -67,6 +77,11 @@ public final class MainPlugin extends JavaPlugin {
  
     @Override
     public void onDisable() {
+
+		if (server != null)
+		{
+			server.stopServer();
+		}
 		this.getLogger().info("MC Shop System is disable");
         // TODO Insert logic to be performed when the plugin is disabled
     }
@@ -83,6 +98,10 @@ public final class MainPlugin extends JavaPlugin {
 
 	public static Settings getSettings() {
 		return settings;
+	}
+
+	public static Server getBukkitServer() {
+		return bukkitServer;
 	}
     
     
