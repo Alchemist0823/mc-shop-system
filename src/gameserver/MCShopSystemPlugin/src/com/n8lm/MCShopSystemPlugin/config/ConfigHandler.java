@@ -8,6 +8,11 @@ import java.security.NoSuchAlgorithmException;
 import java.util.logging.Level;
 import com.n8lm.MCShopSystemPlugin.MainPlugin;
 
+
+/**
+ * @author Alchemist
+ *
+ */
 public class ConfigHandler
 {
 

@@ -3,6 +3,11 @@ package com.n8lm.MCShopSystemPlugin.config;
 import java.net.InetAddress;
 import java.util.ArrayList;
 
+
+/**
+ * @author Alchemist
+ *
+ */
 public class Settings
 {
 	private String responseURL;
