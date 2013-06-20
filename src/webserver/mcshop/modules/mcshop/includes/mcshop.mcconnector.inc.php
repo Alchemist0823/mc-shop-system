@@ -20,7 +20,7 @@
 		*/
 		public function connect($password)
 		{
-			$this->stream = @fsockopen($this->host, $this->port);
+			$this->stream = @fsockopen($this->host, $this->port, $errno, $errstr, 1);
 			if(!$this->stream)
 				return false;
 			$this->writeRawByte(21);

@@ -84,18 +84,40 @@ function mcshop_commerce_checkout_complete($order) {
     $line_item = commerce_line_item_load($line['line_item_id']);
     $product_id = $line_item->commerce_product['und'][0]['product_id'];
     $product = commerce_product_load($product_id);
-    $cmd = $product->field_buycmd['und'][0]['value'];
-	
-	global $user;
-	
-	$args = array(
-	  'player' => $user->name,
-	  'quantity' => (int)$line_item->quantity,
-	);
-	
-	if(_mcshop_sendcmd($cmd,$args))
-		$order->status = 'completed';
-	// TODO: change order status
+    
+    if(isset($product->field_buycmd['und'][0]['value']))
+    {
+   	  $cmd = $product->field_buycmd['und'][0]['value'];
+   	  
+   	  global $user;
+   	  
+   	  $args = array(
+		'player' => $user->name,
+		'quantity' => (int)$line_item->quantity,
+   	  );
+		
+	  if(_mcshop_sendcmd($cmd,$args))
+	  {
+	  	//$order->status = 'Completed';
+	  	// TODO: change order status Line item status
+	  }
+    }
+	else if($product->sku == 'recharge_mcm')
+    {
+
+    	global $user;
+    	// Recharge Money
+    	$currency = commerce_userpoints_load('MCM');
+    	
+    	$points = (int)($line_item->commerce_total['und'][0]['amount'] / 100 / $currency['conversion_rate']);
+    	$params = array(
+    			'points' => $points,
+    			'uid' => $user->uid,
+    			'operation' => $user->name.' Recharge '.$points,
+    	);
+    	$result = userpoints_userpointsapi($params);
+    	//dsm($result);
+    }
   }
 }
 
@@ -120,13 +142,27 @@ function mcshop_form_alter(&$form, &$form_state, $form_id) {
  */
 function _mc_checkout_validate($form, &$form_state) {
 	//dsm($form);
-	//dsm($form_state);
+	//dsm($form['commerce_payment']['payment_methods']['#value']);
 	// TODO: Connect MC Server
+	$re = true;
+	foreach ($form['commerce_payment']['payment_methods']['#value'] as $key => $content)
+		if($key == 'commerce_userpoints|commerce_payment_commerce_userpoints')
+			$re = false;
+	if($re)
+		return;
+	
+	$mcinfo = variable_get('mcshop_mcinfo');
+	if(isset($mcinfo) && !$mcinfo->isOnline())
+	{
+		form_set_error('customer_profile_custom_user_p' , t('Sorry, Our MC Server is not offline. We can not guarantee the validity of your billing information.'));
+		return;
+	}
 	$connector = new MCConnector(variable_get_value('mcshop_server_host'), variable_get_value('mcshop_server_port'));
 	if($connector->connect(variable_get_value('mcshop_server_pass'))) {
 		$connector->disconnect();// Test Success
 	}
-	else form_set_error('customer_profile_custom_user_p[field_mcplayer][und][0][value]' , t('Sorry, Our MC Server is not offline. We can not guarantee the validity of your billing information.'));
+	else form_set_error('customer_profile_custom_user_p' , t('Sorry, Our MC Server is not offline. We can not guarantee the validity of your billing information.'));
+
 }
  
 /**
@@ -135,8 +171,13 @@ function _mc_checkout_validate($form, &$form_state) {
 function _mc_user_validate($form, &$form_state) {
 	if ($form['#user_category'] == 'account' || $form['#user_category'] == 'register') {
 		if (isset($form_state['values']['name']) && isset($form_state['values']['field_mcpwd']['und'][0]['value'])) {
-			
 
+			$mcinfo = variable_get('mcshop_mcinfo');
+			if(isset($mcinfo) && !$mcinfo->isOnline())
+			{
+				form_set_error('name', t('Sorry, Our MC Server is offline. We can not guarantee the validity of your account information.'));
+				return;
+			}
 			$connector = new MCConnector(variable_get_value('mcshop_server_host'), variable_get_value('mcshop_server_port'));
 			if($connector->connect(variable_get_value('mcshop_server_pass'))) {
 				$result = $connector->checkPlayerAccount($form_state['values']['name'], $form_state['values']['field_mcpwd']['und'][0]['value']);

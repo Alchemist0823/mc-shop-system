@@ -10,7 +10,7 @@
 function mcshop_menu() {
 
   
-  $items['admin/mcshop'] = array(
+  $items['admin/reports/mcshop'] = array(
     'type' => MENU_NORMAL_ITEM,
     'title' => 'MC Admin',
     'description' => 'Administer Minecraft Content',
@@ -80,10 +80,36 @@ function mcshop_block_view($delta = '') {
       break;
     case 'mcshop_server_info':
       $block['subject'] = t('Server Info');
-      $block['content'] = t('Minecraft Server is offline.');
+      $block['content'] = _mcshop_mcinfo_content();
       break;
   }
   return $block;
+}
+
+function _mcshop_mcinfo_content()
+{
+	$mcinfo = variable_get('mcshop_mcinfo');
+	if($mcinfo == NULL)
+	{
+		$mcinfo = new MCInfo();
+		variable_set('mcshop_mcinfo', $mcinfo);
+	}
+	if($mcinfo->isNeedUpdate())
+	{
+		$connector = new MCConnector(variable_get_value('mcshop_server_host'), variable_get_value('mcshop_server_port'));
+		if($connector->connect(variable_get_value('mcshop_server_pass'))) {
+			$success = $connector->getServerStatus();
+			$connector->disconnect();
+			if($success)
+				$mcinfo->update(true);
+			else
+				$mcinfo->update(false);
+		}
+		else
+			$mcinfo->update(false);
+		variable_set('mcshop_mcinfo', $mcinfo);
+	}
+	return $mcinfo->display();
 }
 
 /**

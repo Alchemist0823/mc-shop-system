@@ -4,8 +4,11 @@ package = Minecraft Shop System
 core = 7.x
 
 files[] = includes/mcshop.mcconnector.inc
+files[] = includes/mcshop.mcinfo.inc
 
 dependencies[] = variable
+dependencies[] = userpoints
+dependencies[] = commerce_userpoints
 dependencies[] = commerce
 dependencies[] = commerce_cart
 dependencies[] = commerce_checkout
