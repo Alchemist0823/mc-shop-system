@@ -22,7 +22,7 @@
 		public function display()
 		{
 			if($this->online)
-				return '<strong>Server is online</strong><ul><li>'.date('jS \of F Y h:i:s A', $this->lasttime).'</li><li>'.$this->player_num.'</li><li>'.$this->plugins.'</li><li>'.$this->onlineplayers.'</li></ul>';
+				return '<strong>Server is online</strong><ul><li>Host: '.variable_get_value('mcshop_server_host').'</li><li>'.date('jS \of F Y h:i:s A', $this->lasttime).'</li><li>'.$this->player_num.'</li><li>'.$this->plugins.'</li><li>'.$this->onlineplayers.'</li></ul>';
 			else
 				return '<strong>Server is offline</strong><br/>'.date('jS \of F Y h:i:s A', $this->lasttime);
 		}

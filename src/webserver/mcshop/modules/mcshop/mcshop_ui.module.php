@@ -96,9 +96,9 @@ function _mcshop_mcinfo_content()
 	}
 	if($mcinfo->isNeedUpdate())
 	{
-		$connector = new MCConnector(variable_get_value('mcshop_server_host'), variable_get_value('mcshop_server_port'));
-		if($connector->connect(variable_get_value('mcshop_server_pass'))) {
-			$success = $connector->getServerStatus();
+		$connector = new MCConnector();
+		if($connector->connect()) {
+			$success = true;//$connector->getServerStatus();
 			$connector->disconnect();
 			if($success)
 				$mcinfo->update(true);

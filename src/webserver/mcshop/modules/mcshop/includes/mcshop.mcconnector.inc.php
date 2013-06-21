@@ -3,12 +3,14 @@
 	{
 		var $host;
 		var $port;
+		var $password;
 		var $stream;
 
-		public function __construct($host, $port = 10808) 
+		public function __construct() 
 		{
-			$this->host = $host;
-			$this->port = $port;
+			$this->host = variable_get_value('mcshop_server_host');
+			$this->port = variable_get_value('mcshop_server_port');
+			$this->password = variable_get_value('mcshop_server_pass');
 		}
 
 		/**
@@ -18,16 +20,19 @@
 		*         true  success
 		*         false  fail
 		*/
-		public function connect($password)
+		public function connect()
 		{
-			$this->stream = @fsockopen($this->host, $this->port, $errno, $errstr, 1);
+			$this->stream = @fsockopen($this->host, $this->port, $errno, $errstr, 2);
 			if(!$this->stream)
 				return false;
 			$this->writeRawByte(21);
-			$this->writeString($password);
-			
+			$this->writeString($this->password);
+				
 			if($this->readRawInt() == 1)
+			{
+				variable_set('mcshop_mcconnetor', $this->stream);
 				return true;
+			}
 			else
 				return false;
 		}
