@@ -13,6 +13,8 @@ import java.util.logging.Level;
 /**
  * @author Alchemist
  *
+ *	Debug Mode:
+ *	Debug.log(Level, String);
  */
 
 public class CommunicationServer extends Thread
