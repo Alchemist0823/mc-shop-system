@@ -1,6 +1,7 @@
 package com.n8lm.MCShopSystemPlugin.server;
 
 import com.n8lm.MCShopSystemPlugin.MainPlugin;
+import com.n8lm.MCShopSystemPlugin.Debug;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -31,10 +32,7 @@ public class CommunicationServer extends Thread
 	{
 		try
 		{
-			if (MainPlugin.getSettings().isDebugMode())
-			{
-				MainPlugin.getMainLogger().log(Level.INFO, "Starting server");
-			}
+			Debug.log(Level.INFO, "Starting server");
 			startServer();
 		}
 		catch (Exception ex)
@@ -69,40 +67,25 @@ public class CommunicationServer extends Thread
 		serverSkt = new ServerSocket(MainPlugin.getSettings().getPort());
 		while (running)
 		{
-			if (MainPlugin.getSettings().isDebugMode())
-			{
-				MainPlugin.getMainLogger().log(Level.INFO, "Waiting for client.");
-			}
+			Debug.log(Level.INFO, "Waiting for client.");
 			Socket skt = serverSkt.accept();
-			if (MainPlugin.getSettings().isDebugMode())
-			{
-				MainPlugin.getMainLogger().log(Level.INFO, "Client connected.");
-			}
+			Debug.log(Level.INFO, "Client connected.");
 			if (MainPlugin.getSettings().isTrusted(skt.getInetAddress()))
 			{
-				if (MainPlugin.getSettings().isDebugMode())
-				{
-					MainPlugin.getMainLogger().log(Level.INFO, "Client is trusted.");
-				}
+				Debug.log(Level.INFO, "Client is trusted.");
 				skt.setKeepAlive(true);
 				DataInputStream in = new DataInputStream(skt.getInputStream());
 				DataOutputStream out = new DataOutputStream(skt.getOutputStream());
 
 				connected = true;
 
-				if (MainPlugin.getSettings().isDebugMode())
-				{
-					MainPlugin.getMainLogger().log(Level.INFO, "Trying to read first byte.");
-				}
+				Debug.log(Level.INFO, "Trying to read first byte.");
 
 				try
 				{
 					if (in.readByte() == 21)
 					{
-						if (MainPlugin.getSettings().isDebugMode())
-						{
-							MainPlugin.getMainLogger().log(Level.INFO, "First packet is password packet.");
-						}
+						Debug.log(Level.INFO, "First packet is password packet.");
 						authenticated = parsePasswordPacket(in, out);
 						if (!authenticated)
 						{
@@ -111,10 +94,7 @@ public class CommunicationServer extends Thread
 						}
 						else
 						{
-							if (MainPlugin.getSettings().isDebugMode())
-							{
-								MainPlugin.getMainLogger().log(Level.INFO, "Password is correct! Client connected.");
-							}
+							Debug.log(Level.INFO, "Password is correct! Client connected.");
 						}
 					}
 					else
@@ -128,10 +108,7 @@ public class CommunicationServer extends Thread
 						byte packetHeader = in.readByte();
 						if (packetHeader == 21)
 						{
-							if (MainPlugin.getSettings().isDebugMode())
-							{
-								MainPlugin.getMainLogger().log(Level.INFO, "Got packet header: Disconnect");
-							}
+							Debug.log(Level.INFO, "Got packet header: Disconnect");
 							authenticated = parsePasswordPacket(in, out);
 							if (!authenticated)
 							{
@@ -141,18 +118,12 @@ public class CommunicationServer extends Thread
 						}
 						else if (packetHeader == 20)
 						{
-							if (MainPlugin.getSettings().isDebugMode())
-							{
-								MainPlugin.getMainLogger().log(Level.INFO, "Got packet header: Disconnect");
-							}
+							Debug.log(Level.INFO, "Got packet header: Disconnect");
 							connected = false;
 						}
 						else if (PacketManager.packetHandlers.containsKey(packetHeader))
 						{
-							if (MainPlugin.getSettings().isDebugMode())
-							{
-								MainPlugin.getMainLogger().log(Level.INFO, "Got packet header: " + packetHeader);
-							}
+							Debug.log(Level.INFO, "Got packet header: " + packetHeader);
 							PacketManager.packetHandlers.get(packetHeader).onHeaderReceived(in, out);
 						}
 						else
@@ -160,10 +131,7 @@ public class CommunicationServer extends Thread
 							MainPlugin.getMainLogger().log(Level.WARNING, "Unsupported packet header!");
 						}
 					}
-					if (MainPlugin.getSettings().isDebugMode())
-					{
-						MainPlugin.getMainLogger().log(Level.INFO, "Closing connection with client.");
-					}
+					Debug.log(Level.INFO, "Closing connection with client.");
 					out.flush();
 					out.close();
 					in.close();
