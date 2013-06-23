@@ -12,7 +12,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.n8lm.MCShopSystemPlugin.config.*;
-import com.n8lm.MCShopSystemPlugin.server.CommunicationServer;import com.n8lm.MCShopSystemPlugin.Listener.PlayerListener;
+import com.n8lm.MCShopSystemPlugin.server.CommunicationServer;
+import com.n8lm.MCShopSystemPlugin.Listener.PlayerListener; // Your PlayerListener class has never been pushed to our repo
 
 
 /**
@@ -69,14 +70,10 @@ public final class MainPlugin extends JavaPlugin {
 		if (settings.isServerActive())
 		{
 			server = new CommunicationServer();
-			try{
-				server.startServer();
-			}
-			catch (IOException ex){
-				logger.info("Mcshop failed to start Server.");
-				logger.log(Level.SEVERE, null, ex);
-				return;
-			}
+			server.start();
+			// Here we need use server.start() instead of startServer()
+			// Because CommunicationServer is subclass of Thread.
+			// "start" is a method of Thread it will call "run" method automatically.
 		}
 		
 		// Register Listener
