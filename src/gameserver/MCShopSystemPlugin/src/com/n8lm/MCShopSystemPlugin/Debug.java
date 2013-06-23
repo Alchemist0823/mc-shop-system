@@ -8,4 +8,10 @@ public class Debug{
 			MainPlugin.getMainLogger().log(level, msg);
 		}
 	}
+
+	public static void log(Level level, String msg, Exception ex) {
+		if(MainPlugin.getSettings().isDebugMode()){
+			MainPlugin.getMainLogger().log(level, msg, ex);
+		}
+	}
 }
