@@ -81,20 +81,19 @@ function _mcshop_sendcmd($cmd, $args)
  * in the Commerce module
  */
 function mcshop_commerce_checkout_complete($order) {
-  foreach ($order->commerce_line_items['und'] as $line) {
-    $line_item = commerce_line_item_load($line['line_item_id']);
-    $product_id = $line_item->commerce_product['und'][0]['product_id'];
-    $product = commerce_product_load($product_id);
+  $order_wrapper = entity_metadata_wrapper('commerce_order', $order);
+  foreach ($order_wrapper->commerce_line_items as $delta => $line_item_wrapper) {
+  	$product_wrapper = $line_item_wrapper->commerce_product;
     
-    if(isset($product->field_buycmd['und'][0]['value']))
+    if($product_wrapper->type->value() == 'minecraft_item')
     {
-   	  $cmd = $product->field_buycmd['und'][0]['value'];
+   	  $cmd = $product_wrapper->field_buycmd->value();
    	  
    	  global $user;
    	  
    	  $args = array(
 		'player' => $user->name,
-		'quantity' => (int)$line_item->quantity,
+		'quantity' => (int)$line_item_wrapper->quantity->value(),
    	  );
 		
 	  if(_mcshop_sendcmd($cmd,$args))
@@ -103,14 +102,14 @@ function mcshop_commerce_checkout_complete($order) {
 	  	// TODO: change order status Line item status
 	  }
     }
-	else if($product->sku == 'recharge_mcm')
+	else if($product_wrapper->type->value() == 'recharge_product')
     {
 
     	global $user;
     	// Recharge Money
     	$currency = commerce_userpoints_load('MCM');
     	
-    	$points = (int)($line_item->commerce_total['und'][0]['amount'] / 100 / $currency['conversion_rate']);
+    	$points = (int)($line_item_wrapper->commerce_total->amount->value() / 100 / $currency['conversion_rate']);
     	$params = array(
     			'points' => $points,
     			'uid' => $user->uid,
@@ -186,11 +185,100 @@ function _mc_user_validate($form, &$form_state) {
 					form_set_error('name', t('Your acount information is incorrect.'));
 			}
 			else form_set_error('name', t('Sorry, Our MC Server is offline. We can not guarantee the validity of your account information.'));
-			// TODO: test the MC User
 			
 		}
 		else
-			form_set_error('field_mcpwd[und][0][value]', t('MC password is empty.'));
+			form_set_error('field_mcpwd', t('MC password is empty.'));
 	}
 }
  
+
+/**
+ * Implementation of hook_form_FORMID_alter().
+ */
+function mcshop_form_commerce_cart_add_to_cart_form_alter(&$form, &$form_state) {
+	$cart_product_ids = _mcshop_get_products_in_cart();
+	$purchased_product_ids = _mcshop_get_users_purchased_products();
+
+	$line_item = $form_state['line_item'];
+	$line_item_wrapper = entity_metadata_wrapper('commerce_line_item', $line_item);
+  	$product_wrapper = $line_item_wrapper->commerce_product;
+
+	// If this was a contrib module, we'd want to check if the associated registration
+	// entity is set to "Allow multiple registrations" for a user instead of just
+	// checking whether the product type is "program" as is the case for this specific site
+	if ($product_wrapper->type->value() == 'minecraft_item' && $product_wrapper->field_buyonce->value() == 1) { // TODO Change Condition
+		// Change the "Add to Cart" button text
+		//$form['submit']['#value'] = t('Get');
+
+		if (in_array($product_wrapper->product_id->value(), $cart_product_ids)) {
+			// Product is already in cart! We only want to allow a quantity of 1,
+			// so disable the submit button and change its text accordingly
+			$form['submit']['#disabled'] = TRUE;
+			$form['submit']['#value'] = t('Already in cart');
+		}
+		
+		if (in_array($product_wrapper->product_id->value(), $purchased_product_ids)) {
+			// Product has already been purchased!
+			// We only want users to register for a program once
+			$form['submit']['#disabled'] = TRUE;
+			$form['submit']['#value'] = t('Already purchased');
+		}
+		
+		// TODO Registration
+	}
+}
+
+/**
+ * Return the product_id values for all products in the cart
+ *
+ * @return
+ *  An array of product ids
+ */
+function _mcshop_get_products_in_cart() {
+	$cart_product_ids = &drupal_static(__FUNCTION__);
+
+	if (!isset($cart_product_ids)) {
+		global $user;
+		$cart_product_ids = array();
+		$order = commerce_cart_order_load($user->uid);
+		if ($order) {
+			$order_wrapper = entity_metadata_wrapper('commerce_order', $order);
+			foreach ($order_wrapper->commerce_line_items as $delta => $line_item_wrapper) {
+				$product_wrapper = $line_item_wrapper->commerce_product;
+				$cart_product_ids[] = $product_wrapper->product_id->value();
+			}
+		}
+
+		$cart_product_ids = array_unique($cart_product_ids);
+	}
+
+	return $cart_product_ids;
+}
+
+/**
+ * Return the product_id values for all products already purchased
+ *
+ * @return
+ *  An array of product ids
+ */
+
+function _mcshop_get_users_purchased_products() {
+	$purchased_product_ids = &drupal_static(__FUNCTION__);
+
+	if (!isset($purchased_product_ids)) {
+		global $user;
+		$query = db_select('commerce_order', 'corder');
+		$query->join('commerce_line_item', 'li', 'corder.order_id = li.order_id');
+		$query->join('field_data_commerce_product', 'prod', 'li.line_item_id = prod.entity_id');
+		$query->condition('corder.uid', $user->uid, '=')
+		->condition('corder.status', 'completed', '=')
+		->fields('prod', array('commerce_product_product_id'));
+		$result = $query->execute();
+
+		$purchased_product_ids = array_unique($result->fetchCol());
+	}
+
+	return $purchased_product_ids;
+}
+
