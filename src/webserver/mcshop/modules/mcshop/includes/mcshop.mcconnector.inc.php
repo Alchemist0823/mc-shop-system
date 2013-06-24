@@ -42,7 +42,8 @@
 		*/
 		public function disconnect()
 		{
-			$this->writeRawByte(20);
+			if($this->stream)
+				$this->writeRawByte(20);
 			fclose($this->stream);
 		}
 

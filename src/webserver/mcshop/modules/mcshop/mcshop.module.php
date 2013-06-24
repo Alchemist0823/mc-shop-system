@@ -55,24 +55,15 @@ function mcshop_cron()
 
 /**
  * Function Send Cmd Through MCConnecter
+ * @param MCConnector $connector
  * @param string $cmd
  * @param string $args
  * @return bool $state
  */
-function _mcshop_sendcmd($cmd, $args)
+function _mcshop_sendcmd(&$connector, $cmd, $args)
 {
   
-  $connector = new MCConnector();
-  
-  if($connector->connect()) {
-  	$success = $connector->doCommand($cmd);
-  	$connector->disconnect();
-  	if($success)
-  		return true;
-  	else
-  		return false;
-  }
-  else return false;
+  	return $connector->doCommand($cmd);
   // TODO: doCommand
 }
 
@@ -82,6 +73,10 @@ function _mcshop_sendcmd($cmd, $args)
  */
 function mcshop_commerce_checkout_complete($order) {
   $order_wrapper = entity_metadata_wrapper('commerce_order', $order);
+  $success = true;
+  $connector = NULL;
+  $log = '';
+  
   foreach ($order_wrapper->commerce_line_items as $delta => $line_item_wrapper) {
   	$product_wrapper = $line_item_wrapper->commerce_product;
     
@@ -95,11 +90,16 @@ function mcshop_commerce_checkout_complete($order) {
 		'player' => $user->name,
 		'quantity' => (int)$line_item_wrapper->quantity->value(),
    	  );
-		
-	  if(_mcshop_sendcmd($cmd,$args))
+   	  
+   	  if(!isset($connector))
+   	  {
+   	  	$connector = new MCConnector();
+   	  	$success = $success && $connector->connect();
+   	  }
+	  if($success)
 	  {
-	  	//$order->status = 'Completed';
-	  	// TODO: change order status Line item status
+	  	$success = _mcshop_sendcmd($connector,$cmd,$args) && $success;
+	  	$log .= 'line item '.$delta.' send error';
 	  }
     }
 	else if($product_wrapper->type->value() == 'recharge_product')
@@ -119,6 +119,17 @@ function mcshop_commerce_checkout_complete($order) {
     	//dsm($result);
     }
   }
+  $connector->disconnect();
+  if ($success)
+  {
+  	$log = 'send successfully';
+    commerce_order_status_update($order,'completed', false, true, $log);
+  }
+  else 
+  {
+    commerce_order_status_update($order,'pending', false, true, $log);
+  }
+	  	// TODO: change order status Line item status
 }
 
  
