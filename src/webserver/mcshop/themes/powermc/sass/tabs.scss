@@ -1,0 +1,96 @@
+/**
+ * @file
+ * Tabs Styling
+ *
+ * Adds styles for the primary and secondary tabs.
+ *
+ * Compare this with default CSS found in the system module's stylesheet (a copy
+ * of which is in drupal7-reference.css.)
+ */
+
+@import "base";
+
+
+/*
+ * Basic positioning styles shared by primary and secondary tabs.
+ */
+
+ul.primary,
+ul.secondary {
+  @include clearfix;
+  border-bottom: 1px solid #dfdfdf;
+  list-style: none;
+  margin: 1em 0 1.5em;
+  padding: 0;
+  white-space: nowrap;
+
+  li {
+    float: left; /* LTR */
+  }
+  a {
+    border: 1px solid #dfdfdf;
+    border-right: 0;
+    border-bottom: 0;
+    display: block;
+    line-height: 1.5em;
+    text-decoration: none;
+  }
+}
+
+/*
+ * Primary tabs
+ */
+
+ul.primary {
+  li {
+    margin: 0 2px 0 0;
+  }
+  li.active {}
+  a:link,
+  a:visited {
+    border: 1px solid #dfdfdf;
+    border-bottom: none;
+    padding: 0.5em 1em;
+  }
+  a:hover,
+  a:focus {
+    color: #fff;
+    border: 1px solid $link-color;
+    border-bottom: none;
+    background-color: $link-color;
+  }
+  a.active {
+    color: #fff;
+    border: 1px solid $base-font-color;
+    border-bottom: none;
+    background: $base-font-color;
+  }
+}
+
+/*
+ * Secondary tabs
+ */
+
+ul.secondary {
+  margin-top: -1em;
+  padding-bottom: .5em;
+
+  li {
+    margin: 0 20px 0 0;
+  }
+  a:link,
+  a:visited {
+    border: none;
+    border-bottom: 3px solid #dfdfdf;
+  }
+  a:hover,
+  a:focus {
+    background: #f0f0f0;
+  }
+  a.active,
+  a:active {
+    color: $base-font-color;
+    border: none;
+    border-bottom: 3px solid $base-font-color;
+  }
+}

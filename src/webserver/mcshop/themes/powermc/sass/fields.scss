@@ -1,0 +1,15 @@
+/**
+ * @file
+ * Field Styling
+ *
+ * The Fences module allows site builders to pick the semeantic HTML5 element
+ * for each field while editing the field's settings. There's no way a theme
+ * can ever know which element to use for the fields on your site, so Zen
+ * lets Drupal core or Fences decide. Since you DO NOT want three wrapping divs
+ * around every field (do you?) we highly recommend Fences.
+ *
+ * http://drupal.org/project/fences
+ */
+
+@import "base";
+

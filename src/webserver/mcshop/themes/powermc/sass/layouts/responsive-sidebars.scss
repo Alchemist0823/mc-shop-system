@@ -1,0 +1,20 @@
+/**
+ * @file
+ * Positioning for responsive layout.
+ */
+
+@import "base";
+
+/*
+ * Sidebars
+ */
+
+.sidebars {
+  margin: 0;
+  padding: 50px 0 0 0;
+  border-bottom: $divider;
+}
+
+.sidebar .block {
+  padding: 0 0 40px 0;
+}

@@ -1,0 +1,57 @@
+/**
+ * @file
+ * Comment Styling
+ */
+
+@import "base";
+
+
+.comment-wrapper {
+  margin: 40px 0 0 0;
+  padding: 60px 0 0 0;
+  border-top: $divider;
+}
+
+.comments { /* Wrapper for the list of comments and its title */
+  h2.comment-form { /* Heading for the comment form */
+    padding: 40px 0 0 0;
+    border-top: $divider;
+  }
+}
+
+.comment { /* Wrapper for a single comment */
+  padding: 40px 0;
+  border-top: $divider;
+
+  &.comment-preview { /* Preview of the comment before submitting new or updated comment */
+    padding: 20px 0;
+    background-color: #ffffea; /* Drupal core will use a #ffffea background. See #1110842 */
+  }
+
+  &.first { /* The first comment in the list of comments */
+    margin: 30px 0 0 0;
+  }
+
+  .new { /* "New" marker for comments that are new for the current user */
+    padding: 0 5px;
+    text-transform: uppercase;
+    font-weight: normal;
+    color: #fff;
+    background: #75d675;
+  }
+
+  .submitted { /* The "posted by" information */
+    margin-top: 0;
+    color: #8f8f8f;
+  }
+}
+
+.indented { /* Nested comments are indented */
+  margin-left: $indent-amount; /* Drupal core uses a 25px left margin */
+}
+
+.comment-unpublished { /* Unpublished comments */
+  p.unpublished { /* The word "Unpublished" displayed underneath the content. */
+    @include unpublished-div;
+  }
+}

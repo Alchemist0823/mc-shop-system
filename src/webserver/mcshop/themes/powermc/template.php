@@ -60,12 +60,12 @@
  *   api.drupal.org website is a good place to find which file contains which
  *   function.) Then you can copy the original function in its entirety and
  *   paste it in this template.php file, changing the prefix from theme_ to
- *    powermc_. For example:
+ *   powermc_. For example:
  *
  *     original, found in modules/field/field.module: theme_field()
- *     theme override, found in template.php:  powermc_field()
+ *     theme override, found in template.php: powermc_field()
  *
- *   where  powermc is the name of your sub-theme. For example, the
+ *   where powermc is the name of your sub-theme. For example, the
  *   zen_classic theme would define a zen_classic_field() function.
  *
  *   Note that base themes can also override theme functions. And those
@@ -101,25 +101,6 @@
  *   http://drupal.org/node/223440 and http://drupal.org/node/1089656
  */
 
-
-/**
- * Override or insert variables into the maintenance page template.
- *
- * @param $variables
- *   An array of variables to pass to the theme template.
- * @param $hook
- *   The name of the template being rendered ("maintenance_page" in this case.)
- */
-/* -- Delete this line if you want to use this function
-function  powermc_preprocess_maintenance_page(&$variables, $hook) {
-  // When a variable is manipulated or added in preprocess_html or
-  // preprocess_page, that same work is probably needed for the maintenance page
-  // as well, so we can just re-use those functions to do that work here.
-   powermc_preprocess_html($variables, $hook);
-   powermc_preprocess_page($variables, $hook);
-}
-// */
-
 /**
  * Override or insert variables into the html templates.
  *
@@ -128,15 +109,44 @@ function  powermc_preprocess_maintenance_page(&$variables, $hook) {
  * @param $hook
  *   The name of the template being rendered ("html" in this case.)
  */
-/* -- Delete this line if you want to use this function
-function  powermc_preprocess_html(&$variables, $hook) {
-  $variables['sample_variable'] = t('Lorem ipsum.');
-
-  // The body tag's classes are controlled by the $classes_array variable. To
-  // remove a class from $classes_array, use array_diff().
-  //$variables['classes_array'] = array_diff($variables['classes_array'], array('class-to-remove'));
+function powermc_preprocess_html(&$variables, $hook) {
+  // Add additional body classes depending upon the layout.
+  $layout = theme_get_setting('powermc_layout');
+  switch ($layout) {
+    case '1':
+      if (strpos(current_path(),'forum') !== FALSE)
+      {
+        break;
+      }
+      $variables['classes_array'][] = 'sidebar-right';
+      $variables['classes_array'][] = 'multi-column';
+      break;
+    case '2':
+      $variables['classes_array'][] = 'sidebar-left';
+      $variables['classes_array'][] = 'multi-column';
+      break;
+  }
 }
-// */
+
+/**
+ * Override or insert variables in the html_tag theme function.
+ *
+ * Remove 'type' and 'media="all"' from stylesheet <link>s because:
+ * - they are redundant in HTML5
+ * - this has the added advantage of counteracting IE8/respond.js's
+ *   random mis-parsing of aggregated CSS
+ */
+function powermc_process_html_tag(&$variables) {
+  $tag = &$variables['element'];
+  if ($tag['#tag'] == 'link' && $tag['#attributes']['rel'] == 'stylesheet') {
+    // Remove redundant type attribute.
+    unset($tag['#attributes']['type']);
+    // Remove media="all" but leave others unaffected.
+    if (isset($tag['#attributes']['media']) && $tag['#attributes']['media'] === 'all') {
+      unset($tag['#attributes']['media']);
+    }
+  }
+}
 
 /**
  * Override or insert variables into the page templates.
@@ -146,11 +156,24 @@ function  powermc_preprocess_html(&$variables, $hook) {
  * @param $hook
  *   The name of the template being rendered ("page" in this case.)
  */
-/* -- Delete this line if you want to use this function
-function  powermc_preprocess_page(&$variables, $hook) {
-  $variables['sample_variable'] = t('Lorem ipsum.');
+function powermc_preprocess_page(&$variables, $hook) {
+  // Retrieve the theme setting value for 'powermc_layout'.
+  $layout = theme_get_setting('powermc_layout');
+  // If either the right sidebar or left sidebar layout is selected set
+  // multi_column equal to TRUE.
+  if (strpos(current_path(),'forum') !== FALSE)
+    $variables['multi_column'] = FALSE;
+  else
+    $variables['multi_column'] = ($layout == '1' || $layout == '2') ? TRUE : FALSE;
+
+  // Retrieve the theme setting value for 'powermc_max_width' and construct the
+  // max-width HTML.
+  $max_width = theme_get_setting('powermc_max_width') . 'px';
+  $variables['max_width'] = 'style="max-width:' . $max_width . '"';
+
+  // Retrieve the theme setting value for 'powermc_display_main_menu'.
+  $variables['display_main_menu'] = theme_get_setting('powermc_display_main_menu');
 }
-// */
 
 /**
  * Override or insert variables into the node templates.
@@ -160,18 +183,15 @@ function  powermc_preprocess_page(&$variables, $hook) {
  * @param $hook
  *   The name of the template being rendered ("node" in this case.)
  */
-/* -- Delete this line if you want to use this function
-function  powermc_preprocess_node(&$variables, $hook) {
-  $variables['sample_variable'] = t('Lorem ipsum.');
+function powermc_preprocess_node(&$variables, $hook) {
+  // Modify Zen's default pubdate output.
+  $variables['pubdate'] = '<time pubdate datetime="' . format_date($variables['node']->created, 'custom', 'c') . '">' . format_date($variables['node']->created, 'custom', 'jS F, Y') . ' &middot; ' . format_date($variables['node']->created, 'custom', 'g:ia') . '</time>';
 
-  // Optionally, run node-type-specific preprocess functions, like
-  //  powermc_preprocess_node_page() or  powermc_preprocess_node_story().
-  $function = __FUNCTION__ . '_' . $variables['node']->type;
-  if (function_exists($function)) {
-    $function($variables, $hook);
+  // Remove 'Submitted by ' and insert a middot.
+  if ($variables['display_submitted']) {
+    $variables['submitted'] = t('!username &middot; !datetime', array('!username' => $variables['name'], '!datetime' => $variables['pubdate']));
   }
 }
-// */
 
 /**
  * Override or insert variables into the comment templates.
@@ -181,46 +201,44 @@ function  powermc_preprocess_node(&$variables, $hook) {
  * @param $hook
  *   The name of the template being rendered ("comment" in this case.)
  */
-/* -- Delete this line if you want to use this function
-function  powermc_preprocess_comment(&$variables, $hook) {
-  $variables['sample_variable'] = t('Lorem ipsum.');
+function powermc_preprocess_comment(&$variables, $hook) {
+  // Modify Zen's default pubdate output.
+  $variables['pubdate'] = '<time pubdate datetime="' . format_date($variables['comment']->created, 'custom', 'c') . '">' . format_date($variables['comment']->created, 'custom', 'jS F, Y') . ' &middot; ' . format_date($variables['comment']->created, 'custom', 'g:ia') . '</time>';
+
+  // Replace 'replied on' with a middot.
+  $variables['submitted'] = t('!username &middot; !datetime', array('!username' => $variables['author'], '!datetime' => $variables['pubdate']));
 }
-// */
 
 /**
- * Override or insert variables into the region templates.
+ * Override status messages.
  *
- * @param $variables
- *   An array of variables to pass to the theme template.
- * @param $hook
- *   The name of the template being rendered ("region" in this case.)
+ * Insert a 'messages-inner' div.
  */
-/* -- Delete this line if you want to use this function
-function  powermc_preprocess_region(&$variables, $hook) {
-  // Don't use Zen's region--sidebar.tpl.php template for sidebars.
-  //if (strpos($variables['region'], 'sidebar_') === 0) {
-  //  $variables['theme_hook_suggestions'] = array_diff($variables['theme_hook_suggestions'], array('region__sidebar'));
-  //}
-}
-// */
+function powermc_status_messages($variables) {
+  $display = $variables['display'];
+  $output = '';
 
-/**
- * Override or insert variables into the block templates.
- *
- * @param $variables
- *   An array of variables to pass to the theme template.
- * @param $hook
- *   The name of the template being rendered ("block" in this case.)
- */
-/* -- Delete this line if you want to use this function
-function  powermc_preprocess_block(&$variables, $hook) {
-  // Add a count to all the blocks in the region.
-  // $variables['classes_array'][] = 'count-' . $variables['block_id'];
-
-  // By default, Zen will use the block--no-wrapper.tpl.php for the main
-  // content. This optional bit of code undoes that:
-  //if ($variables['block_html_id'] == 'block-system-main') {
-  //  $variables['theme_hook_suggestions'] = array_diff($variables['theme_hook_suggestions'], array('block__no_wrapper'));
-  //}
+  $status_heading = array(
+    'status' => t('Status message'),
+    'error' => t('Error message'),
+    'warning' => t('Warning message'),
+  );
+  foreach (drupal_get_messages($display) as $type => $messages) {
+    $output .= "<div class=\"messages $type\"><div class=\"messages-inner\">\n";
+    if (!empty($status_heading[$type])) {
+      $output .= '<h2 class="element-invisible">' . $status_heading[$type] . "</h2>\n";
+    }
+    if (count($messages) > 1) {
+      $output .= " <ul>\n";
+      foreach ($messages as $message) {
+        $output .= '  <li>' . $message . "</li>\n";
+      }
+      $output .= " </ul>\n";
+    }
+    else {
+      $output .= $messages[0];
+    }
+    $output .= "</div></div>\n";
+  }
+  return $output;
 }
-// */

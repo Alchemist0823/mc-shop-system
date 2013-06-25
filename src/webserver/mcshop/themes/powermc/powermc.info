@@ -1,4 +1,4 @@
-﻿; Drupal's .info files allow themers to easily specify some of the static
+; Drupal's .info files allow themers to easily specify some of the static
 ; properties of your theme. Properties such as its name, stylesheets,
 ; javascripts, and block regions.
 ;
@@ -12,8 +12,8 @@
 ; page at admin/appearance.
 
 screenshot  = screenshot.png
-name        = Zen Sub-theme Power Minecraft
-description = Read the <a href="http://drupal.org/node/873778">online docs</a> or the included README.txt on how to create a theme with Zen.
+name        = Power Minecraft
+description = A Zen sub-theme.
 
 
 
@@ -63,6 +63,8 @@ stylesheets[all][] = css/forms.css
 stylesheets[all][] = css/fields.css
 stylesheets[all][] = css/print.css
 
+stylesheets[all][] = css/forum.css
+
 ; Built-in conditional stylesheet support has been removed from Zen 7.x-5.x.
 ; Instead, Zen now adds conditional-comment-included classes to the html
 ; element, such as .lt-ie9, .lt-ie8, .lt-ie7. More information on this
@@ -77,7 +79,7 @@ stylesheets[all][] = css/print.css
 
 ; Optionally add some JavaScripts to your theme.
 
-;scripts[] = js/script.js
+scripts[] = js/script.js
 
 
 
@@ -139,7 +141,7 @@ settings[zen_breadcrumb]           = yes
 settings[zen_breadcrumb_separator] = ' › '
 settings[zen_breadcrumb_home]      = 1
 settings[zen_breadcrumb_trailing]  = 1
-settings[zen_breadcrumb_title]     = 0
+settings[zen_breadcrumb_title]     = 1
 settings[zen_skip_link_anchor]     = main-menu
 settings[zen_skip_link_text]       = Jump to navigation
 settings[zen_html5_respond_meta][] = respond
@@ -147,6 +149,9 @@ settings[zen_html5_respond_meta][] = html5
 settings[zen_html5_respond_meta][] = meta
 settings[zen_rebuild_registry]     = 1
 settings[zen_wireframes]           = 0
+settings[powermc_layout]           = 1
+settings[powermc_max_width]        = 1000
+settings[powermc_display_main_menu]= 1
 
 ; To make this sub-theme an admin theme with shortcut links next to titles,
 ; uncomment the line below.
@@ -156,3 +161,9 @@ settings[zen_wireframes]           = 0
 ; To add a Panels layout (which can also be used by Display Suite), uncomment
 ; the line below and see the documentation at: http://drupal.org/node/495654
 ;plugins[panels][layouts] = layouts
+
+; Information added by drupal.org packaging script on 2013-06-11
+version = "7.x-1.0"
+core = "7.x"
+project = "powermc"
+

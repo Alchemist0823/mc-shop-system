@@ -1,0 +1,27 @@
+/**
+ * @file
+ * Node Styling
+ *
+ * Style anything that isn't in the $content variable.
+ */
+
+@import "base";
+
+
+.node {
+  .submitted {
+    color: #8f8f8f;
+  }
+}
+
+.node-teaser {
+  margin: 0 0 45px 0;
+  padding: 0 0 55px 0;
+  border-bottom: $divider;
+}
+
+.node-unpublished {
+  p.unpublished { /* The word "Unpublished" displayed underneath the content. */
+    @include unpublished-div;
+  }
+}
