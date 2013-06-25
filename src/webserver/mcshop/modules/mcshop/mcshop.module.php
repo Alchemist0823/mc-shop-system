@@ -202,7 +202,24 @@ function _mc_user_validate($form, &$form_state) {
 			form_set_error('field_mcpwd', t('MC password is empty.'));
 	}
 }
- 
+
+
+/**
+ * Implementation of hook_commerce_cart_product_add().
+ */
+
+function mcshop_commerce_cart_product_add($order, $product, $quantity, $line_item) {
+
+	$product_wrapper = entity_metadata_wrapper('commerce_product', $product);
+	if ($product_wrapper->type->value() == 'minecraft_item' && $product_wrapper->field_buyonce->value() == 1) {
+		if ($line_item) {
+			$line_item->quantity = 1;
+			commerce_line_item_save($line_item);
+		}
+	}
+	// No example.
+}
+
 
 /**
  * Implementation of hook_form_FORMID_alter().

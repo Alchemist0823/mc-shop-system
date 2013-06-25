@@ -24,17 +24,11 @@ function mcshop_menu() {
     // see the example 'examples/menu_example/permissioned/controlled' below.
     //'access callback' => TRUE,
 
-    // 'file' => 'menu_example.module',
+    'file' => 'mcshop_ui.admin.inc',
 
     // 'menu_name' => 'navigation',
   );
   return $items;
-}
-
-function _mcshop_admin_instructions()
-{
-	$base_content = t('This is the base page of MC Admin. Enjoy!');
-	return '<div>' . $base_content . '</div><br />';
 }
 
 /**
