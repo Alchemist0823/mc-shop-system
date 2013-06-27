@@ -5,11 +5,12 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.n8lm.MCShopSystemPlugin.FileOperator.CheckUser;
+import com.n8lm.MCShopSystemPlugin.FileOperator.PasswdOperator;
 
 public class MCShopCommands implements CommandExecutor {
  
 	private MainPlugin plugin;
+	private PasswdOperator passwd = MainPlugin.getPasswdFile();
  
 	public MCShopCommands(MainPlugin plugin) {
 		this.plugin = plugin;
@@ -28,9 +29,10 @@ public class MCShopCommands implements CommandExecutor {
 					return false;
 				}
 				
-				CheckUser PlayerInfo = new CheckUser(sender.getName());
+				Player player = (Player) sender;
+				String UserName = player.getName();
 				
-				if(PlayerInfo.hasPasswd()){
+				if(passwd.hasPasswd(UserName)){
 					if(params == 2){
 						sender.sendMessage("您已设置密码");
 						sender.sendMessage("若想重设密码，请使用如下格式：/mcshop pass 已有密码 新密码");
@@ -38,8 +40,8 @@ public class MCShopCommands implements CommandExecutor {
 						return false;
 					}
 					if(params == 3){
-						if(PlayerInfo.checkPasswd(args[1])){
-							if(MainPlugin.getPasswdFile().changePasswd(args[2])){
+						if(passwd.checkPasswd(UserName,args[1])){
+							if(passwd.changePasswd(args[2])){
 								sender.sendMessage("您已重设密码！");
 								return true;
 							}
@@ -59,7 +61,7 @@ public class MCShopCommands implements CommandExecutor {
 				}
 				else{
 					if(params == 2)
-						if(MainPlugin.getPasswdFile().setPasswd(args[1])){
+						if(passwd.setPasswd(args[1])){
 							sender.sendMessage("成功设置密码！");
 							return true;
 						}
