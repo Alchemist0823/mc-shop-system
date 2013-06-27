@@ -5,8 +5,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.n8lm.MCShopSystemPlugin.Check.CheckUser;
-import com.n8lm.MCShopSystemPlugin.config.PasswdOperator;
+import com.n8lm.MCShopSystemPlugin.FileOperator.CheckUser;
 
 public class MCShopCommands implements CommandExecutor {
  
@@ -29,8 +28,7 @@ public class MCShopCommands implements CommandExecutor {
 					return false;
 				}
 				
-				PasswdOperator Operator = new PasswdOperator();
-				CheckUser PlayerInfo = new CheckUser(sender.getName(),Operator);
+				CheckUser PlayerInfo = new CheckUser(sender.getName());
 				
 				if(PlayerInfo.hasPasswd()){
 					if(params == 2){
@@ -41,7 +39,7 @@ public class MCShopCommands implements CommandExecutor {
 					}
 					if(params == 3){
 						if(PlayerInfo.checkPasswd(args[1])){
-							if(Operator.changePasswd(args[2])){
+							if(MainPlugin.getPasswdFile().changePasswd(args[2])){
 								sender.sendMessage("您已重设密码！");
 								return true;
 							}
@@ -61,7 +59,7 @@ public class MCShopCommands implements CommandExecutor {
 				}
 				else{
 					if(params == 2)
-						if(Operator.setPasswd(args[1])){
+						if(MainPlugin.getPasswdFile().setPasswd(args[1])){
 							sender.sendMessage("成功设置密码！");
 							return true;
 						}

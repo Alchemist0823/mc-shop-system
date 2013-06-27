@@ -1,5 +1,5 @@
 /**
- * 
+ * @Author Alchemist 
  */
 package com.n8lm.MCShopSystemPlugin;
 
@@ -13,13 +13,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.n8lm.MCShopSystemPlugin.config.*;
 import com.n8lm.MCShopSystemPlugin.server.CommunicationServer;
+import com.n8lm.MCShopSystemPlugin.FileOperator.PasswdOperator;
 import com.n8lm.MCShopSystemPlugin.Listener.PlayerListener; // Your PlayerListener class has never been pushed to our repo
 
-
-/**
- * @author Alchemist
- *
- */
 public final class MainPlugin extends JavaPlugin {
 	
 	private static Logger logger;
@@ -30,6 +26,7 @@ public final class MainPlugin extends JavaPlugin {
 	private final PlayerListener playerListener = new PlayerListener(this);
 	
 	private static Settings settings;
+	private static PasswdOperator PasswdFile;
 	
 	@Override
     public void onEnable(){
@@ -76,6 +73,10 @@ public final class MainPlugin extends JavaPlugin {
 			// "start" is a method of Thread it will call "run" method automatically.
 		}
 		
+		// Load File
+		PasswdFile = new PasswdOperator();
+		//TODO: StoreFile = new StoreOperator();
+		
 		// Register Listener
 		bukkitServer.getPluginManager().registerEvents(playerListener, plugin);
 		
@@ -121,6 +122,10 @@ public final class MainPlugin extends JavaPlugin {
 
 	public static CommunicationServer getCommunicationServer() {
 		return server;
+	}
+	
+	public static PasswdOperator getPasswdFile(){
+		return PasswdFile;
 	}
     
 }
