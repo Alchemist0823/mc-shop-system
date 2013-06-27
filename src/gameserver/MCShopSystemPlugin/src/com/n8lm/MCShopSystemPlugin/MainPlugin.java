@@ -78,10 +78,13 @@ public final class MainPlugin extends JavaPlugin {
 		
 		// Register Listener
 		bukkitServer.getPluginManager().registerEvents(playerListener, plugin);
+		
+		// Register Executor
+		getCommand("mcshop").setExecutor(new MCShopCommands(this));
 
-		this.getLogger().info("MC Shop System is enable");
 		// TODO Insert logic to be performed when the plugin is enabled
 		
+		this.getLogger().info("MC Shop System is enable");
     }
  
     @Override
@@ -95,6 +98,7 @@ public final class MainPlugin extends JavaPlugin {
 		
         // TODO Insert logic to be performed when the plugin is disabled
 		PlayerInteractEvent.getHandlerList().unregister(plugin);
+		bukkitServer.getScheduler().cancelTasks(this);
     }
     
     public static MainPlugin getInstance()
