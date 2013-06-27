@@ -139,7 +139,7 @@
 			----Functions----
 			0x1 checkServerConnection()
 			0x2 checkPlayerAccount($accountName, $accountPass)
-			0x3 doCommand($cmmd)
+			0x3 doCommand($cmmd, $args)
 			0x4 getPlayerStatus($accountName)
 			0x5 getServerStatus()
 			0x6 doBroadcast($message)
@@ -177,8 +177,10 @@
 		}
 		
 		
-		public function doCommand($cmmd) //return true if command was found
+		public function doCommand($cmmd, $args) //return true if command was found
 		{
+		    foreach ($args as $key => $value)
+		      $cmmd .= ' -'.$key.'('.$value.')';
 			$this->writeRawByte(3);
 			$this->writeString($cmmd);
 			

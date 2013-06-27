@@ -150,7 +150,7 @@ function mcshop_user_view($account, $view_mode, $langcode) {
  */
 function mcshop_node_view($node, $view_mode) {
 	// Remove the "Read more" links on Registrant Form teasers
-	//if ($node->type == 'mc_item_display' && $view_mode == 'teaser') {
+	if ($node->type == 'minecraft_item' && $view_mode == 'teaser') {
 		unset($node->content['links']['node']['#links']['node-readmore']);
-	//}
+	}
 }

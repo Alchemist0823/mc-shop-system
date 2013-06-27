@@ -54,20 +54,6 @@ function mcshop_cron()
 }
 
 /**
- * Function Send Cmd Through MCConnecter
- * @param MCConnector $connector
- * @param string $cmd
- * @param string $args
- * @return bool $state
- */
-function _mcshop_sendcmd(&$connector, $cmd, $args)
-{
-  
-  	return $connector->doCommand($cmd);
-  // TODO: doCommand
-}
-
-/**
  * Implements hook_commerce_checkout_complete().
  * in the Commerce module
  */
@@ -98,7 +84,7 @@ function mcshop_commerce_checkout_complete($order) {
    	  }
 	  if($success)
 	  {
-	  	$success = _mcshop_sendcmd($connector,$cmd,$args) && $success;
+	  	$success = $connector->doCommand($cmd,$args) && $success;
 	  	$log .= 'line item '.$delta.' send error';
 	  }
     }
@@ -107,9 +93,8 @@ function mcshop_commerce_checkout_complete($order) {
 
     	global $user;
     	// Recharge Money
-    	$currency = commerce_userpoints_load('MCM');
     	
-    	$points = (int)($line_item_wrapper->commerce_total->amount->value() / 100 / $currency['conversion_rate']);
+    	$points = (int)($line_item_wrapper->quantity->value() * $product_wrapper->field_recharge->value());
     	$params = array(
     			'points' => $points,
     			'uid' => $user->uid,
