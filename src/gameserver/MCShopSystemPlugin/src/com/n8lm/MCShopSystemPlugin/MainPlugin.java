@@ -26,7 +26,7 @@ public final class MainPlugin extends JavaPlugin {
 	private final PlayerListener playerListener = new PlayerListener(this);
 	
 	private static Settings settings;
-	private static PasswdOperator PasswdFile;
+	private static PasswordOperator passwordOperator;
 	
 	@Override
     public void onEnable(){
@@ -74,7 +74,7 @@ public final class MainPlugin extends JavaPlugin {
 		}
 		
 		// Load File
-		PasswdFile = new PasswdOperator();
+		passwordOperator = new PasswordOperator();
 		//TODO: StoreFile = new StoreOperator();
 		
 		// Register Listener
@@ -124,8 +124,8 @@ public final class MainPlugin extends JavaPlugin {
 		return server;
 	}
 	
-	public static PasswdOperator getPasswdFile(){
-		return PasswdFile;
+	public static PasswordOperator getPasswordOperator(){
+		return passwordOperator;
 	}
     
 }
