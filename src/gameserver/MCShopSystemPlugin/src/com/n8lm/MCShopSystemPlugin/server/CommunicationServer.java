@@ -63,7 +63,7 @@ public class CommunicationServer extends Thread
 		}
 	}
 	
-	private void startServer() throws IOException
+	public void startServer() throws IOException
 	{
 		running = true;
 		serverSkt = new ServerSocket(MainPlugin.getSettings().getPort());
