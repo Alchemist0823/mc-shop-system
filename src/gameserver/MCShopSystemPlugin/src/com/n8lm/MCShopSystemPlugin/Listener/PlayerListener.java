@@ -1,4 +1,4 @@
-/*
+ï»¿/*
  * PlayerListener
  * 	Used to handle things in store,
  * 	When Player Login.
@@ -33,8 +33,8 @@ public class PlayerListener implements Listener{
 		String UserName = player.getName();
 
 		if(store.checkStore(UserName)){
-			player.sendMessage("MCShop: ·¢ÏÖÄúÓĞ¹ºÂòÈ´Î´·¢»õµÄÎïÆ·!");
-			player.sendMessage("MCShop: ÕıÔÚ³¢ÊÔ·¢ËÍ£¡");
+			player.sendMessage("MCShop: å‘ç°æ‚¨æœ‰è´­ä¹°å´æœªå‘è´§çš„ç‰©å“!");
+			player.sendMessage("MCShop: æ­£åœ¨å°è¯•å‘é€ï¼");
 
 			String[] arg = store.getAllThing(UserName);
 			String hashcode,command;
@@ -48,7 +48,7 @@ public class PlayerListener implements Listener{
 					//TODO sendItem
 					try {
 						store.deleteCommand(UserName, hash);
-						player.sendMessage("MCShop: Ò»ÎïÆ··¢ËÍ³É¹¦£¡");
+						player.sendMessage("MCShop: ä¸€ç‰©å“å‘é€æˆåŠŸï¼");
 					} catch (IOException e) {
 						MainPlugin.getMainLogger().log(Level.WARNING, "Wrong when deal with User:" + UserName + "'s store thing.");
 						MainPlugin.getMainLogger().log(Level.WARNING, "Couldn't delete the command in store file!");
@@ -57,7 +57,7 @@ public class PlayerListener implements Listener{
 					}
 				}
 				else{
-					player.sendMessage("MCShop: Ò»ÎïÆ··¢ËÍÊ§°Ü£¡");
+					player.sendMessage("MCShop: ä¸€ç‰©å“å‘é€å¤±è´¥ï¼");
 				}
 			}
 		}

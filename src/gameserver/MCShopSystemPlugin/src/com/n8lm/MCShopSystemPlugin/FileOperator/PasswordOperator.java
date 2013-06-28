@@ -6,8 +6,8 @@
  *  	Load a HashMap from password.dat;
  *  
  *  	Get Boolean:
- *  	hasPasswd(UserName);
- *  	checkPasswd(UserName,Password);
+ *  	hasPasswd(userName);
+ *  	checkPasswd(userName,Password);
  *  
  *  	Operate:
  *  	setPassword for player;
@@ -31,7 +31,7 @@ import com.n8lm.MCShopSystemPlugin.MainPlugin;
 
 public class PasswordOperator
 {
-	private HashMap<String, String> PasswdMap;
+	private HashMap<String, String> passwdMap;
 	private static File folder;
 	private static File dat;
 	private static File bak;
@@ -50,27 +50,27 @@ public class PasswordOperator
 	}
 
 	public HashMap<String, String> getHashMap(){
-		return PasswdMap;
+		return passwdMap;
 	}
 	
-	public boolean checkPasswd(String UserName, String GivenPass) {
-		return PasswdMap.get(UserName).equals(GivenPass);
+	public boolean checkPasswd(String userName, String givenPass) {
+		return passwdMap.get(userName).equals(givenPass);
 	}
 	
-	public boolean hasPasswd(String UserName) {
-		return PasswdMap.containsKey(UserName);
+	public boolean hasPasswd(String userName) {
+		return passwdMap.containsKey(userName);
 	}
 	
-	public String getPasswd(String UserName){
-		return PasswdMap.get(UserName);
+	public String getPasswd(String userName){
+		return passwdMap.get(userName);
 	}
 
-	public boolean changePasswd(String UserName, String Passwd) {
+	public boolean changePasswd(String userName, String passwd) {
 		try{
 			//Write to new file
 			BufferedWriter writer = openBak();
-			PasswdMap.put(UserName, Passwd);
-			for(Map.Entry<String, String> entry : PasswdMap.entrySet()) {
+			passwdMap.put(userName, passwd);
+			for(Map.Entry<String, String> entry : passwdMap.entrySet()) {
 			    String key = entry.getKey();
 			    String value = entry.getValue();
 			    writer.write(key + " " + value);
@@ -98,16 +98,16 @@ public class PasswordOperator
 		return true;
 	}
 	
-	public boolean setPasswd(String UserName, String Passwd) {
+	public boolean setPasswd(String userName, String passwd) {
 		try{
 			FileWriter fw = new FileWriter(bak,true);
-			PasswdMap.put(UserName, Passwd);
-			fw.write(UserName + " " + Passwd);
+			passwdMap.put(userName, passwd);
+			fw.write(userName + " " + passwd);
 			fw.close();
 			return true;
 		}
 		catch (IOException e){
-			MainPlugin.getMainLogger().log(Level.WARNING, "Couldn't add user: "+ UserName +" 's password to password.dat!");
+			MainPlugin.getMainLogger().log(Level.WARNING, "Couldn't add user: "+ userName +" 's password to password.dat!");
 			return false;
 		}
 	}
@@ -157,14 +157,14 @@ public class PasswordOperator
 	}
 	
 	private void loadMap(BufferedReader reader) throws IOException{
-		String temp,user,pass;
+		String temp, user, pass;
 		int space;
 		temp = null;
 		while((temp = reader.readLine()) != null){
 			space = temp.indexOf(" ");
 			user = temp.substring(0, space);
 			pass = temp.substring(space+1, temp.length());
-			PasswdMap.put(user, pass);
+			passwdMap.put(user, pass);
 		}
 	}
 	

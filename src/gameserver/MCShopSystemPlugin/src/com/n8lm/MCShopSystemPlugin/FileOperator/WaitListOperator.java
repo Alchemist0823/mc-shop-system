@@ -16,10 +16,10 @@
  *  addCommand(String command)
  *  	no return, throw exception
  *  
- *  boolean deleteCommand(String UserName, int hash)
+ *  boolean deleteCommand(String userName, int hash)
  *  	delete one single command in store;
  *  
- *  deletePlayer(String UserName)
+ *  deletePlayer(String userName)
  *  	delete all things of one player in store;
  *  
  *  
@@ -46,9 +46,9 @@ import com.n8lm.MCShopSystemPlugin.MainPlugin;
 
 public class WaitListOperator
 {
-	private HashMap<String, Integer> Store;
-	private HashMap<Integer, Integer> Next;
-	private HashMap<Integer, String> CommandTable;
+	private HashMap<String, Integer> store;
+	private HashMap<Integer, Integer> next;
+	private HashMap<Integer, String> commandTable;
 	
 	private static File folder;
 	private static File dat;
@@ -68,36 +68,36 @@ public class WaitListOperator
 		reader.close();
 	}
 	
-	public boolean checkStore(String UserName) {
-		return Store.containsKey(UserName);
+	public boolean checkStore(String userName) {
+		return store.containsKey(userName);
 	}
 	
-	public int getStoreNumber(String UserName){
+	public int getStoreNumber(String userName){
 		
-		if(!checkStore(UserName))
+		if(!checkStore(userName))
 			return 0;
 		
 		int num = 1,i;
-		i = Store.get(UserName);
-		while(Next.containsKey(i)) {
+		i = store.get(userName);
+		while(next.containsKey(i)) {
 			num++;
-			i = Next.get(i);
+			i = next.get(i);
 		}
 		return num;
 	}
 	
-	public String getThing(String UserName){
-		return Store.get(UserName)+" "+CommandTable.get(Store.get(UserName));
+	public String getThing(String userName){
+		return store.get(userName)+" "+commandTable.get(store.get(userName));
 	}
 	
-	public String[] getAllThing(String UserName){
-		int num = getStoreNumber(UserName);
+	public String[] getAllThing(String userName){
+		int num = getStoreNumber(userName);
 		String[] arg = new String[num];
 		
-		int add = Store.get(UserName);
+		int add = store.get(userName);
 		for(int i=0;i<num;i++){
-			arg[i] = add + " " + CommandTable.get(add);
-			add = Next.get(add);
+			arg[i] = add + " " + commandTable.get(add);
+			add = next.get(add);
 		}
 		
 		return arg;
@@ -105,66 +105,66 @@ public class WaitListOperator
 	
 	public void addCommand(String arg) throws IOException{
 		// TODO, If necessary, convert String to form.
-		String UserName = arg.substring(0, arg.indexOf(" "));
+		String userName = arg.substring(0, arg.indexOf(" "));
 		
 		FileWriter fw = new FileWriter(bak,true);
 		fw.write(arg + System.getProperty("line.separator"));
 		fw.close();
 		
 		HashCode ++;
-		CommandTable.put(HashCode, arg);
-		if(Store.containsKey(UserName)){
-			int old = Store.get(UserName);
-			Next.put(HashCode, old);
+		commandTable.put(HashCode, arg);
+		if(store.containsKey(userName)){
+			int old = store.get(userName);
+			next.put(HashCode, old);
 		}
-		Store.put(UserName, HashCode);
+		store.put(userName, HashCode);
 	}
 	
-	public boolean deleteCommand(String UserName, int hash) throws IOException {
+	public boolean deleteCommand(String userName, int hash) throws IOException {
 		BufferedWriter writer = openBak();
 			
 		// Deal with the table
-		if(!CommandTable.containsKey(hash)){
+		if(!commandTable.containsKey(hash)){
 			MainPlugin.getMainLogger().log(Level.WARNING, "Could not find the store thing. Hash: " + hash);
 			return false;
 		}
-		CommandTable.remove(hash);
+		commandTable.remove(hash);
 		
-		int num = getStoreNumber(UserName);
-		int key = Store.get(UserName);
+		int num = getStoreNumber(userName);
+		int key = store.get(userName);
 		
 		if(key == hash){
-			CommandTable.remove(key);
-			if(Next.containsKey(key)){
-				Store.put(UserName, Next.get(key));
-				Next.remove(key);
+			commandTable.remove(key);
+			if(next.containsKey(key)){
+				store.put(userName, next.get(key));
+				next.remove(key);
 			}
 			else{
-				Store.remove(UserName);
+				store.remove(userName);
 			}
 		}
 		else{
 			int link = 0;
 			while(--num > 0 && key != hash){
 				link = key;
-				key = Next.get(key);
+				key = next.get(key);
 			}
 			if(num == 0){
-				MainPlugin.getMainLogger().log(Level.WARNING, "The store thing. Hash: " + hash + "Don't belong to Player "+ UserName);
+				MainPlugin.getMainLogger().log(Level.WARNING, "The store thing. Hash: " + hash + "Don't belong to Player "+ userName);
 				return false;
 			}
-			CommandTable.remove(key);
-			if(Next.containsKey(key)){
-				Next.put(link, Next.get(key));
-				Next.remove(key);
+			commandTable.remove(key);
+			if(next.containsKey(key)){
+				next.put(link, next.get(key));
+				next.remove(key);
 			}
 			else{
-				Next.remove(link);
+				next.remove(link);
 			}
 		}
 			
 		//Write to new file
-		for(Entry<Integer, String> entry : CommandTable.entrySet()) {
+		for(Entry<Integer, String> entry : commandTable.entrySet()) {
 			String value = entry.getValue();
 			writer.write(value);
 			writer.newLine();
@@ -190,27 +190,27 @@ public class WaitListOperator
 		return true;
 	}
 	
-	public void deletePlayer(String UserName) throws IOException {
+	public void deletePlayer(String userName) throws IOException {
 		BufferedWriter writer = openBak();
 			
 		// Deal with the table
-		int num = getStoreNumber(UserName);
+		int num = getStoreNumber(userName);
 		if(num == 0) return;
 			
-		int key = Store.get(UserName);
-		Store.remove(UserName);
+		int key = store.get(userName);
+		store.remove(userName);
 			
 		int link;
 		while(--num > 0){
-			CommandTable.remove(key);
-			link = Next.get(key);
-			Next.remove(key);
+			commandTable.remove(key);
+			link = next.get(key);
+			next.remove(key);
 			key = link;
 		}
-		CommandTable.remove(key);
+		commandTable.remove(key);
 			
 		//Write to new file
-		for(Entry<Integer, String> entry : CommandTable.entrySet()) {
+		for(Entry<Integer, String> entry : commandTable.entrySet()) {
 			String value = entry.getValue();
 			writer.write(value);
 			writer.newLine();
@@ -289,13 +289,13 @@ public class WaitListOperator
 			user = temp.substring(0, space);
 			
 			//Put in to Table
-			CommandTable.put(HashCode, temp);
+			commandTable.put(HashCode, temp);
 			
 			//Check LinkedList
-			oldnext = Store.get(user);
-			Store.put(user, HashCode);
-			if(CommandTable.containsKey(oldnext)){
-				Next.put(HashCode, oldnext);
+			oldnext = store.get(user);
+			store.put(user, HashCode);
+			if(commandTable.containsKey(oldnext)){
+				next.put(HashCode, oldnext);
 			}
 		}
 	}

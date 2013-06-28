@@ -62,29 +62,29 @@ import com.n8lm.MCShopSystemPlugin.MainPlugin;
 
 public class CheckUser{
 	
-	private String UserName;
+	private String userName;
 	private Player player;
 	private static PasswordOperator Passwd = MainPlugin.getPasswordOperator();
 	
-	public CheckUser(String UserName){
-		this.UserName = UserName;
-		this.player = MainPlugin.getBukkitServer().getPlayer(UserName);
+	public CheckUser(String userName){
+		this.userName = userName;
+		this.player = MainPlugin.getBukkitServer().getPlayer(userName);
 	}
 	
 	// Password
 	
 	public boolean hasPassword(){
-		return Passwd.hasPasswd(UserName);
+		return Passwd.hasPasswd(userName);
 	}
 
-	public boolean checkPassword(String Pass){
-		return Passwd.checkPasswd(UserName,Pass);
+	public boolean checkPassword(String pass){
+		return Passwd.checkPasswd(userName,pass);
 	}
 	
 	// From Player Interface
 	
-	public boolean canSee(String TargetPlayer){
-		return player.canSee(MainPlugin.getBukkitServer().getPlayer(TargetPlayer));
+	public boolean canSee(String targetPlayer){
+		return player.canSee(MainPlugin.getBukkitServer().getPlayer(targetPlayer));
 	}
 
 	public boolean getAllowFlight(){
@@ -159,7 +159,7 @@ public class CheckUser{
 
 	
 	public String getName(){
-		return UserName;
+		return userName;
 	}
 
 	
