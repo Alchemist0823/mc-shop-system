@@ -1,9 +1,9 @@
 /*
  * PasswordOperator:
  * 
- * 		Init:
+ * 		Initiation:
  *  	Open password.dat;
- *  	Load a HashMap from .dat;
+ *  	Load a HashMap from password.dat;
  *  
  *  	Get Boolean:
  *  	hasPasswd(UserName);
@@ -11,18 +11,20 @@
  *  
  *  	Operate:
  *  	setPassword for player;
- *  	changePassword for player;
  *  	return password of a player;
  *  
  */
 package com.n8lm.MCShopSystemPlugin.FileOperator;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 
 import com.n8lm.MCShopSystemPlugin.MainPlugin;
@@ -30,22 +32,21 @@ import com.n8lm.MCShopSystemPlugin.MainPlugin;
 public class PasswordOperator
 {
 	private HashMap<String, String> PasswdMap;
+	private static File folder;
 	private static File dat;
-	private static File folder = MainPlugin.getInstance().getDataFolder();
+	private static File bak;
 	
 	public PasswordOperator() throws IOException
 	{
-		dat = new File(folder, "password.dat");
+		folder = MainPlugin.getInstance().getDataFolder();
+		dat  = new File(folder, "password.dat");
+		bak = new File(folder, "password.bak");
 		
 		BufferedReader reader = openFile();
-		if(reader == null){
+		if(reader == null)
 			throw new IOException();
-		}
-		else{
-			loadMap(reader);
-			reader.close();
-			// TODO FileWriter write = openFile();
-		}
+		loadMap(reader);
+		reader.close();
 	}
 
 	public HashMap<String, String> getHashMap(){
@@ -65,15 +66,73 @@ public class PasswordOperator
 	}
 
 	public boolean changePasswd(String UserName, String Passwd) {
-		PasswdMap.put(UserName, Passwd);
-		//TODO Operate the File.
+		try{
+			//Write to new file
+			BufferedWriter writer = openBak();
+			PasswdMap.put(UserName, Passwd);
+			for(Map.Entry<String, String> entry : PasswdMap.entrySet()) {
+			    String key = entry.getKey();
+			    String value = entry.getValue();
+			    writer.write(key + " " + value);
+			    writer.newLine();
+			    writer.flush();
+			}
+			writer.close();
+			
+			// Replace
+			dat  = new File(folder, "password.dat");
+			bak = new File(folder, "password.bak");
+			
+			if(!dat.delete()){
+				MainPlugin.getMainLogger().log(Level.WARNING, "Couldn't delete password.dat!");
+			}
+			else{
+				if(!bak.renameTo(new File(folder, "password.dat"))){
+					MainPlugin.getMainLogger().log(Level.WARNING, "Couldn't rename password.bak!");
+				}
+			}
+		}
+		catch (IOException ex){
+			return false;
+		}
 		return true;
 	}
-
+	
 	public boolean setPasswd(String UserName, String Passwd) {
-		PasswdMap.put(UserName, Passwd);
-		//TODO Operate the File.
-		return true;
+		try{
+			FileWriter fw = new FileWriter(bak,true);
+			PasswdMap.put(UserName, Passwd);
+			fw.write(UserName + " " + Passwd);
+			fw.close();
+			return true;
+		}
+		catch (IOException e){
+			MainPlugin.getMainLogger().log(Level.WARNING, "Couldn't add user: "+ UserName +" 's password to password.dat!");
+			return false;
+		}
+	}
+	
+	private BufferedWriter openBak() throws IOException{
+		BufferedWriter writer = null;
+		try{
+			if(!(bak.createNewFile())){
+				MainPlugin.getMainLogger().log(Level.SEVERE, "A Password Temp File already exists.");
+				MainPlugin.getMainLogger().log(Level.SEVERE, "A password change request may haven't been performed.");
+				try{
+					cleanBak();
+				}
+				catch(IOException ex){
+					MainPlugin.getMainLogger().log(Level.WARNING, "Couldn't overwrite Password Temp File.");
+					throw ex;
+				}
+			}
+			writer = new BufferedWriter(new FileWriter(bak));
+		}
+		catch (IOException e){
+			MainPlugin.getMainLogger().log(Level.WARNING, "Could not create a temp password file.");
+			throw e;
+		}
+		return writer;
 	}
 	
 	private BufferedReader openFile()
@@ -107,5 +166,11 @@ public class PasswordOperator
 			pass = temp.substring(space+1, temp.length());
 			PasswdMap.put(user, pass);
 		}
+	}
+	
+	private void cleanBak() throws IOException{
+		FileWriter fw = new FileWriter(bak);
+		fw.write("");
+		fw.close();
 	}
 }
