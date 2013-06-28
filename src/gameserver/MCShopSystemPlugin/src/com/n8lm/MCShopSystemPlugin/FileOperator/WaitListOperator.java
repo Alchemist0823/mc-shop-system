@@ -22,6 +22,9 @@
  *  
  *  !Store in form:
  *  	PlayerName MUST BE BEFORE THE FIRST " " !
+ *  
+ *  @author Kelym
+ *  
  */
 package com.n8lm.MCShopSystemPlugin.FileOperator;
 
@@ -194,7 +197,7 @@ public class WaitListOperator
 				dat.createNewFile();
 			}
 			catch (IOException e){
-				MainPlugin.getMainLogger().log(Level.WARNING, "Could not create new password file.");
+				MainPlugin.getMainLogger().log(Level.WARNING, "Could not create new waitlist file.");
 				throw e;
 			}
 		}
