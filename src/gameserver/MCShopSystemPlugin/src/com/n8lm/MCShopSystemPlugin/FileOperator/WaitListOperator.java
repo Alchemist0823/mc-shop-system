@@ -8,13 +8,16 @@
  *  	return number of thing in store of a player
  *  
  *  String getThing(String PlayerName)
- *  	return one thing of a player, command.
+ *  	return one thing of a player, command with prefix Hash.
  *  
  *  String[] getAllThing(String PlayerName)
- *  	return all things of a player, commands
+ *  	return all things of a player, commands with prefix Hash.
  *  
  *  addCommand(String command)
  *  	no return, throw exception
+ *  
+ *  boolean deleteCommand(String UserName, int hash)
+ *  	delete one single command in store;
  *  
  *  deletePlayer(String UserName)
  *  	delete all things of one player in store;
@@ -84,7 +87,7 @@ public class WaitListOperator
 	}
 	
 	public String getThing(String UserName){
-		return CommandTable.get(Store.get(UserName));
+		return Store.get(UserName)+" "+CommandTable.get(Store.get(UserName));
 	}
 	
 	public String[] getAllThing(String UserName){
@@ -93,7 +96,7 @@ public class WaitListOperator
 		
 		int add = Store.get(UserName);
 		for(int i=0;i<num;i++){
-			arg[i] = CommandTable.get(add);
+			arg[i] = add + " " + CommandTable.get(add);
 			add = Next.get(add);
 		}
 		
@@ -115,6 +118,76 @@ public class WaitListOperator
 			Next.put(HashCode, old);
 		}
 		Store.put(UserName, HashCode);
+	}
+	
+	public boolean deleteCommand(String UserName, int hash) throws IOException {
+		BufferedWriter writer = openBak();
+			
+		// Deal with the table
+		if(!CommandTable.containsKey(hash)){
+			MainPlugin.getMainLogger().log(Level.WARNING, "Could not find the store thing. Hash: " + hash);
+			return false;
+		}
+		CommandTable.remove(hash);
+		
+		int num = getStoreNumber(UserName);
+		int key = Store.get(UserName);
+		
+		if(key == hash){
+			CommandTable.remove(key);
+			if(Next.containsKey(key)){
+				Store.put(UserName, Next.get(key));
+				Next.remove(key);
+			}
+			else{
+				Store.remove(UserName);
+			}
+		}
+		else{
+			int link = 0;
+			while(--num > 0 && key != hash){
+				link = key;
+				key = Next.get(key);
+			}
+			if(num == 0){
+				MainPlugin.getMainLogger().log(Level.WARNING, "The store thing. Hash: " + hash + "Don't belong to Player "+ UserName);
+				return false;
+			}
+			CommandTable.remove(key);
+			if(Next.containsKey(key)){
+				Next.put(link, Next.get(key));
+				Next.remove(key);
+			}
+			else{
+				Next.remove(link);
+			}
+		}
+			
+		//Write to new file
+		for(Entry<Integer, String> entry : CommandTable.entrySet()) {
+			String value = entry.getValue();
+			writer.write(value);
+			writer.newLine();
+			writer.flush();
+			}
+		writer.close();
+			
+		// Replace
+		dat  = new File(folder, "waitlist.dat");
+		bak = new File(folder, "waitlist.bak");
+			
+		if(!dat.delete()){
+			MainPlugin.getMainLogger().log(Level.WARNING, "Couldn't delete waitlist.dat!");
+			return false;
+		}
+		else{
+			if(!bak.renameTo(new File(folder, "waitlist.dat"))){
+				MainPlugin.getMainLogger().log(Level.WARNING, "Couldn't rename waitlist.bak!");
+				return false;
+			}
+		}
+		
+		return true;
 	}
 	
 	public void deletePlayer(String UserName) throws IOException {
