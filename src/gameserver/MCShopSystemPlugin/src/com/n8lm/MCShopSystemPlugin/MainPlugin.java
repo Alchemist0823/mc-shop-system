@@ -13,8 +13,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.n8lm.MCShopSystemPlugin.config.*;
 import com.n8lm.MCShopSystemPlugin.server.CommunicationServer;
-import com.n8lm.MCShopSystemPlugin.FileOperator.PasswdOperator;
-import com.n8lm.MCShopSystemPlugin.Listener.PlayerListener; // Your PlayerListener class has never been pushed to our repo
+import com.n8lm.MCShopSystemPlugin.FileOperator.PasswordOperator;
+import com.n8lm.MCShopSystemPlugin.Listener.PlayerListener;
 
 public final class MainPlugin extends JavaPlugin {
 	
@@ -56,6 +56,14 @@ public final class MainPlugin extends JavaPlugin {
 			return;
 		}
 
+		// Load Password File
+		try{
+			passwordOperator = new PasswordOperator();
+		}
+		catch (IOException e){
+			logger.info("Mcshop failed to load password.dat file.");
+			needSetup = true;
+		}
 
 		if (needSetup)
 		{
@@ -68,13 +76,8 @@ public final class MainPlugin extends JavaPlugin {
 		{
 			server = new CommunicationServer();
 			server.start();
-			// Here we need use server.start() instead of startServer()
-			// Because CommunicationServer is subclass of Thread.
-			// "start" is a method of Thread it will call "run" method automatically.
 		}
 		
-		// Load File
-		passwordOperator = new PasswordOperator();
 		//TODO: StoreFile = new StoreOperator();
 		
 		// Register Listener
