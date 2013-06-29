@@ -7,21 +7,17 @@
  *  int getStoreNumber(String PlayerName)
  *  	return number of thing in store of a player
  *  
- *  String getThing(String PlayerName)
- *  	return one thing of a player, command with prefix Hash.
- *  
  *  String[] getAllThing(String PlayerName)
  *  	return all things of a player, commands with prefix Hash.
  *  
- *  addCommand(String command)
+ *  boolean addCommand(String command)
  *  	no return, throw exception
  *  
  *  boolean deleteCommand(String userName, int hash)
  *  	delete one single command in store;
  *  
- *  deletePlayer(String userName)
+ *  boolean deletePlayer(String userName)
  *  	delete all things of one player in store;
- *  
  *  
  *  !Store in form:
  *  	PlayerName MUST BE BEFORE THE FIRST " " !
@@ -29,7 +25,7 @@
  *  @author Kelym
  *  
  */
-package com.n8lm.MCShopSystemPlugin.FileOperator;
+
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -38,6 +34,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.logging.Level;
@@ -46,192 +43,91 @@ import com.n8lm.MCShopSystemPlugin.MainPlugin;
 
 public class WaitListOperator
 {
-	private HashMap<String, Integer> store;
-	private HashMap<Integer, Integer> next;
-	private HashMap<Integer, String> commandTable;
-	
+	private HashMap<String, ArrayList<String>> commandTable;
+
 	private static File folder;
 	private static File dat;
 	private static File bak;
-	
-	private static int HashCode;
-	
+
 	public WaitListOperator() throws IOException
 	{
 		folder = MainPlugin.getInstance().getDataFolder();
 		dat  = new File(folder, "waitlist.dat");
 		bak = new File(folder, "waitlist.bak");
-		HashCode = 0;
-		
-		BufferedReader reader = openFile();
-		loadMap(reader);
-		reader.close();
+
+		loadMap();
 	}
-	
+
 	public boolean checkStore(String userName) {
-		return store.containsKey(userName);
+		return commandTable.containsKey(userName);
 	}
-	
+
 	public int getStoreNumber(String userName){
-		
+
 		if(!checkStore(userName))
 			return 0;
-		
-		int num = 1,i;
-		i = store.get(userName);
-		while(next.containsKey(i)) {
-			num++;
-			i = next.get(i);
-		}
-		return num;
+
+		return commandTable.get(userName).size();
 	}
-	
-	public String getThing(String userName){
-		return store.get(userName)+" "+commandTable.get(store.get(userName));
-	}
-	
+
 	public String[] getAllThing(String userName){
-		int num = getStoreNumber(userName);
-		String[] arg = new String[num];
 		
-		int add = store.get(userName);
-		for(int i=0;i<num;i++){
-			arg[i] = add + " " + commandTable.get(add);
-			add = next.get(add);
-		}
-		
+		if(!checkStore(userName))
+			return null;
+		String[] arg = (String[]) commandTable.get(userName).toArray();
 		return arg;
 	}
-	
-	public void addCommand(String arg) throws IOException{
-		// TODO, If necessary, convert String to form.
+
+	public boolean addCommand(String arg){
+		
 		String userName = arg.substring(0, arg.indexOf(" "));
-		
-		FileWriter fw = new FileWriter(bak,true);
-		fw.write(arg + System.getProperty("line.separator"));
-		fw.close();
-		
-		HashCode ++;
-		commandTable.put(HashCode, arg);
-		if(store.containsKey(userName)){
-			int old = store.get(userName);
-			next.put(HashCode, old);
-		}
-		store.put(userName, HashCode);
-	}
-	
-	public boolean deleteCommand(String userName, int hash) throws IOException {
-		BufferedWriter writer = openBak();
-			
-		// Deal with the table
-		if(!commandTable.containsKey(hash)){
-			MainPlugin.getMainLogger().log(Level.WARNING, "Could not find the store thing. Hash: " + hash);
+
+		if(!writeCommand(arg)){
+			MainPlugin.getMainLogger().log(Level.WARNING, 
+					"Couldn't write to waitlist.bak!");
 			return false;
 		}
-		commandTable.remove(hash);
+			
+		return addStoreCommand(userName, arg);
+	}
+
+	public boolean deleteCommand(String userName, String command){
 		
-		int num = getStoreNumber(userName);
-		int key = store.get(userName);
-		
-		if(key == hash){
-			commandTable.remove(key);
-			if(next.containsKey(key)){
-				store.put(userName, next.get(key));
-				next.remove(key);
-			}
-			else{
-				store.remove(userName);
-			}
-		}
-		else{
-			int link = 0;
-			while(--num > 0 && key != hash){
-				link = key;
-				key = next.get(key);
-			}
-			if(num == 0){
-				MainPlugin.getMainLogger().log(Level.WARNING, "The store thing. Hash: " + hash + "Don't belong to Player "+ userName);
-				return false;
-			}
-			commandTable.remove(key);
-			if(next.containsKey(key)){
-				next.put(link, next.get(key));
-				next.remove(key);
-			}
-			else{
-				next.remove(link);
-			}
-		}
-			
-		//Write to new file
-		for(Entry<Integer, String> entry : commandTable.entrySet()) {
-			String value = entry.getValue();
-			writer.write(value);
-			writer.newLine();
-			writer.flush();
-			}
-		writer.close();
-			
-		// Replace
-		dat  = new File(folder, "waitlist.dat");
-		bak = new File(folder, "waitlist.bak");
-			
-		if(!dat.delete()){
-			MainPlugin.getMainLogger().log(Level.WARNING, "Couldn't delete waitlist.dat!");
+		if(getStoreNumber(userName) == 0){
+			MainPlugin.getMainLogger().log(Level.WARNING,
+					"Could not find anything in store belong to User: " + userName);
 			return false;
 		}
-		else{
-			if(!bak.renameTo(new File(folder, "waitlist.dat"))){
-				MainPlugin.getMainLogger().log(Level.WARNING, "Couldn't rename waitlist.bak!");
-				return false;
-			}
+		
+		ArrayList<String> store = commandTable.get(userName);
+		if(!store.remove(command)){
+			MainPlugin.getMainLogger().log(Level.WARNING,
+					"Could not find command:" + command +
+					"belong to User: " + userName);
+			return false;
 		}
 		
-		return true;
+		if(store.isEmpty()){
+			commandTable.remove(userName);
+			store.trimToSize();
+		}
+		
+		return updateFile();
 	}
-	
-	public void deletePlayer(String userName) throws IOException {
-		BufferedWriter writer = openBak();
-			
-		// Deal with the table
-		int num = getStoreNumber(userName);
-		if(num == 0) return;
-			
-		int key = store.get(userName);
-		store.remove(userName);
-			
-		int link;
-		while(--num > 0){
-			commandTable.remove(key);
-			link = next.get(key);
-			next.remove(key);
-			key = link;
+
+	public boolean deletePlayer(String userName) throws IOException {
+		if(getStoreNumber(userName) == 0){
+			return true;
 		}
-		commandTable.remove(key);
-			
-		//Write to new file
-		for(Entry<Integer, String> entry : commandTable.entrySet()) {
-			String value = entry.getValue();
-			writer.write(value);
-			writer.newLine();
-			writer.flush();
-			}
-		writer.close();
-			
-		// Replace
-		dat  = new File(folder, "waitlist.dat");
-		bak = new File(folder, "waitlist.bak");
-			
-		if(!dat.delete()){
-			MainPlugin.getMainLogger().log(Level.WARNING, "Couldn't delete waitlist.dat!");
-		}
-		else{
-			if(!bak.renameTo(new File(folder, "waitlist.dat"))){
-				MainPlugin.getMainLogger().log(Level.WARNING, "Couldn't rename waitlist.bak!");
-			}
-		}
+		
+		ArrayList<String> store = commandTable.get(userName);
+		store.clear();
+		store.trimToSize();
+		commandTable.remove(userName);
+		
+		return updateFile();
 	}
-	
+
 	private BufferedWriter openBak() throws IOException{
 		BufferedWriter writer = null;
 		try{
@@ -254,11 +150,11 @@ public class WaitListOperator
 		}
 		return writer;
 	}
-	
+
 	private BufferedReader openFile() throws IOException
 	{
 		BufferedReader reader = null;
-		
+
 		try{
 			reader = new BufferedReader(new FileReader(dat));
 		}
@@ -276,30 +172,87 @@ public class WaitListOperator
 		}
 		return reader;
 	}
-	
-	private void loadMap(BufferedReader reader) throws IOException{
+
+	private void loadMap() throws IOException{
+		BufferedReader reader = openFile();
 		String temp,user;
-		int space, oldnext;
+		int space;
 		temp = null;
 		while((temp = reader.readLine()) != null){
-			HashCode ++;
-			
+
 			// Get Command and PlayerName
 			space = temp.indexOf(" ");
 			user = temp.substring(0, space);
-			
+
 			//Put in to Table
-			commandTable.put(HashCode, temp);
-			
-			//Check LinkedList
-			oldnext = store.get(user);
-			store.put(user, HashCode);
-			if(commandTable.containsKey(oldnext)){
-				next.put(HashCode, oldnext);
+			addStoreCommand(user,temp);
+		}
+		reader.close();
+	}
+	
+	private boolean updateFile(){
+		
+		try{
+			BufferedWriter writer = openBak();
+			//Write to new file
+			for(Entry<String, ArrayList<String>> entry : commandTable.entrySet()) {
+				ArrayList<String> value = entry.getValue();
+				for(String i:value){
+					writer.write(i);
+					writer.newLine();
+					writer.flush();
+					}
+				}
+			writer.close();
+		}
+		catch (IOException e){
+			MainPlugin.getMainLogger().log(Level.WARNING,
+					"Couldn't write to waitlist.bak!");
+			e.printStackTrace();
+			return false;
+		}
+
+		// Replace
+		dat  = new File(folder, "waitlist.dat");
+		bak = new File(folder, "waitlist.bak");
+
+		if(!dat.delete()){
+			MainPlugin.getMainLogger().log(Level.WARNING, "Couldn't delete waitlist.dat!");
+			return false;
+		}
+		else{
+			if(!bak.renameTo(new File(folder, "waitlist.dat"))){
+				MainPlugin.getMainLogger().log(Level.WARNING, "Couldn't rename waitlist.bak!");
+				return false;
 			}
+		}
+		return true;
+	}
+	
+	private boolean writeCommand(String arg){
+		try{
+			FileWriter fw = new FileWriter(bak,true);
+			fw.write(arg + System.getProperty("line.separator"));
+			fw.close();
+			return true;
+		}
+		catch (IOException e){
+			return false;
 		}
 	}
 	
+	private boolean addStoreCommand(String user,String command){
+		ArrayList<String> store;
+		if(commandTable.containsKey(user)){
+			store = commandTable.get(user);
+		}
+		else{
+			store = new ArrayList<String>();
+			commandTable.put(user, store);
+		}
+		return store.add(command);
+	}
+
 	private void cleanBak() throws IOException{
 		FileWriter fw = new FileWriter(bak);
 		fw.write("");
