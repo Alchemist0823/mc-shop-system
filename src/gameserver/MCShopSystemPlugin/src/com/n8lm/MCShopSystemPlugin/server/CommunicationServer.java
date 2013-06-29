@@ -6,8 +6,10 @@ import com.n8lm.MCShopSystemPlugin.Debug;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.logging.Level;
 
 /**
@@ -46,19 +48,21 @@ public class CommunicationServer extends Thread
 
 			try
 			{
-				serverSkt.close();
+				if(serverSkt != null)
+					serverSkt.close();
 			}
 			catch (IOException ex1)
 			{
+				MainPlugin.getMainLogger().log(Level.WARNING, "Close Socket Server Error!");
 			}
 
 			try
 			{
 				startServer();
 			}
-			catch (IOException ex1)
+			catch (Exception ex1)
 			{
-				MainPlugin.getMainLogger().log(Level.SEVERE, "Server encountered an error. Server down.", ex);
+				MainPlugin.getMainLogger().log(Level.SEVERE, "Server encountered an error. Server down.", ex1);
 			}
 		}
 	}
@@ -66,16 +70,34 @@ public class CommunicationServer extends Thread
 	private void startServer() throws IOException
 	{
 		running = true;
-		serverSkt = new ServerSocket(MainPlugin.getSettings().getPort());
+		
+		serverSkt = new ServerSocket();
+		serverSkt.setReuseAddress(true);
+		serverSkt.bind(new InetSocketAddress(MainPlugin.getSettings().getPort()));
+		
 		while (running)
 		{
 			Debug.log(Level.INFO, "Waiting for client.");
-			Socket skt = serverSkt.accept();
+			
+			
+			Socket skt = null;
+
+			try
+			{
+				skt = serverSkt.accept();
+			}
+			catch (Exception ex1)
+			{
+				MainPlugin.getMainLogger().info("Server Socket is forced to stop.");
+			}
+			
 			Debug.log(Level.INFO, "Client connected.");
 			if (MainPlugin.getSettings().isTrusted(skt.getInetAddress()))
 			{
 				Debug.log(Level.INFO, "Client is trusted.");
+				
 				skt.setKeepAlive(true);
+				
 				DataInputStream in = new DataInputStream(skt.getInputStream());
 				DataOutputStream out = new DataOutputStream(skt.getOutputStream());
 
@@ -150,14 +172,32 @@ public class CommunicationServer extends Thread
 				MainPlugin.getMainLogger().log(Level.WARNING, "Address: " + skt.getInetAddress());
 				MainPlugin.getMainLogger().log(Level.WARNING, "Add this address to config.txt");
 			}
-			skt.close();
+			try
+			{
+				if(skt != null)
+					skt.close();
+			} catch (IOException e) {
+				MainPlugin.getMainLogger().log(Level.WARNING, "Close Socket Error!");
+			}
 		}
-		serverSkt.close();
+		try {
+			serverSkt.close();
+		} catch (IOException e) {
+			MainPlugin.getMainLogger().log(Level.WARNING, "Close Socket Server Error!");
+		}
+		MainPlugin.getMainLogger().log(Level.INFO, "Socket Server has been close.");
 	}
 
 	public void stopServer()
 	{
 		running = false;
+		
+		try {
+			serverSkt.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public boolean isConnected()

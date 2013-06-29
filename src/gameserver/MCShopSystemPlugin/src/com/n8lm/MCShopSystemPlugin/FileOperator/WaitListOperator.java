@@ -56,6 +56,7 @@ public class WaitListOperator
 		folder = MainPlugin.getInstance().getDataFolder();
 		dat  = new File(folder, "waitlist.dat");
 		bak = new File(folder, "waitlist.bak");
+		this.commandTable = new HashMap<String, ArrayList<String>>();
 
 		loadMap();
 	}
@@ -166,11 +167,13 @@ public class WaitListOperator
 			}
 			try{
 				dat.createNewFile();
+				reader = new BufferedReader(new FileReader(dat));
 			}
 			catch (IOException e){
 				MainPlugin.getMainLogger().log(Level.WARNING, "Could not create new waitlist file.");
 				throw e;
 			}
+
 		}
 		return reader;
 	}

@@ -31,6 +31,7 @@ public class PacketManager {
 	public static void setupPacketHandlers()
 	{
 		addPacketHandler(new DoCommandPacketHandler());
+		addPacketHandler(new CheckPlayerPacketHandler());
 		
 		MainPlugin.getMainLogger().info("Find out packets" + packetHandlers.toString());
 	}

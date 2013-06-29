@@ -22,7 +22,7 @@ public class MCShopCommands implements CommandExecutor {
 
 			int params = args.length;
 
-			if(args[0].equalsIgnoreCase("pass")){
+			if(params > 0 && args[0].equalsIgnoreCase("pass")){
 
 				if(!(sender instanceof Player)){
 					sender.sendMessage("You must be a player to set password!");
@@ -34,47 +34,49 @@ public class MCShopCommands implements CommandExecutor {
 
 				if(operator.hasPasswd(UserName)){
 					if(params == 2){
-						sender.sendMessage("ÄúÒÑÉèÖÃÃÜÂë");
-						sender.sendMessage("ÈôÏëÖØÉèÃÜÂë£¬ÇëÊ¹ÓÃÈçÏÂ¸ñÊ½£º/mcshop pass ÒÑÓĞÃÜÂë ĞÂÃÜÂë");
-						sender.sendMessage("ÈôÍü¼Ç¾ÉÃÜÂë£¬ÇëÍ¬¹ÜÀíÔ±ÁªÏµ");
+						sender.sendMessage("æ‚¨å·²è®¾ç½®å¯†ç ");
+						sender.sendMessage("è‹¥æƒ³é‡è®¾å¯†ç ï¼Œè¯·ä½¿ç”¨å¦‚ä¸‹æ ¼å¼ï¼š/mcshop pass å·²æœ‰å¯†ç  æ–°å¯†ç ");
+						sender.sendMessage("è‹¥å¿˜è®°æ—§å¯†ç ï¼Œè¯·åŒç®¡ç†å‘˜è”ç³»");
 						return false;
 					}
 					if(params == 3){
 						if(operator.checkPasswd(UserName,args[1])){
 							if(operator.changePasswd(UserName,args[2])){
-								sender.sendMessage("ÄúÒÑÖØÉèÃÜÂë£¡");
+								sender.sendMessage("æ‚¨å·²é‡è®¾å¯†ç ï¼");
 								return true;
 							}
 							else{
-								sender.sendMessage("ÃÜÂëÉèÖÃ³öÏÖ´íÎó£¡Î´ÄÜÖØÉèÃÜÂë£¡");
+								sender.sendMessage("å¯†ç è®¾ç½®å‡ºç°é”™è¯¯ï¼æœªèƒ½é‡è®¾å¯†ç ï¼");
 								return false;
 							}
 						}
 						else{
-							sender.sendMessage("¾ÉÃÜÂëÊäÈë´íÎó£¬ÇëÖØÊÔ£¡");
-							sender.sendMessage("ÖØÉèÃÜÂë£¬ÇëÊ¹ÓÃÈçÏÂ¸ñÊ½£º/mcshop pass ¾ÉÃÜÂë ĞÂÃÜÂë");
+							sender.sendMessage("æ—§å¯†ç è¾“å…¥é”™è¯¯ï¼Œè¯·é‡è¯•ï¼");
+							sender.sendMessage("é‡è®¾å¯†ç ï¼Œè¯·ä½¿ç”¨å¦‚ä¸‹æ ¼å¼ï¼š/mcshop pass æ—§å¯†ç  æ–°å¯†ç ");
 							return false;
 						}
 					}
-					sender.sendMessage("ÉèÖÃMCShopÉÌµêÃÜÂëÇëÊ¹ÓÃÈçÏÂ¸ñÊ½£º");
-					sender.sendMessage("/mcshop pass ÉèÖÃÃÜÂë");
+					sender.sendMessage("è®¾ç½®MCShopå•†åº—å¯†ç è¯·ä½¿ç”¨å¦‚ä¸‹æ ¼å¼ï¼š");
+					sender.sendMessage("/mcshop pass è®¾ç½®å¯†ç ");
+					return false;
 				}
 				else{
 					if(params == 2)
 						if(operator.setPasswd(UserName,args[1])){
-							sender.sendMessage("³É¹¦ÉèÖÃÃÜÂë£¡");
+							sender.sendMessage("æˆåŠŸè®¾ç½®å¯†ç ï¼");
 							return true;
 						}
 						else{
-							sender.sendMessage("ÃÜÂëÉèÖÃ³öÏÖ´íÎó£¡Î´ÄÜÖØÉèÃÜÂë£¡");
+							sender.sendMessage("å¯†ç è®¾ç½®å‡ºç°é”™è¯¯ï¼æœªèƒ½é‡è®¾å¯†ç ï¼");
 							return false;
 						}
 					else{
-						sender.sendMessage("ÉèÖÃÃÜÂë£¬ÇëÊ¹ÓÃÈçÏÂ¸ñÊ½£º/mcshop pass ÃÜÂë");
+						sender.sendMessage("è®¾ç½®å¯†ç ï¼Œè¯·ä½¿ç”¨å¦‚ä¸‹æ ¼å¼ï¼š/mcshop pass å¯†ç ");
 						return false;
 					}
 				}
 			}
+			return false;
 		}
 		return false;
 	}

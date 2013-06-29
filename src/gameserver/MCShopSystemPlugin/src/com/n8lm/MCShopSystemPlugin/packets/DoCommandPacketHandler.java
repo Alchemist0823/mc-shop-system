@@ -74,12 +74,12 @@ public class DoCommandPacketHandler extends PacketHandler {
 		
 		// replace {}
 		int i, j, posi, posj;
-		while((i=command.indexOf("{")) >= 0){
+		while((i = command.indexOf("{")) >= 0){
 			
 			// Find {temp} , get temp;
 			try{
 				j = command.indexOf("}");
-				temp = command.substring(i+1, j);
+				temp = command.substring(i + 1, j);
 			}
 			catch (IndexOutOfBoundsException ex){
 				MainPlugin.getMainLogger().log(Level.WARNING,
@@ -110,6 +110,26 @@ public class DoCommandPacketHandler extends PacketHandler {
 				build.append(command.substring(posj+1, command.length()));
 			
 			command = build.toString();
+		}
+
+		// Find $temp(content), get content
+
+		while((i = command.indexOf("$")) >= 0){
+			
+			// Find {temp} , get temp;
+			try{
+				j = command.indexOf(")");
+				temp = command.substring(i + 1, j);
+			}
+			catch (IndexOutOfBoundsException ex){
+				MainPlugin.getMainLogger().log(Level.WARNING,
+						"Failed to convert Command! " + 
+						" Cannot find ) for $ !" );
+				return null;
+			}
+			build = new StringBuilder();
+			if(i>0) build.append(command.substring(0, i));
+			build.append(command.substring(j+1, command.length()));
 		}
 		
 		command = deleteSpace(command);

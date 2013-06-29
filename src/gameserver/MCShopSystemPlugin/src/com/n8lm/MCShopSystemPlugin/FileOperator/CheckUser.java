@@ -82,10 +82,6 @@ public class CheckUser{
 	}
 	
 	// From Player Interface
-	
-	public boolean canSee(String targetPlayer){
-		return player.canSee(MainPlugin.getBukkitServer().getPlayer(targetPlayer));
-	}
 
 	public boolean getAllowFlight(){
 		return player.getAllowFlight();
@@ -121,11 +117,6 @@ public class CheckUser{
 	}
 
 	
-	public void closeInventory(){
-		player.closeInventory();
-	}
-
-	
 	public Inventory getEnderChest() {
 		return player.getEnderChest();
 	}
@@ -133,11 +124,6 @@ public class CheckUser{
 	
 	public int getExpToLevel() {
 		return player.getExpToLevel();
-	}
-
-	
-	public GameMode getGameMode() {
-		return player.getGameMode();
 	}
 
 	
@@ -183,21 +169,7 @@ public class CheckUser{
 	}
 
 	
-	public InventoryView openEnchanting(Location arg0, boolean arg1) {
-		return player.openEnchanting(arg0,arg1);
-	}
-
-	
-	public InventoryView openInventory(Inventory arg0) {
-		return player.openInventory(arg0);
-		
-	}
 /*
-	
-	public void openInventory(InventoryView arg0) {
-		return player.
-		
-	}
 
 	
 	public InventoryView openWorkbench(Location arg0, boolean arg1) {
@@ -206,53 +178,10 @@ public class CheckUser{
 	}
 
 	
-	public void setGameMode(GameMode arg0) {
-		return player.
-		
-	}
-
-	
-	public void setItemInHand(ItemStack arg0) {
-		return player.
-		
-	}
-
-	
-	public void setItemOnCursor(ItemStack arg0) {
-		return player.
-		
-	}
-
-	
-	public boolean setWindowProperty(Property arg0, int arg1) {
-		return player.
-		return false;
-	}
-
-	
-	public boolean addPotionEffect(PotionEffect arg0) {
-		return player.
-		return false;
-	}
-
-	
-	public boolean addPotionEffect(PotionEffect arg0, boolean arg1) {
-		return player.
-		return false;
-	}
-
-	
-	public boolean addPotionEffects(Collection<PotionEffect> arg0) {
-		return player.
-		return false;
-	}
-
-	
 	public Collection<PotionEffect> getActivePotionEffects() {
 		return player.
 		
 	}
-
 	
 	public boolean getCanPickupItems() {
 		return player.
@@ -269,12 +198,6 @@ public class CheckUser{
 	public EntityEquipment getEquipment() {
 		return player.
 		
-	}
-
-	
-	public double getEyeHeight() {
-		return player.
-		return 0;
 	}
 
 	

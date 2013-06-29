@@ -23,7 +23,6 @@ import com.n8lm.MCShopSystemPlugin.FileOperator.WaitListOperator;
 public class PlayerListener implements Listener{
 	
 	private MainPlugin plugin;
-	private WaitListOperator store = MainPlugin.getWaitListOperator();
 	
 	public PlayerListener(MainPlugin plugin){
 		this.plugin = plugin;
@@ -33,7 +32,7 @@ public class PlayerListener implements Listener{
 	public void onPlayerLogin(PlayerLoginEvent event){
 		Player player = event.getPlayer();
 		String userName = player.getName();
-
+        WaitListOperator store = MainPlugin.getWaitListOperator();
 		if(store.checkStore(userName)){
 			player.sendMessage("MCShop: 发现您有购买却未发货的物品!");
 			player.sendMessage("MCShop: 正在尝试发送！");

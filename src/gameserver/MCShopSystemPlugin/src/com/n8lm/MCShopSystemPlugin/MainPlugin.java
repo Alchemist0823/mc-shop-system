@@ -108,11 +108,12 @@ public final class MainPlugin extends JavaPlugin {
 		{
 			server.stopServer();
 		}
-		this.getLogger().info("MC Shop System is disable");
+		PlayerInteractEvent.getHandlerList().unregister(plugin);
 		
         // TODO Insert logic to be performed when the plugin is disabled
-		PlayerInteractEvent.getHandlerList().unregister(plugin);
 		bukkitServer.getScheduler().cancelTasks(this);
+		
+		this.getLogger().info("MC Shop System has been disabled");
     }
     
     public static MainPlugin getInstance()

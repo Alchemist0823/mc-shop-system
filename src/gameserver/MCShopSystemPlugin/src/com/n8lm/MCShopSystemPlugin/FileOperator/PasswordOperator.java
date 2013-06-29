@@ -41,12 +41,9 @@ public class PasswordOperator
 		folder = MainPlugin.getInstance().getDataFolder();
 		dat  = new File(folder, "password.dat");
 		bak = new File(folder, "password.bak");
+		this.passwdMap = new HashMap<String, String>();
 		
-		BufferedReader reader = openFile();
-		if(reader == null)
-			throw new IOException();
-		loadMap(reader);
-		reader.close();
+		loadMap();
 	}
 
 	public HashMap<String, String> getHashMap(){
@@ -148,6 +145,7 @@ public class PasswordOperator
 			}
 			try{
 				dat.createNewFile();
+				reader = new BufferedReader(new FileReader(dat));
 			}
 			catch (IOException e){
 				MainPlugin.getMainLogger().log(Level.WARNING, "Could not create new password file.");
@@ -156,7 +154,9 @@ public class PasswordOperator
 		return reader;
 	}
 	
-	private void loadMap(BufferedReader reader) throws IOException{
+	private void loadMap() throws IOException{
+
+		BufferedReader reader = openFile();
 		String temp, user, pass;
 		int space;
 		temp = null;
@@ -166,6 +166,7 @@ public class PasswordOperator
 			pass = temp.substring(space+1, temp.length());
 			passwdMap.put(user, pass);
 		}
+		reader.close();
 	}
 	
 	private void cleanBak() throws IOException{

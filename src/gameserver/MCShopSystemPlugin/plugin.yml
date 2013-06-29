@@ -1,7 +1,7 @@
-name: N8LM MC Shop
+name: MCShopSystemPlugin
 main: com.n8lm.MCShopSystemPlugin.MainPlugin
 version: 0.1.0
 commands:
-  n8lmshop:
+  mcshop:
     description: Get information about this plugin.
-    usage: "Usage: '/n8lmshop' to get information"
+    usage: "Usage: '/mcshop' to get information"
