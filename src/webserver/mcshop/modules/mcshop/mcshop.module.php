@@ -175,6 +175,7 @@ function _mc_user_validate($form, &$form_state) {
 			}
 			$connector = new MCConnector();
 			if($connector->connect()) {
+			    $result = false;
 				$result = $connector->checkPlayerAccount($form_state['values']['name'], $form_state['values']['field_mcpwd']['und'][0]['value']);
 				$connector->disconnect();
 				if(!result)

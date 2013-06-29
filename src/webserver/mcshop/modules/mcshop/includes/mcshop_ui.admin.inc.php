@@ -4,14 +4,14 @@
 //IMPORTANT: haven't been tested yet...
 
 //the argument to receive the playername selected, '' means to show the list
-//e.g. "admin/reports/mcshop" calls the function with $playerselected==''
-//     "admin/reports/mcshop/name" calls the function with $playerselected=='name'
+//e.g. 'admin/reports/mcshop' calls the function with $playerselected==''
+//     'admin/reports/mcshop/name' calls the function with $playerselected=='name'
 //if the above works, hook_menu needn't be changed.
 
 function _mcshop_admin_instructions($playerselected = '')
 {
 	$base_content = t('This is the base page of MC Admin. Enjoy!');
-	$result = "<p>".$base_content."</p>";
+	$result = '<p>'.$base_content.'</p>';
 	$mcinfo = variable_get('mcshop_mcinfo');
 
 	if($mcinfo == NULL)
@@ -38,20 +38,20 @@ function _mcshop_admin_instructions($playerselected = '')
 
 	
 	if($playerselected == ''){      //display the list
-		$result=$result."<div><ul>";
+		$result=$result.'<div><ul>';
 		if ($mcinfo.isOnline()){
 			foreach($mcinfo->onlineplayers as $playername){
-				$result = $result."<li><a href='"$playername."' target='_blank'>".$playername."</a></li>";
+				$result = $result.'<li><a href="'.$playername.'" target="_blank">'.$playername.'</a></li>';
 			}
 		}
 		else{
-			$result = $result."Server is offline.";
+			$result = $result.'Server is offline.';
 		}
-		$result = $result."</ul></div>";
+		$result = $result.'</ul></div>';
 	}
 	
 	else{       //display the status of one player
-		$result=$result."<div>";
+		$result=$result.'<div>';
 		if ($mcinfo.isOnline()){
 			$connector = new MCConnector();
 			if($connector->connect()){
@@ -60,12 +60,12 @@ function _mcshop_admin_instructions($playerselected = '')
 				$connector->disconnect();
 			}
 			else
-				$result = $result."Cannot connect to server.";
+				$result = $result.'Cannot connect to server.';
 		}
 		else{
-			$result = $result."Server is offline.";
+			$result = $result.'Server is offline.';
 		}
-		$result = $result."</div>";
+		$result = $result.'</div>';
 	}
 	
 	return $result;
