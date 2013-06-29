@@ -14,6 +14,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.n8lm.MCShopSystemPlugin.config.*;
 import com.n8lm.MCShopSystemPlugin.server.CommunicationServer;
 import com.n8lm.MCShopSystemPlugin.FileOperator.PasswordOperator;
+import com.n8lm.MCShopSystemPlugin.FileOperator.WaitListOperator;
 import com.n8lm.MCShopSystemPlugin.Listener.PlayerListener;
 
 public final class MainPlugin extends JavaPlugin {
