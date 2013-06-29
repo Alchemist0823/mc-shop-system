@@ -3,6 +3,8 @@
  * 	Used to handle things in store,
  * 	When Player Login.
  * 
+ * TODO: complete sendItem
+ * 
  */
 package com.n8lm.MCShopSystemPlugin.Listener;
 
@@ -30,27 +32,22 @@ public class PlayerListener implements Listener{
 	@EventHandler //EventPriority.NORMAL by default
 	public void onPlayerLogin(PlayerLoginEvent event){
 		Player player = event.getPlayer();
-		String UserName = player.getName();
+		String userName = player.getName();
 
-		if(store.checkStore(UserName)){
+		if(store.checkStore(userName)){
 			player.sendMessage("MCShop: 发现您有购买却未发货的物品!");
 			player.sendMessage("MCShop: 正在尝试发送！");
 
-			String[] arg = store.getAllThing(UserName);
-			String hashcode,command;
-			int space,hash;
-			for(String i: arg){
+			String[] arg = store.getAllThing(userName);
+			int space;
+			for(String command: arg){
 				space = i.indexOf(" ");
-				hashcode = i.substring(0, space);
-				hash = Integer.valueOf(hashcode);
-				command = i.substring(space+1, i.length());
 				if(sendItem(command)){
-					//TODO sendItem
 					try {
-						store.deleteCommand(UserName, hash);
+						store.deleteCommand(userName, command);
 						player.sendMessage("MCShop: 一物品发送成功！");
 					} catch (IOException e) {
-						MainPlugin.getMainLogger().log(Level.WARNING, "Wrong when deal with User:" + UserName + "'s store thing.");
+						MainPlugin.getMainLogger().log(Level.WARNING, "Wrong when deal with User:" + userName + "'s store thing.");
 						MainPlugin.getMainLogger().log(Level.WARNING, "Couldn't delete the command in store file!");
 						// WARNING!
 						e.printStackTrace();
