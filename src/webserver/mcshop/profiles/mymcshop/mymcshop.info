@@ -29,6 +29,14 @@ dependencies[] = rules
 dependencies[] = rules_admin
 dependencies[] = views
 dependencies[] = views_ui
+dependencies[] = inline_entity_form
+dependencies[] = views_megarow
+dependencies[] = views_bulk_operations
+dependencies[] = eva
+dependencies[] = date_api
+dependencies[] = date_tools
+dependencies[] = date_views
+dependencies[] = date_popup
 
 ; Install the Commerce modules.
 dependencies[] = commerce
@@ -55,24 +63,8 @@ dependencies[] = jirafe
 dependencies[] = yottaa
 
 ; Install contribs.
-dependencies[] = chosen
-
-dependencies[] = crumbs
-
-dependencies[] = module_filter
-
-dependencies[] = image_delta_formatter
-
 dependencies[] = libraries
-
 dependencies[] = pathauto
-dependencies[] = inline_entity_form
-dependencies[] = entityreference
-dependencies[] = views_megarow
-
-dependencies[] = fences
-dependencies[] = title
-
 dependencies[] = variable
 dependencies[] = advanced_forum
 

@@ -163,8 +163,8 @@
 		public function checkPlayerAccount($accountName, $accountPass) //return true if valid
 		{
 			$this->writeRawByte(2);
-			$this->writeRawString($accountName); //length of strings are sent in writeRawString
-			$this->writeRawString($accountPass);
+			$this->writeString($accountName); //length of strings are sent in writeRawString
+			$this->writeString($accountPass);
 			
 			if($this->readRawInt() == 1)
 			{
