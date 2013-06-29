@@ -6,6 +6,7 @@ package com.n8lm.MCShopSystemPlugin.packets;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 
 import com.n8lm.MCShopSystemPlugin.MainPlugin;
@@ -52,5 +53,91 @@ public class DoCommandPacketHandler extends PacketHandler {
 			out.writeInt(0);
 		}
 	}
+	
+	public static void main(String[] arg){
+		System.out.println(convertCommand("give {player} 123 {quantity} $player(alchemist) $quantity(10)"));
+		System.out.println(convertCommand("   give {player} 123 {quantity} $player(alchemist) $quantity(10)    "));
+		
+	}
 
+	public static String convertCommand(String command){
+		
+		command = deleteSpace(command);
+		
+		String temp, content;
+		StringBuilder build;
+		
+		// replace {}
+		int i, j, posi, posj;
+		while((i=command.indexOf("{")) >= 0){
+			
+			// Find {temp} , get temp;
+			try{
+				j = command.indexOf("}");
+				temp = command.substring(i+1, j);
+			}
+			catch (IndexOutOfBoundsException ex){
+				MainPlugin.getMainLogger().log(Level.WARNING,
+						"Failed to convert Command! " + 
+						" Cannot find } for { !" );
+				return null;
+			}
+			
+			// Find $temp(content), get content
+			try{
+				posi = command.indexOf("$"+temp+"(");
+				posj = command.indexOf(")", posi);
+				content = command.substring(posi+2+temp.length(), posj);
+			}
+			catch (IndexOutOfBoundsException ex){
+				//MainPlugin.getMainLogger().log(Level.WARNING,
+				//		"Failed to convert Command! " + 
+				//		" Cannot find $Variable(Value) !" );
+				return null;
+			}
+			
+			// Revise command
+			build = new StringBuilder();
+			if(i>0) build.append(command.substring(0, i));
+			build.append(content);
+			if(posi > j+1) build.append(command.substring(j+1, posi));
+			if(posj < command.length()-1)
+				build.append(command.substring(posj+1, command.length()));
+			
+			command = build.toString();
+		}
+		
+		command = deleteSpace(command);
+		
+		return command;
+	}
+	
+	public static String deleteSpace(String input){
+		
+		int begin, end ,length = input.length();
+
+		// Delete Space at head and tail
+		for(begin = 0;begin < length;begin++)
+			if(input.charAt(begin) != ' ') break;
+		if(begin >= length)
+			return null;
+		for(end = length - 1;end > begin;end --)
+			if(input.charAt(end) != ' ') break;
+		
+		// Deal with input
+		StringBuffer output = new StringBuffer();
+		char c;
+		while(begin <= end){
+			c = input.charAt(begin);
+			output.append(c);
+			if(c!= ' '){
+				begin++;
+			}
+			else{
+				while(input.charAt(begin)==' ')
+					begin++;
+			}
+		}
+		return output.toString();
+	}
 }
