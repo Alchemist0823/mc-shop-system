@@ -28,9 +28,21 @@ public class DoCommandPacketHandler extends PacketHandler {
 
 	@Override
 	public void onHeaderReceived(DataInputStream in, DataOutputStream out) throws IOException {
-		// TODO Auto-generated method stub
-		String command = CommunicationHelper.readString(in);
 		
+		String command = CommunicationHelper.readString(in);
+		command = convertCommand(command);
+		
+		if (sendItem(command))
+		{
+			out.writeInt(1);
+		}
+		else
+		{
+			out.writeInt(0);
+		}
+	}
+	
+	public static boolean sendItem(String command){
 		boolean success;
 		try
 		{
@@ -44,14 +56,7 @@ public class DoCommandPacketHandler extends PacketHandler {
 			}
 			success = false;
 		}
-		if (success)
-		{
-			out.writeInt(1);
-		}
-		else
-		{
-			out.writeInt(0);
-		}
+		return success;
 	}
 	
 	public static void main(String[] arg){

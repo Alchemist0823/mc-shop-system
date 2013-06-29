@@ -3,21 +3,21 @@
  * 	Used to handle things in store,
  * 	When Player Login.
  * 
- * TODO: complete sendItem
+ * TODO: complete sendItem, 
+ * 	or use sendItem method of DoCommandPacketHandler;
  * 
  */
 package com.n8lm.MCShopSystemPlugin.Listener;
 
-import java.io.IOException;
 import java.util.logging.Level;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 
 import com.n8lm.MCShopSystemPlugin.MainPlugin;
+import com.n8lm.MCShopSystemPlugin.packets.*;
 import com.n8lm.MCShopSystemPlugin.FileOperator.WaitListOperator;
 
 public class PlayerListener implements Listener{
@@ -39,18 +39,15 @@ public class PlayerListener implements Listener{
 			player.sendMessage("MCShop: 正在尝试发送！");
 
 			String[] arg = store.getAllThing(userName);
-			int space;
 			for(String command: arg){
-				space = i.indexOf(" ");
-				if(sendItem(command)){
-					try {
-						store.deleteCommand(userName, command);
+				if(DoCommandPacketHandler.sendItem(command)){
+					if(store.deleteCommand(userName, command)){
 						player.sendMessage("MCShop: 一物品发送成功！");
-					} catch (IOException e) {
+						
+					}
+					else{
 						MainPlugin.getMainLogger().log(Level.WARNING, "Wrong when deal with User:" + userName + "'s store thing.");
 						MainPlugin.getMainLogger().log(Level.WARNING, "Couldn't delete the command in store file!");
-						// WARNING!
-						e.printStackTrace();
 					}
 				}
 				else{
@@ -58,10 +55,5 @@ public class PlayerListener implements Listener{
 				}
 			}
 		}
-	}
-	
-	private boolean sendItem(String arg){
-		//TODO sendItem;
-		return true;
 	}
 }

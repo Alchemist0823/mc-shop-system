@@ -1,3 +1,5 @@
+package com.n8lm.MCShopSystemPlugin.FileOperator;
+
 /*
  * StoreOperator:
  * 
