@@ -27,6 +27,7 @@ public final class MainPlugin extends JavaPlugin {
 	
 	private static Settings settings;
 	private static PasswordOperator passwordOperator;
+	private static WaitListOperator waitListOperator;
 	
 	@Override
     public void onEnable(){
@@ -64,6 +65,15 @@ public final class MainPlugin extends JavaPlugin {
 			logger.info("Mcshop failed to load password.dat file.");
 			needSetup = true;
 		}
+		
+		// Load WaitList File
+		try{
+			waitListOperator = new WaitListOperator();
+		}
+		catch (IOException e){
+			logger.info("Mcshop failed to load waitlist.dat file.");
+			needSetup = true;
+		}
 
 		if (needSetup)
 		{
@@ -78,7 +88,6 @@ public final class MainPlugin extends JavaPlugin {
 			server.start();
 		}
 		
-		//TODO: StoreFile = new StoreOperator();
 		
 		// Register Listener
 		bukkitServer.getPluginManager().registerEvents(playerListener, plugin);
@@ -129,6 +138,10 @@ public final class MainPlugin extends JavaPlugin {
 	
 	public static PasswordOperator getPasswordOperator(){
 		return passwordOperator;
+	}
+	
+	public static WaitListOperator getWaitListOperator(){
+		return waitListOperator;
 	}
     
 }
