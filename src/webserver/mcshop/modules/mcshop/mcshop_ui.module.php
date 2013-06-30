@@ -24,7 +24,7 @@ function mcshop_menu() {
     // see the example 'examples/menu_example/permissioned/controlled' below.
     //'access callback' => TRUE,
 
-    'file' => 'mcshop_ui.admin.inc',
+    'file' => 'includes/mcshop_ui.admin.inc',
 
     // 'menu_name' => 'navigation',
   );

@@ -37,20 +37,19 @@ function _mcshop_admin_instructions($playerselected = '')
 	}
 
 	
-	if($playerselected == ''){      //display the list
+	if($playerselected == '') {      //display the list
 		$result=$result.'<div><ul>';
-		if ($mcinfo.isOnline()){
-			foreach($mcinfo->onlineplayers as $playername){
+		if ($mcinfo->isOnline()) {
+			foreach($mcinfo->onlineplayers as $playername) {
 				$result = $result.'<li><a href="'.$playername.'" target="_blank">'.$playername.'</a></li>';
 			}
 		}
-		else{
+		else {
 			$result = $result.'Server is offline.';
 		}
 		$result = $result.'</ul></div>';
 	}
-	
-	else{       //display the status of one player
+	else {       //display the status of one player
 		$result=$result.'<div>';
 		if ($mcinfo.isOnline()){
 			$connector = new MCConnector();
