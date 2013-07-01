@@ -39,7 +39,7 @@ function _mcshop_admin_instructions($playerselected = '')
 	
 	if($playerselected == ''){      //display the list
 		$result=$result.'<div><ul>';
-		if ($mcinfo.isOnline()){
+		if ($mcinfo->isOnline()){
 			foreach($mcinfo->onlineplayers as $playername){
 				$result = $result.'<li><a href="'.$playername.'" target="_blank">'.$playername.'</a></li>';
 			}
@@ -52,7 +52,7 @@ function _mcshop_admin_instructions($playerselected = '')
 	
 	else{       //display the status of one player
 		$result=$result.'<div>';
-		if ($mcinfo.isOnline()){
+		if ($mcinfo->isOnline()){
 			$connector = new MCConnector();
 			if($connector->connect()){
 				$playerstatus = $connector->getPlayerStatus($playerselected);
