@@ -51,7 +51,7 @@ function _mcshop_admin_instructions($playerselected = '')
 	}
 	else {       //display the status of one player
 		$result=$result.'<div>';
-		if ($mcinfo.isOnline()){
+		if ($mcinfo->isOnline()){
 			$connector = new MCConnector();
 			if($connector->connect()){
 				$playerstatus = $connector->getPlayerStatus($playerselected);

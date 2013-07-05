@@ -59,11 +59,11 @@ public class DoCommandPacketHandler extends PacketHandler {
 		return success;
 	}
 	
-	public static void main(String[] arg){
+	/*public static void main(String[] arg){
 		System.out.println(convertCommand("give {player} 123 {quantity} $player(alchemist) $quantity(10)"));
 		System.out.println(convertCommand("   give {player} 123 {quantity} $player(alchemist) $quantity(10)    "));
 		
-	}
+	}*/
 
 	public static String convertCommand(String command){
 		
