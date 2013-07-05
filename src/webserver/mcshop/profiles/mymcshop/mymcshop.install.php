@@ -109,7 +109,28 @@ function mymcshop_configure_site_form() { //TODO
   drupal_set_title(st('Configure Site'));
 
   // Prepare all the options for sample content.
-
+  
+  // Set up Minecraft Server MCShop Plugin Information
+  $form['mcshop_gameserver'] = array(
+    '#type' => 'fieldset',
+    '#title' => st('Minecraft Server Settings'),
+  );
+  $form['mcshop_gameserver']['mcshop_server_host'] = array(
+    '#type' => 'textfield',
+    '#title' => st('Minecraft Server Host'),
+    '#default_value' => variable_get('mcshop_server_host'),
+  );
+  $form['mcshop_gameserver']['mcshop_server_port'] = array(
+    '#type' => 'textfield',
+    '#title' => st('Minecraft Server MCShop Plugin Port'),
+    '#default_value' => variable_get('mcshop_server_port'),
+  );
+  $form['mcshop_gameserver']['mcshop_server_pass'] = array(
+    '#type' => 'textfield',
+    '#title' => st('Minecraft Server MCShop Plugin Password'),
+    '#default_value' => variable_get('mcshop_server_pass'),
+  );
+  /*
   $options_selection = array(
     'anonymous_checkout' => 'Allow checkout for <strong>anonymous users</strong>.',
     'merchandising' => 'Additional <strong>blocks</strong> for featuring specific content.',
@@ -118,8 +139,8 @@ function mymcshop_configure_site_form() { //TODO
     'forum' => '<strong>Forum</strong> functionality.',
     'social' => '<strong>Social</strong> logins and links for sharing products via social networks.',
     'zoom_cloud' => '<strong>Zoom & Gallery</strong> mode for products.',
-  );
-  $form['functionality']['extras'] = array(
+  );*/
+  /*$form['functionality']['extras'] = array(
     '#type' => 'checkboxes',
     '#options' => $options_selection,
     '#title' => t("Install additional functionality"),
@@ -128,7 +149,7 @@ function mymcshop_configure_site_form() { //TODO
         ':input[name="install_demo_store"]' => array('value' => '0'),
       ),
     ),
-  );
+  );*/
 
   // Build a currency options list from all defined currencies.
   $options = array();
@@ -173,7 +194,11 @@ function mymcshop_configure_site_form_submit(&$form, &$form_state) {
   variable_set('mymcshop_selected_extras', $form_state['values']['extras']);
   
   variable_set('commerce_default_currency', $form_state['values']['commerce_default_currency']);
-  variable_set('commerce_enabled_currencies', array($form_state['values']['commerce_default_currency'] => $form_state['values']['commerce_default_currency']));
+  variable_set('commerce_enabled_currencies', array($form_state['values']['commerce_default_currency'] => $form_state['values']['commerce_default_currency'], 'MCM' => 'MCM'));
+
+  variable_set('mcshop_server_host', $form_state['values']['mcshop_server_host']);
+  variable_set('mcshop_server_port', $form_state['values']['mcshop_server_port']);
+  variable_set('mcshop_server_pass', $form_state['values']['mcshop_server_pass']);
 }
 
 
@@ -559,8 +584,8 @@ function mymcshop_install() {
 */
 function _mymcshop_create_terms() {
   
-  
-  $terms = array(); 
+
+  $terms = array();
   $vocabulary = taxonomy_vocabulary_machine_name_load('categories');
   $terms[] = 'Permission';
   $terms[] = 'Item';
@@ -571,6 +596,44 @@ function _mymcshop_create_terms() {
     $term->name = $name;
     taxonomy_term_save($term);
   }
+  
+
+  $terms = array();
+  $vocabulary = taxonomy_vocabulary_machine_name_load('userpoints');
+  $terms[] = 'MC Points';
+  foreach($terms as $name) {
+    $term = new stdClass();
+    $term->vid = $vocabulary->vid;
+    $term->name = $name;
+    taxonomy_term_save($term);
+  }
+  
+  $tid = null;
+  $tree = taxonomy_get_tree($vocabulary->vid);
+  foreach ($tree as $term) {
+    $tid = $term->tid;
+  }
+  
+  if(isset($tid))
+  {
+    variable_set('userpoints_category_default_tid', $tid);
+    variable_set('userpoints_invite_tid', $tid);
+    variable_set('userpoints_category_profile_display_tid', array(
+      $tid => ''.$tid,
+      'uncategorized' => 0,
+      'all' => 0,
+    ));
+    variable_set('commerce_userpoints_currencies', array(
+          'MCM' => array(
+              'name' => 'MC Money',
+              'tid' => ''.$tid,
+              'code' => 'MCM',
+              'symbol' => 'MC$',
+              'conversion_rate' => '1',
+          ),
+      ));
+  }
+  
 
 }
 

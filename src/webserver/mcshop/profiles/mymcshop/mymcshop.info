@@ -67,13 +67,14 @@ dependencies[] = libraries
 dependencies[] = pathauto
 dependencies[] = variable
 dependencies[] = advanced_forum
+dependencies[] = module_filter
+dependencies[] = admin_menu
 
 ; Install Commerce Contrib
 dependencies[] = commerce_alipay
 dependencies[] = commerce_autosku
 dependencies[] = commerce_userpoints
 dependencies[] = commerce_userpoints_payment_method
-dependencies[] = customer_profile_type_ui
 dependencies[] = commerce_backoffice
 dependencies[] = commerce_backoffice_product
 dependencies[] = commerce_backoffice_order
@@ -110,26 +111,26 @@ dependencies[] = migrate
 dependencies[] = commerce_migrate
 
 ; Install Search API
-dependencies[] = facetapi
-dependencies[] = search_api
-dependencies[] = search_api_db
-dependencies[] = search_api_views
-dependencies[] = search_api_facetapi
-dependencies[] = search_api_ranges
+; dependencies[] = facetapi
+; dependencies[] = search_api
+; dependencies[] = search_api_db
+; dependencies[] = search_api_views
+; dependencies[] = search_api_facetapi
+; dependencies[] = search_api_ranges
+
+; Custom
+dependencies[] = mcshop
+dependencies[] = mcshop_ui
 
 ; Distribution modules.
-dependencies[] = mymcshop_core;
-dependencies[] = mymcshop_forum;
+dependencies[] = mymcshop_product
+dependencies[] = mymcshop_commerce
 dependencies[] = mymcshop_help
-dependencies[] = mymcshop_inline_help
 dependencies[] = mymcshop_order
 dependencies[] = mymcshop_payment
 dependencies[] = mymcshop_comment
 dependencies[] = mymcshop_migrate
 
-; Custom
-dependencies[] = mcshop
-dependencies[] = mcshop_ui
 
 ; System Requirements.
 php_memory_limit = 128M
