@@ -12,10 +12,7 @@ import com.n8lm.MCShopSystemPlugin.MainPlugin;
 import com.n8lm.MCShopSystemPlugin.server.CommunicationHelper;
 import com.n8lm.MCShopSystemPlugin.server.PacketHandler;
 import com.n8lm.MCShopSystemPlugin.FileOperator.CheckUser;
-/**
- * @author Alchemist
- *
- */
+
 public class GetPlayerDataHandlerPacket extends PacketHandler {
 
 	/**
