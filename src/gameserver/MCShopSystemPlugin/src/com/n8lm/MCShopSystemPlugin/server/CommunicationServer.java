@@ -39,6 +39,10 @@ public class CommunicationServer extends Thread
 			Debug.log(Level.INFO, "Starting server");
 			startServer();
 		}
+		catch (SocketException ex)
+		{
+			Debug.log(Level.INFO, "Stoping server");
+		}
 		catch (Exception ex)
 		{
 			MainPlugin.getMainLogger().log(Level.SEVERE, "Server encountered an error. Attempting restart.", ex);
@@ -59,6 +63,10 @@ public class CommunicationServer extends Thread
 			try
 			{
 				startServer();
+			}
+			catch (SocketException ex1)
+			{
+				Debug.log(Level.INFO, "Stoping server");
 			}
 			catch (Exception ex1)
 			{
