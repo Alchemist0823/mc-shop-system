@@ -3,8 +3,14 @@
 * Implements hook_form_FORM_ID_alter().
 */
 function mymcshop_form_install_configure_form_alter(&$form, $form_state) {
-  $form['site_information']['site_name']['#default_value'] = 'Minecraft Website';
+  // Use "Minecraft Website" as the default site name.
+  $form['site_information']['site_name']['#default_value'] = st('Minecraft Website');
+  
+  // Use "admin" as the default username.
   $form['admin_account']['account']['name']['#default_value'] = 'admin';
+
+  // Hide Update Notifications.
+  $form['update_notifications']['#access'] = FALSE;
 }
 
 

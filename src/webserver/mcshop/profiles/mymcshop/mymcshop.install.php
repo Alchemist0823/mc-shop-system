@@ -7,7 +7,7 @@
 /**
 * Implements hook_install_tasks()
 */
-function mymcshop_install_tasks() {
+function mymcshop_install_tasks($install_state) {
 
   $tasks = array();
   $current_task = variable_get('install_task', 'done');
@@ -18,8 +18,26 @@ function mymcshop_install_tasks() {
   );
   $tasks['mymcshop_install_additional_modules'] = array(
     'display_name' => st('Install additional functionality'),
+    'type' => 'batch',  
+    'display' => strpos($current_task, 'mymcshop_') !== FALSE,
+  );
+
+  $tasks['mymcshop_import_content'] = array(
+    'display_name' => st('Import content'),
+    'type' => 'batch',
+    // Show this task only after the Kickstart steps have bene reached.
+    'display' => strpos($current_task, 'mymcshop_') !== FALSE,
+  );
+  
+  $needs_translations = variable_get('mymcshop_localization', FALSE);
+
+  $tasks['mymcshop_install_import_translation'] = array(
+    'display_name' => st('Set up translations'),
+    'display' => $needs_translations,
+    'run' => $needs_translations ? INSTALL_TASK_RUN_IF_NOT_COMPLETED : INSTALL_TASK_SKIP,
     'type' => 'batch',
   );
+  
   return $tasks;
 }
 
@@ -30,8 +48,11 @@ function mymcshop_install_tasks() {
 function mymcshop_install_tasks_alter(&$tasks, $install_state) {
   $tasks['install_finished']['function'] = 'mymcshop_install_finished';
   $tasks['install_select_profile']['display'] = FALSE;
-  $tasks['install_select_locale']['display'] = FALSE;
-  $tasks['install_select_locale']['run'] = INSTALL_TASK_SKIP;
+
+  unset($tasks['install_import_locales']);
+  unset($tasks['install_import_locales_remaining']);
+  //$tasks['install_select_locale']['display'] = FALSE;
+  //$tasks['install_select_locale']['run'] = INSTALL_TASK_SKIP;
 
   // The "Welcome" screen needs to come after the first two steps
   // (profile and language selection), despite the fact that they are disabled.
@@ -41,28 +62,50 @@ function mymcshop_install_tasks_alter(&$tasks, $install_state) {
     'type' => 'form',
     'run' => isset($install_state['parameters']['welcome']) ? INSTALL_TASK_SKIP : INSTALL_TASK_RUN_IF_REACHED,
   );
+  
+  _mymcshop_set_theme('seven');
+  
   $old_tasks = $tasks;
   $tasks = array_slice($old_tasks, 0, 2) + $new_task + array_slice($old_tasks, 2);
 }
 
 
 /**
+ * Force-set a theme at any point during the execution of the request.
+ *
+ * Drupal doesn't give us the option to set the theme during the installation
+ * process and forces enable the maintenance theme too early in the request
+ * for us to modify it in a clean way.
+ */
+function _mymcshop_set_theme($target_theme) {
+  if ($GLOBALS['theme'] != $target_theme) {
+    unset($GLOBALS['theme']);
+
+    drupal_static_reset();
+    $GLOBALS['conf']['maintenance_theme'] = $target_theme;
+    _drupal_maintenance_theme();
+  }
+}
+
+/**
  * Task callback: shows the welcome screen.
  */
 function install_welcome($form, &$form_state, &$install_state) {
   drupal_set_title(st('Privacy Policy Summary'));
-  $message = '<p>' . st('Thank you for choosing My Minecraft System, a product offered by No.8 Lightning Man Workgroup.') . '</p>';
+  $message = '<p>' . st('Thank you for choosing My Minecraft Shop System, a product offered by No.8 Lightning Man Workgroup.') . '</p>';
   $eula = '<p>' . st('While we have a rather long, boring Privacy Policy just like any other technology company, here is a short summary of some key items we feel are important:') . '</p>';
+  
   $items = array();
-  $dfp_link = l("Google's DoubleClick for Publishers (\"DFP\")", "http://www.google.com/dfp/info/sb/index.html", array('attributes' => array('target' => '_blank')));
-  $items[] = st("Commerce Kickstart makes use of !dfp;", array('!dfp' => $dfp_link));
-  $items[] = st('We use DFP to show you content relevant to Drupal Commerce at various points and places in Commerce Kickstart, including during installation;');
-  $items[] = st('DFP is a third-party technology. It uses audience management tags which collect and use certain data;');
-  $items[] = st('Commerce Guys does not collect any personally identifiable information;');
-  $items[] = st('If at any time after installation you do not want us to utilize DFP through Commerce Kickstart, you can easily opt out of it;');
+  
+  $studio_link = l("No.8 Lightning Man", "http://www.n8lm.cn/", array('attributes' => array('target' => '_blank')));
+  
+  $items[] = st("My Minecraft Shop System is made by !comp.", array('!comp' => $studio_link));
+  $items[] = st('The website part of My Minecraft Shop System is Commerial Product. Anyone use it should buy it on No.8 Lightning Man Studio.');
+  $items[] = st('My Minecraft Shop System will collect all of payment data from your server to guarantee the fair of profit-share.');
+  $items[] = st('If you have chosen the share profit plan but don not share profit with us, we will shut down your MyMCShop System.');
   $eula .= theme('item_list', array('items' => $items));
-  $eula_link = l('Privacy Policy and User Agreement', 'https://marketplace.commerceguys.com/privacy/commerce-kickstart', array('attributes' => array('target' => '_blank')));
-  $eula .= '<p>' . st('That is it for the main points. The full !policy can be viewed on our website.  Thank you again for choosing Commerce Kickstart!', array('!policy' => $eula_link)) . '</p>';
+  $eula_link = l('Privacy Policy and User Agreement', 'http://www.n8lm.cn/product/mymcshop/agreement', array('attributes' => array('target' => '_blank')));
+  $eula .= '<p>' . st('That is it for the main points. The full !policy can be viewed on our website.  Thank you again for choosing MyMCShop System!', array('!policy' => $eula_link)) . '</p>';
   $form = array();
   $form['welcome_message'] = array(
     '#markup' => $message,
@@ -96,7 +139,7 @@ function install_welcome_submit($form, &$form_state) {
   global $install_state;
 
   $install_state['parameters']['welcome'] = 'done';
-  $install_state['parameters']['locale'] = 'en';
+  //$install_state['parameters']['locale'] = 'en';
 }
 
 
@@ -130,26 +173,44 @@ function mymcshop_configure_site_form() { //TODO
     '#title' => st('Minecraft Server MCShop Plugin Password'),
     '#default_value' => variable_get('mcshop_server_pass'),
   );
-  /*
+
+  // Prepare all the options for sample content.
+  $options = array(
+      '1' => st('Yes'),
+      '0' => st('No'),
+  );
+
+  
+  $form['localization'] = array(
+      '#type' => 'fieldset',
+      '#title' => st('Localization'),
+  );
+  $form['localization']['install_localization'] = array(
+      '#type' => 'radios',
+      '#title' => st('Do you want to be able to translate the interface of your store?'),
+      '#options' => $options,
+      '#default_value' => '0',
+  );
+
+  $form['functionality'] = array(
+      '#type' => 'fieldset',
+      '#title' => st('Extra Functionality'),
+  );
   $options_selection = array(
-    'anonymous_checkout' => 'Allow checkout for <strong>anonymous users</strong>.',
-    'merchandising' => 'Additional <strong>blocks</strong> for featuring specific content.',
-    'slideshow' => 'Frontpage <strong>slideshow</strong>.',
     'menus' => 'Custom <strong>admin menu</strong> designed for store owners.',
-    'forum' => '<strong>Forum</strong> functionality.',
-    'social' => '<strong>Social</strong> logins and links for sharing products via social networks.',
-    'zoom_cloud' => '<strong>Zoom & Gallery</strong> mode for products.',
-  );*/
-  /*$form['functionality']['extras'] = array(
+    'forum' => 'Mincraft <strong>Forum</strong> functionality.',
+    'ga'    => '<strong>Google Analytics</strong> functionality.',
+  );
+  $form['functionality']['extras'] = array(
     '#type' => 'checkboxes',
     '#options' => $options_selection,
-    '#title' => t("Install additional functionality"),
+    '#title' => t('Install additional functionality'),
     '#states' => array(
       'visible' => array(
         ':input[name="install_demo_store"]' => array('value' => '0'),
       ),
     ),
-  );*/
+  );
 
   // Build a currency options list from all defined currencies.
   $options = array();
@@ -215,43 +276,31 @@ function mymcshop_configure_site_form_submit(&$form, &$form_state) {
 function mymcshop_install_additional_modules() {
 
     $modules = array(
-      'mymcshop_block',
-      'mymcshop_social',
+      'mymcshop_commerce',
       'mymcshop_product',
-      'mymcshop_product_ui',
-      'mymcshop_forum',
-      'mymcshop_menus',
-      'mymcshop_search',
-      'mymcshop_taxonomy',
+      'mymcshop_migrate',
     );
     $selected_extras = variable_get('mymcshop_selected_extras', array());
-    if (!empty($selected_extras['merchandising'])) {
-      $modules[] = 'mymcshop_merchandising';
-    }
-    if (!empty($selected_extras['slideshow'])) {
-      $modules[] = 'mymcshop_slideshow';
-    }
     if (!empty($selected_extras['menus'])) {
-      $modules[] = 'mymcshop_menus';
+      $modules[] = 'mymcshop_menu';
     }
-    if (!empty($selected_extras['social'])) {
-      $modules[] = 'mymcshop_social';
+    if (!empty($selected_extras['forum'])) {
+      $modules[] = 'mymcshop_forum';
     }
-    if (!empty($selected_extras['zoom_cloud'])) {
-      variable_set('mymcshop_product_zoom_enabled', TRUE);
+    if (!empty($selected_extras['ga'])) {
+      $modules[] = 'googleanalytics';
     }
     
   $install_localization = variable_get('mymcshop_localization', FALSE);
   if ($install_localization) {
     $modules[] = 'locale';
-    $modules[] = 'variable';
     $modules[] = 'i18n';
-    $modules[] = 'i18n_field';
+    $modules[] = 'l10n_update';
   }
 
   $store_country = variable_get('mymcshop_store_country', 'US');
   
-  // Enable Commerce Paypal Express Checkout for Europe.
+  // Enable Commerce Alipay Checkout for China.
   if (in_array($store_country, array('ZH','TW','CN'))) {
     $modules[] = 'commerce_alipay';
   }
@@ -312,17 +361,16 @@ function mymcshop_import_content() {
   // on a Mac, by forcing PHP to detect the appropriate line endings.
   ini_set("auto_detect_line_endings", TRUE);
 
-  $operations[] = array('_mymcshop_taxonomy_menu', array(t('Setting up menus.')));
+  $operations[] = array('_mymcshop_setup_userpoint', array(t('Setup userpoint.')));
 
   // Run all available migrations.
   $migrations = migrate_migrations();
   foreach ($migrations as $machine_name => $migration) {
     $operations[] = array('_mymcshop_import', array($machine_name, t('Importing content.')));
   }
-
   // Perform post-import tasks.
   $operations[] = array('_mymcshop_post_import', array(t('Completing setup.')));
-
+  
   $batch = array(
     'title' => t('Importing content'),
     'operations' => $operations,
@@ -331,6 +379,32 @@ function mymcshop_import_content() {
 
   return $batch;
 }
+
+
+/**
+ * Task callback:
+ *
+ * @param $install_state
+ *   An array of information about the current installation state.
+ */
+function mymcshop_install_import_translation(&$install_state) {
+  // Enable installation language as default site language.
+  include_once DRUPAL_ROOT . '/includes/locale.inc';
+  $install_locale = $install_state['parameters']['locale'];
+  locale_add_language($install_locale, NULL, NULL, NULL, '', NULL, 1, TRUE);
+
+  // Build batch with l10n_update module.
+  $history = l10n_update_get_history();
+  module_load_include('check.inc', 'l10n_update');
+  $available = l10n_update_available_releases();
+  $updates = l10n_update_build_updates($history, $available);
+
+  module_load_include('batch.inc', 'l10n_update');
+  $updates = _l10n_update_prepare_updates($updates, NULL, array());
+  $batch = l10n_update_batch_multiple($updates, LOCALE_IMPORT_KEEP);
+  return $batch;
+}
+
 
 /**
  * Custom installation task; perform final steps and redirect the user to the new site if there are no errors.
@@ -387,11 +461,11 @@ function mymcshop_install_finished(&$install_state) {
     if (!drupal_is_cli()) {
       if (module_exists('overlay')) {
         // Special case when no clean urls.
-        $fragment = empty($GLOBALS['conf']['clean_url']) ? urlencode('?q=admin/help/getting-started') : 'admin/help/getting-started';
+        $fragment = empty($GLOBALS['conf']['clean_url']) ? urlencode('?q=admin/') : 'admin/';
         drupal_goto('', array('fragment' => 'overlay=' . $fragment));
       }
       else {
-        drupal_goto('admin/help/getting-started');
+        drupal_goto('admin/');
       }
     }
   }
@@ -468,9 +542,9 @@ function mymcshop_install() {
   $types = array(
     array(
       'type' => 'page',
-      'name' => st('Basic page'),
+      'name' => t('Basic page'),
       'base' => 'node_content',
-      'description' => st("Use <em>basic pages</em> for your static content, such as an 'About us' page."),
+      'description' => t("Use <em>basic pages</em> for your static content, such as an 'About us' page."),
       'custom' => 1,
       'modified' => 1,
       'locked' => 0,
@@ -520,7 +594,7 @@ function mymcshop_install() {
 
   // Create a Home link in the main menu.
   $item = array(
-    'link_title' => st('Home'),
+    'link_title' => t('Home'),
     'link_path' => '<front>',
     'menu_name' => 'main-menu',
   );
@@ -541,6 +615,7 @@ function mymcshop_install() {
   variable_set('chosen_search_contains', TRUE);*/
 
   // Create the default Search API server.
+  /*
   $values = array(
     'machine_name' => 'frontend',
     'name' => 'Frontend',
@@ -552,8 +627,10 @@ function mymcshop_install() {
     ),
   );
   search_api_server_insert($values);
-
+  */
+  
   // Enable automatic title replacement for node and commerce product bundles.
+  /*
   foreach (array('node', 'commerce_product') as $entity_type) {
     $title_settings = array(
       'auto_attach' => array(
@@ -565,9 +642,7 @@ function mymcshop_install() {
       ),
     );
     variable_set('title_' . $entity_type, $title_settings);
-  }
-  
-  _mymcshop_create_terms();
+  }*/
   
   // Enable the admin theme.
   db_update('system')
@@ -577,64 +652,6 @@ function mymcshop_install() {
     ->execute();
   variable_set('admin_theme', 'seven');
   variable_set('node_admin_theme', '1');
-}
-
-/**
-* Implements mymcshop_install() callback
-*/
-function _mymcshop_create_terms() {
-  
-
-  $terms = array();
-  $vocabulary = taxonomy_vocabulary_machine_name_load('categories');
-  $terms[] = 'Permission';
-  $terms[] = 'Item';
-  $terms[] = 'House';
-  foreach($terms as $name) {
-    $term = new stdClass();
-    $term->vid = $vocabulary->vid;
-    $term->name = $name;
-    taxonomy_term_save($term);
-  }
-  
-
-  $terms = array();
-  $vocabulary = taxonomy_vocabulary_machine_name_load('userpoints');
-  $terms[] = 'MC Points';
-  foreach($terms as $name) {
-    $term = new stdClass();
-    $term->vid = $vocabulary->vid;
-    $term->name = $name;
-    taxonomy_term_save($term);
-  }
-  
-  $tid = null;
-  $tree = taxonomy_get_tree($vocabulary->vid);
-  foreach ($tree as $term) {
-    $tid = $term->tid;
-  }
-  
-  if(isset($tid))
-  {
-    variable_set('userpoints_category_default_tid', $tid);
-    variable_set('userpoints_invite_tid', $tid);
-    variable_set('userpoints_category_profile_display_tid', array(
-      $tid => ''.$tid,
-      'uncategorized' => 0,
-      'all' => 0,
-    ));
-    variable_set('commerce_userpoints_currencies', array(
-          'MCM' => array(
-              'name' => 'MC Money',
-              'tid' => ''.$tid,
-              'code' => 'MCM',
-              'symbol' => 'MC$',
-              'conversion_rate' => '1',
-          ),
-      ));
-  }
-  
-
 }
 
 /**
