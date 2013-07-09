@@ -104,7 +104,8 @@ function mcshop_commerce_checkout_complete($order) {
     	//dsm($result);
     }
   }
-  $connector->disconnect();
+  if(isset($connector))
+    $connector->disconnect();
   if ($success)
   {
   	$log = 'send successfully';
@@ -134,7 +135,7 @@ function mcshop_form_alter(&$form, &$form_state, $form_id) {
 }
 
 /**
- * Callback minecraft user validation
+ * Callback minecraft checkout validation
  */
 function _mc_checkout_validate($form, &$form_state) {
 	//dsm($form);
@@ -144,18 +145,21 @@ function _mc_checkout_validate($form, &$form_state) {
 		if($key == 'commerce_userpoints|commerce_payment_commerce_userpoints')
 			$re = false;
 	if($re)
-		return;
+		return TRUE;
 	
 	// TODO: Connect MC Server
 	$mcinfo = variable_get('mcshop_mcinfo');
 	if(isset($mcinfo) && !$mcinfo->isOnline())
 	{
-		form_set_error('customer_profile_custom_user_p' , t('Sorry, Our MC Server is not offline. We can not guarantee the validity of your billing information.'));
-		return;
+		form_set_error('' , t('Sorry, Our MC Server is not offline. We can not guarantee the validity of your billing information.'));
+		return FALSE;
 	}
 	$connector = new MCConnector();
 	if(!$connector->connect())
-		form_set_error('customer_profile_custom_user_p' , t('Sorry, Our MC Server is not offline. We can not guarantee the validity of your billing information.'));
+	{
+		form_set_error('' , t('Sorry, Our MC Server is not offline. We can not guarantee the validity of your billing information.'));
+		return FALSE;
+	}
 	else
 		$connector->disconnect();
 }
@@ -294,5 +298,13 @@ function _mcshop_get_users_purchased_products() {
 	}
 
 	return $purchased_product_ids;
+}
+
+/**
+ * Implementation of hook_checkout_pane_info_alter().
+ */
+function mcshop_commerce_checkout_pane_info_alter(&$checkout_panes)
+{
+  $checkout_panes['customer_profile_billing']['page'] = 'disabled';
 }
 

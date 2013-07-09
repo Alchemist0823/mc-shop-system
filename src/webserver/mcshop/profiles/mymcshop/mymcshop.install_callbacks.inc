@@ -155,8 +155,20 @@ function _mymcshop_post_import($operation, &$context) {
  * @see mymcshop_setup_userpoint()
  */
 function _mymcshop_setup_userpoint($operation, &$context) {
+  
   $context['message'] = t('@operation', array('@operation' => $operation));
 
+  //autosku
+  db_update('commerce_autosku_patterns')
+  ->fields(array('pattern' => '[commerce-product:title]-[commerce-product:created]'))
+  ->condition('product_type', 'minecraft_item')
+  ->execute();
+
+  db_update('commerce_autosku_patterns')
+  ->fields(array('pattern' => 'recharge-card-[commerce-product:title]'))
+  ->condition('product_type', 'recharge_product')
+  ->execute();
+  
   $vocabulary = taxonomy_vocabulary_machine_name_load('categories');
   if(isset($vocabulary))
   {
