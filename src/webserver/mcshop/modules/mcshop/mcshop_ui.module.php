@@ -44,7 +44,6 @@ function mcshop_block_info() {
     // info: The name of the block.
     'info' => t('Powered by N8LM'),
     'status' => TRUE,
-    'region' => 'bottom',  // Not usually provided.
     // Block caching options (per role, per user, etc.)
     'cache' => DRUPAL_CACHE_GLOBAL,
   );

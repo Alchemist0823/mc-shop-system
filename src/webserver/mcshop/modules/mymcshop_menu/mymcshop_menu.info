@@ -1,0 +1,10 @@
+name = MyMCShop System Admin Menu
+description = Provides a MyMCShop-specific administration menu.
+core = 7.x
+package = MyMCShop Features
+dependencies[] = menu
+
+; Information added by drupal.org packaging script on 2013-05-30
+version = "7.x-1.0-beta1"
+core = "7.x"
+project = "mymcshop"
