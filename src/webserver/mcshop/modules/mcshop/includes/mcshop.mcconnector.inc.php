@@ -43,8 +43,10 @@
 		public function disconnect()
 		{
 			if($this->stream)
+			{
 				$this->writeRawByte(20);
-			fclose($this->stream);
+			    fclose($this->stream);
+			}
 		}
 
 		//NETWORK IO

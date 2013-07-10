@@ -1,6 +1,8 @@
 name = MyMCShop System
 core = 7.x
-description = MyMCShop System Distibution. Based on Build Kit.
+description = MyMCShop System Distibution is a part of MyMCShop System Project
+distribution_name = MyMCShop System
+exclusive = 1
 
 ; Core
 dependencies[] = block
@@ -19,6 +21,7 @@ dependencies[] = path
 dependencies[] = taxonomy
 dependencies[] = forum
 dependencies[] = toolbar
+dependencies[] = search
 
 ; Install Commerce dependencies.
 dependencies[] = addressfield
@@ -59,19 +62,24 @@ dependencies[] = commerce_product_pricing_ui
 dependencies[] = commerce_product_reference
 
 ; Install Commerce services.
-dependencies[] = jirafe
-dependencies[] = yottaa
+;dependencies[] = jirafe
+;dependencies[] = yottaa
 
 ; Install contribs.
 dependencies[] = libraries
 dependencies[] = pathauto
 dependencies[] = variable
+dependencies[] = variable_admin
 dependencies[] = advanced_forum
 dependencies[] = module_filter
 dependencies[] = admin_menu
+dependencies[] = admin_menu_toolbar
+dependencies[] = ckeditor
+dependencies[] = special_menu_items
+
 
 ; Install Commerce Contrib
-dependencies[] = commerce_alipay
+;dependencies[] = commerce_alipay
 dependencies[] = commerce_autosku
 dependencies[] = commerce_userpoints
 dependencies[] = commerce_userpoints_payment_method
@@ -86,29 +94,30 @@ dependencies[] = userpoints_invite
 dependencies[] = userpoints_rules
 dependencies[] = terms_of_use
 dependencies[] = field_permissions
+dependencies[] = author_pane
 
 ; Build Kit Contrib
-dependencies[] = admin
-dependencies[] = boxes
-dependencies[] = openid
-dependencies[] = openidadmin
-dependencies[] = coder
-dependencies[] = context
-dependencies[] = context_ui
-dependencies[] = ctools
-dependencies[] = devel
-dependencies[] = diff
-dependencies[] = features
-dependencies[] = markdown
-dependencies[] = strongarm
+;dependencies[] = admin
+;dependencies[] = boxes
+;dependencies[] = openid
+;dependencies[] = openidadmin
+;dependencies[] = coder
+;dependencies[] = context
+;dependencies[] = context_ui
+;dependencies[] = ctools
+;dependencies[] = devel
+;dependencies[] = diff
+;dependencies[] = features
+;dependencies[] = markdown
+;dependencies[] = strongarm
 
 ; Install Features
 dependencies[] = features
 dependencies[] = commerce_features
+dependencies[] = strongarm
 
 ; Install Migrate
 dependencies[] = migrate
-dependencies[] = commerce_migrate
 
 ; Install Search API
 ; dependencies[] = facetapi
@@ -125,11 +134,9 @@ dependencies[] = mcshop_ui
 ; Distribution modules.
 dependencies[] = mymcshop_product
 dependencies[] = mymcshop_commerce
-dependencies[] = mymcshop_help
-dependencies[] = mymcshop_order
-dependencies[] = mymcshop_payment
-dependencies[] = mymcshop_comment
-dependencies[] = mymcshop_migrate
+;dependencies[] = mymcshop_help
+;dependencies[] = mymcshop_payment
+;dependencies[] = mymcshop_migrate
 
 
 ; System Requirements.
