@@ -37,7 +37,8 @@ public class BroadcastPacketHandler extends PacketHandler {
 		
 		//MainPlugin.getMainLogger().log(Level.INFO, "User Account '" + user + "' '" + pass + "' ");
 		
-		Bukkit.broadcastMessage(msg);
+		MainPlugin.getInstance().getServer().broadcastMessage(msg);
+		//Bukkit.broadcastMessage(msg);
 	}
 	/*public static void main(String[] arg){
 	}*/
