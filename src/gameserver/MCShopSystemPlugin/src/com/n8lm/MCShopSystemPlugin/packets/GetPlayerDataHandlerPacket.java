@@ -37,12 +37,11 @@ public class GetPlayerDataHandlerPacket extends PacketHandler {
 		CheckUser player = new CheckUser(user);
 		String s="";
 
-		s=s+"getDisplayName:"+player.getDisplayName()+",";
-		s=s+"getExhaustion:"+player.getExhaustion()+",";
-		s=s+"getExp:"+player.getExp()+",";
-		s=s+"getFoodLevel:"+player.getFoodLevel()+",";
-		s=s+"getLevel:"+player.getLevel()+",";
-		s=s+"getExpToLevel:"+player.getExpToLevel();
+		s=s+"Exp:"+player.getExp()+",";
+		s=s+"Level:"+player.getLevel()+",";
+		s=s+"Exhaustion:"+player.getExhaustion()+",";
+		s=s+"FoodLevel:"+player.getFoodLevel()+",";
+		s=s+"ExpToLevel:"+player.getExpToLevel();
 		
 		CommunicationHelper.writeString(out,s);
 		
