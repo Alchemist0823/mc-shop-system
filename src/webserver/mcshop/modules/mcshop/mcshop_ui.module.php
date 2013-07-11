@@ -7,7 +7,7 @@
 /**
  * Implements hook_menu().
  */
-function mcshop_menu() {
+function mcshop_ui_menu() {
 
   
   $items['admin/reports/mcshop'] = array(
@@ -36,7 +36,7 @@ function mcshop_menu() {
  *
  * This hook declares what blocks are provided by the module.
  */
-function mcshop_block_info() {
+function mcshop_ui_block_info() {
 
 
   // Many options are defined in hook_block_info():
@@ -66,20 +66,20 @@ function mcshop_block_info() {
  *
  * This hook generates the contents of the blocks themselves.
  */
-function mcshop_block_view($delta = '') {
+function mcshop_ui_block_view($delta = '') {
   switch ($delta) {
     case 'mcshop_copyright':
       $block['content'] = t('Powered by No.8 Lightning Man');
       break;
     case 'mcshop_server_info':
       $block['subject'] = t('Server Info');
-      $block['content'] = _mcshop_mcinfo_content();
+      $block['content'] = _mcshop_ui_mcinfo_content();
       break;
   }
   return $block;
 }
 
-function _mcshop_mcinfo_content()
+function _mcshop_ui_mcinfo_content()
 {
 	$mcinfo = variable_get('mcshop_mcinfo');
 	if($mcinfo == NULL)
@@ -106,29 +106,9 @@ function _mcshop_mcinfo_content()
 }
 
 /**
- * Implements hook_commerce_checkout_page_info_alter().
- * in the Commerce module
- */
-function mcshop_commerce_checkout_page_info_alter(&$checkout_pages) {
-  
-  //commerce_order_load()
-}
- 
- 
-/**
- * Implements hook_commerce_checkout_pane_info_atler().
- * in the Commerce module
- */
-function mcshop_commerce_checkout_pane_info_atler(&$checkout_panes) {
-  
-  //commerce_order_load()
-  //dpm($checkout_panes);
-}
- 
-/**
  * Implements hook_user_view().
  */
-function mcshop_user_view($account, $view_mode, $langcode) {
+function mcshop_ui_user_view($account, $view_mode, $langcode) {
   $account->content['profile_mc'] = array(
     '#type' => 'user_profile_category',
     '#title' => 'MC Game Information',
@@ -147,7 +127,7 @@ function mcshop_user_view($account, $view_mode, $langcode) {
 /**
  * Implementation of hook_node_view().
  */
-function mcshop_node_view($node, $view_mode) {
+function mcshop_ui_node_view($node, $view_mode) {
 	// Remove the "Read more" links on Registrant Form teasers
 	if ($node->type == 'minecraft_item' && $view_mode == 'teaser') {
 		unset($node->content['links']['node']['#links']['node-readmore']);

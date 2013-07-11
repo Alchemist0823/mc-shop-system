@@ -287,7 +287,7 @@ function _mymcshop_setup_blocks() {
     ),
     // mcshop_copyright.
     array(
-      'module' => 'mcshop',
+      'module' => 'mcshop_ui',
       'delta' => 'mcshop_copyright',
       'theme' => $default_theme,
       'status' => 1,
@@ -296,7 +296,7 @@ function _mymcshop_setup_blocks() {
     ),
     // mcshop_server_info.
     array(
-      'module' => 'mcshop',
+      'module' => 'mcshop_ui',
       'delta' => 'mcshop_server_info',
       'theme' => $default_theme,
       'status' => 1,
@@ -310,6 +310,7 @@ function _mymcshop_setup_blocks() {
       'theme' => $default_theme,
       'status' => 1,
       'weight' => 0,
+      'title' => '<none>',
       'region' => 'footer',
     ),
     // search.

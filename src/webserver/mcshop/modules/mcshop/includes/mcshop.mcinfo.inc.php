@@ -21,10 +21,53 @@
 		 */
 		public function display()
 		{
+			$rows = array();
 			if($this->online)
-				return '<strong>Server is online</strong><ul><li>Host: '.variable_get_value('mcshop_server_host').'</li><li>'.format_date($this->lasttime, 'short').'</li><li>'.$this->player_num.'</li><li>'.$this->plugins.'</li><li>'.$this->onlineplayers.'</li></ul>';
+			{
+			  $rows[] = array(
+			      t('Server Status'),
+			      '<strong>'.t('Online').'</strong>',
+			  );
+			  $rows[] = array(
+			      t('Server Address'),
+			      variable_get_value('mcshop_server_host'),
+			  );
+			  $rows[] = array(
+			      t('Server Time'),
+			      format_date($this->lasttime, 'short'),
+			  );
+			  $rows[] = array(
+			      t('Number of Player'),
+			      ''.$this->player_num,
+			  );
+			  $rows[] = array(
+			      t('Plugins'),
+			      theme('item_list', array('items' => $this->plugins)),
+			  );/*
+			  $rows[] = array(
+			      t('Number of Player'),
+			      theme('item_list', array('items' => $this->onlineplayers)),
+			  );*/
+			}
 			else
-				return '<strong>Server is offline</strong><br/>'.format_date($this->lasttime, 'short');
+			{
+			  $rows[] = array(
+			      t('Server Status'),
+			      '<strong>'.t('Offline').'</strong>',
+			  );
+			  $rows[] = array(
+			      t('Server Address'),
+			      variable_get_value('mcshop_server_host'),
+			  );
+			  $rows[] = array(
+			      t('Server Time'),
+			      format_date($this->lasttime, 'short'),
+			  );
+			}
+			return array(
+			    '#theme' => 'table',
+			    '#rows' => $rows,
+			);
 		}
 
 		/**
@@ -41,10 +84,14 @@
 		/**
 		 * @param bool $status
 		 */
-		public function update($status)
+		public function update($status, $info = NULL)
 		{
 			$this->online = $status;
 			$this->lasttime = time();
+			
+			if(isset($info))
+			{
+			}
 		}
 		
 

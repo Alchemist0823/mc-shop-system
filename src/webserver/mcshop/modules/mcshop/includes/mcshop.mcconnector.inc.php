@@ -182,7 +182,7 @@
 		public function doCommand($cmmd, $args) //return true if command was found
 		{
 		    foreach ($args as $key => $value)
-		      $cmmd .= ' -'.$key.'('.$value.')';
+		      $cmmd .= ' $'.$key.'('.$value.')';
 			$this->writeRawByte(3);
 			$this->writeString($cmmd);
 			

@@ -151,13 +151,13 @@ function _mc_checkout_validate($form, &$form_state) {
 	$mcinfo = variable_get('mcshop_mcinfo');
 	if(isset($mcinfo) && !$mcinfo->isOnline())
 	{
-		form_set_error('' , t('Sorry, Our MC Server is not offline. We can not guarantee the validity of your billing information.'));
+		form_set_error('' , t('Sorry, Our MC Server is offline. We can not guarantee the validity of your billing information.'));
 		return FALSE;
 	}
 	$connector = new MCConnector();
 	if(!$connector->connect())
 	{
-		form_set_error('' , t('Sorry, Our MC Server is not offline. We can not guarantee the validity of your billing information.'));
+		form_set_error('' , t('Sorry, Our MC Server is offline. We can not guarantee the validity of your billing information.'));
 		return FALSE;
 	}
 	else
@@ -175,21 +175,31 @@ function _mc_user_validate($form, &$form_state) {
 			if(isset($mcinfo) && !$mcinfo->isOnline())
 			{
 				form_set_error('name', t('Sorry, Our MC Server is offline. We can not guarantee the validity of your account information.'));
-				return;
+				return FALSE;
 			}
 			$connector = new MCConnector();
 			if($connector->connect()) {
 			    $result = false;
 				$result = $connector->checkPlayerAccount($form_state['values']['name'], $form_state['values']['field_mcpwd']['und'][0]['value']);
 				$connector->disconnect();
-				if(!result)
+				if(!$result)
+				{
 					form_set_error('name', t('Your acount information is incorrect.'));
+					return FALSE;
+				}
 			}
-			else form_set_error('name', t('Sorry, Our MC Server is offline. We can not guarantee the validity of your account information.'));
+			else
+			{
+			  form_set_error('name', t('Sorry, Our MC Server is offline. We can not guarantee the validity of your account information.'));
+			  return FALSE;
+			}
 			
 		}
 		else
+		{
 			form_set_error('field_mcpwd', t('MC password is empty.'));
+			return FALSE;
+		}
 	}
 }
 
