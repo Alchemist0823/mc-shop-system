@@ -59,10 +59,10 @@ function _mcshop_admin_instructions($playerselected = '')
 		      t('Number of Players'),
 		      ''.$mcinfo->player_num,
 		  );	
-
+		  $playerlist = array();
 		  $playerlist = $mcinfo->onlineplayers;
 		  foreach($playerlist as &$playername)
-			 $playername = "<a href='".'mcshop/'.$playername."'>".$playername.'</a>';
+			 $playername = "<a href='".'mcshop/'.$playername."' target='_blank'>".$playername.'</a>';
 		  $rows[] = array(
 			  t('Player List (Click to view details)'),
 			  
@@ -96,7 +96,7 @@ function _mcshop_admin_instructions($playerselected = '')
 		  if($connector->connect()){
 			$playerstatus = $connector->getPlayerStatus($playerselected);
 			$rows[] = array(
-			  '<h2>'.t('Player Details').'</h2>',
+			  '<h2>'.t('Player Details').'</h2>','',
 			); 
 			$vars = explode(',', $playerstatus);
 			foreach ($vars as $var)
