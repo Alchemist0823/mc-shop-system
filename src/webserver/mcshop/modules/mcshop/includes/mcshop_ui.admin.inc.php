@@ -1,7 +1,6 @@
 <?php
 //6.29 - the list of players online OR the status details of playerselected
-
-//IMPORTANT: haven't been tested yet...
+//7.11 - Update: detailed information displayed in table
 
 //the argument to receive the playername selected, '' means to show the list
 //e.g. 'admin/reports/mcshop' calls the function with $playerselected==''
@@ -10,8 +9,7 @@
 
 function _mcshop_admin_instructions($playerselected = '')
 {
-	$base_content = t('This is the base page of MC Admin. Enjoy!');
-	$result = '<p>'.$base_content.'</p>';
+
 	$mcinfo = variable_get('mcshop_mcinfo');
 
 	if($mcinfo == NULL)
@@ -27,35 +25,158 @@ function _mcshop_admin_instructions($playerselected = '')
 	}
 	
 	if($playerselected == '') {      //display the list
-		$result=$result.'<div><ul>';
-		if ($mcinfo->isOnline()) {
-			foreach($mcinfo->onlineplayers as $playername) {
-				$result = $result.'<li><a href="mcshop/'.$playername.'" target="_blank">'.$playername.'</a></li>';
-			}
+		
+		$rows = array();
+		if($mcinfo->isonline())
+		{
+		  $rows[] = array(
+			  '<h2>'.t('MCShop Admin Report').'</h2>','',
+		  );
+		  $rows[] = array(
+		      t('Server Status'),
+		      '<strong>'.t('Online').'</strong>',
+		  );
+		  $rows[] = array(
+		      t('Server Address'),
+		      variable_get_value('mcshop_server_host'),
+		  );
+		  $rows[] = array(
+		      t('Server Time'),
+		      format_date($mcinfo->lasttime, 'short'),
+		  );
+
+		  $rows[] = array(
+		      t('Number of Plugins'),
+		      ''.count($mcinfo->plugins),
+		      //theme('item_list', array('items' => $mcinfo->plugins)),
+		  );
+		  $rows[] = array(
+			  t('Plugin List'),
+		      //''.count($mcinfo->plugins),
+		      theme('item_list', array('items' => $mcinfo->plugins)),
+		  );
+		  $rows[] = array(
+		      t('Number of Players'),
+		      ''.$mcinfo->player_num,
+		  );	
+
+		  $playerlist = $mcinfo->onlineplayers;
+		  foreach($playerlist as &$playername)
+			 $playername = "<a href='".'mcshop/'.$playername."'>".$playername.'</a>';
+		  $rows[] = array(
+			  t('Player List (Click to view details)'),
+			  
+			  theme('item_list', array('items' => $playerlist)),
+		  );
 		}
-		else {
-			$result = $result.'Server is offline.';
+		else
+		{
+		  $rows[] = array(
+			  '<h2>'.t('MCShop Admin Report').'</h2>',
+		  );
+		  $rows[] = array(
+		      '<h4>'.t('Server is now offline').'</h4>',
+		  );
+
 		}
-		$result = $result.'</ul></div>';
+		
+		return array(
+		    '#theme' => 'table',
+		    '#rows' => $rows,
+		);
+		
 	}
 	else {       //display the status of one player
-		$result=$result.'<div>';
-		if ($mcinfo->isOnline()){
-			$connector = new MCConnector();
-			if($connector->connect()){
-				$playerstatus = $connector->getPlayerStatus($playerselected);
-				$result = $result.$playerstatus;
-				$connector->disconnect();
+
+		$rows = array();
+		if($mcinfo->isonline())
+		{
+		
+		  $connector = new MCConnector();
+		  if($connector->connect()){
+			$playerstatus = $connector->getPlayerStatus($playerselected);
+			$rows[] = array(
+			  '<h2>'.t('Player Details').'</h2>',
+			); 
+			$vars = explode(',', $playerstatus);
+			foreach ($vars as $var)
+			{
+				$name = strstr($var, ':', true);
+				$value = substr(strstr($var, ':'), 1);
+				if($name === false)
+					continue;
+				if($name == 'DisplayName'){
+					$rows[] = array(
+						t('Player Name'),$value,
+					);
+				}
+				else if($name == 'PlayerTime')
+				{
+					$rows[] = array(
+						t('Player Time'),$value,
+					);
+				}
+				else if($name == 'LastPlayed')
+				{
+					$rows[] = array(
+						t('Last Time Played'),$value,
+					);
+				}
+				else if($name == 'Level')
+				{
+					$rows[] = array(
+						t('Player Level'),$value,
+					);
+				}
+				else if($name == 'Exp')
+				{
+					$rows[] = array(
+						t('Player Experience'),$value,
+					);
+				}	
+				else if($name == 'FoodLevel')
+				{
+					$rows[] = array(
+						t('Player Food Level'),$value,
+					);
+				}
+				else if($name == 'Health')
+				{
+					$rows[] = array(
+						t('Player Health'),$value,
+					);
+				}				
 			}
-			else
-				$result = $result.'Cannot connect to server.';
+			$connector->disconnect();
+		  }
+		  else
+		  {
+		  	  $rows[] = array(
+				'<h2>'.t('Player Details').'</h2>',
+			  );
+			  $rows[] = array(
+				'<h4>'.t('Could not connect to server').'</h4>',
+			  );
+		  }
 		}
-		else{
-			$result = $result.'Server is offline.';
+
+		else
+		{
+		  $rows[] = array(
+			  '<h2>'.t('Player Details').'</h2>',
+		  );
+		  $rows[] = array(
+		      '<h4>'.t('Server is now offline').'</h4>',
+		  );
+
 		}
-		$result = $result.'</div>';
+		
+		return array(
+		    '#theme' => 'table',
+		    '#rows' => $rows,
+		);
+		
 	}
 	
-	return $result;
 }
 ?>
