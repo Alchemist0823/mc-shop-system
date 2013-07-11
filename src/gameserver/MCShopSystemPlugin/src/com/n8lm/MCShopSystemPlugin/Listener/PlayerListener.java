@@ -16,9 +16,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-import com.n8lm.MCShopSystemPlugin.Debug;
 import com.n8lm.MCShopSystemPlugin.MainPlugin;
 import com.n8lm.MCShopSystemPlugin.FileOperator.WaitListOperator;
+import com.n8lm.MCShopSystemPlugin.utils.CommandHelper;
 
 public class PlayerListener implements Listener{
 	
@@ -36,7 +36,7 @@ public class PlayerListener implements Listener{
 
 			String[] args = operator.getAllCommands(userName);
 			for(String command: args){
-				if(sendCommand(command)){
+				if(CommandHelper.sendCommand(command)){
 					if(operator.deleteCommand(userName, command)){
 						player.sendMessage("MCShop: 一物品发送成功！");
 						MainPlugin.getMainLogger().info("Send command successfully");
@@ -52,20 +52,5 @@ public class PlayerListener implements Listener{
 				}
 			}
 		}
-	}
-	
-	private boolean sendCommand(String command)
-	{
-		boolean success;
-		try
-		{
-			success = MainPlugin.getBukkitServer().dispatchCommand(MainPlugin.getBukkitServer().getConsoleSender(), command);
-		}
-		catch(Exception ex)
-		{
-			Debug.log(Level.WARNING, "MCShop caught an exception while running command '"+command+"'", ex);
-			success = false;
-		}
-		return success;
 	}
 }

@@ -12,12 +12,12 @@ import com.n8lm.MCShopSystemPlugin.server.CommunicationHelper;
 import com.n8lm.MCShopSystemPlugin.server.PacketHandler;
 import com.n8lm.MCShopSystemPlugin.FileOperator.CheckUser;
 
-public class GetPlayerDataHandlerPacket extends PacketHandler {
+public class GetPlayerDataPacketHandler extends PacketHandler {
 
 	/**
 	 * @param header
 	 */
-	public GetPlayerDataHandlerPacket() {
+	public GetPlayerDataPacketHandler() {
 		super((byte) 4);
 		// TODO Auto-generated constructor stub
 	}

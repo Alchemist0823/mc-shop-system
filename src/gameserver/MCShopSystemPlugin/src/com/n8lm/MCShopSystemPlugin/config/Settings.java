@@ -3,7 +3,6 @@ package com.n8lm.MCShopSystemPlugin.config;
 import java.net.InetAddress;
 import java.util.ArrayList;
 
-
 /**
  * @author Alchemist
  *
@@ -48,7 +47,9 @@ public class Settings
 	public void addHost(InetAddress address)
 	{
 		if(!hosts.contains(address))
+		{
 			hosts.add(address);
+		}
 	}
 
 	public void removeHost(InetAddress address)

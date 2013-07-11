@@ -12,9 +12,9 @@ import java.util.logging.Level;
 import com.n8lm.MCShopSystemPlugin.MainPlugin;
 import com.n8lm.MCShopSystemPlugin.server.CommunicationHelper;
 import com.n8lm.MCShopSystemPlugin.server.PacketHandler;
+import com.n8lm.MCShopSystemPlugin.utils.CommandHelper;
 
 /**
- * This is a example of packetHandler. we need fix it in some way.
  * 
  * @author Alchemist
  *
@@ -55,22 +55,12 @@ public class DoCommandPacketHandler extends PacketHandler {
 		if(parsedCommand == null)
 			return success;
 		String playerName = variables.get("player");
-		if(MainPlugin.getPasswordOperator().hasPasswd(playerName))
+		if(playerName == null)
+			success = CommandHelper.sendCommand(parsedCommand);
+		else if(MainPlugin.getPasswordOperator().hasPasswd(playerName))
 		{
 			if(MainPlugin.getBukkitServer().getPlayer(playerName) != null)
-			{
-				try
-				{
-					success = MainPlugin.getBukkitServer().dispatchCommand(MainPlugin.getBukkitServer().getConsoleSender(), parsedCommand);
-				}
-				catch(Exception ex)
-				{
-					MainPlugin.getMainLogger().log(Level.WARNING, "MCShop caught an exception while running command '"+parsedCommand+"'", ex);
-					success = false;
-				}
-				if(success)
-					MainPlugin.getMainLogger().info("Send command successfully");
-			}
+				success = CommandHelper.sendCommand(parsedCommand);
 			else
 			{
 				MainPlugin.getMainLogger().info("Add a waitlist command \"" + parsedCommand + "\" to " + playerName);
@@ -80,6 +70,7 @@ public class DoCommandPacketHandler extends PacketHandler {
 		else MainPlugin.getMainLogger().log(Level.WARNING,"Command error: Can not find out the user \"" + playerName +"\"");
 		return success;
 	}
+	
 	/*
 	public static void main(String[] arg){
 		

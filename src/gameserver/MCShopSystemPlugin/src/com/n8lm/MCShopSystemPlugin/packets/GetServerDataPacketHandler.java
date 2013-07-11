@@ -6,23 +6,22 @@ package com.n8lm.MCShopSystemPlugin.packets;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.logging.Level;
 
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
 import com.n8lm.MCShopSystemPlugin.MainPlugin;
 import com.n8lm.MCShopSystemPlugin.server.CommunicationHelper;
 import com.n8lm.MCShopSystemPlugin.server.PacketHandler;
-import com.n8lm.MCShopSystemPlugin.FileOperator.CheckUser;
 
-public class GetServerDataHandlerPacket extends PacketHandler {
+public class GetServerDataPacketHandler extends PacketHandler {
 
 	/**
 	 * @param header
 	 */
-	public GetServerDataHandlerPacket() {
-		super((byte) 4);
+	public GetServerDataPacketHandler() {
+		super((byte) 5);
 		// TODO Auto-generated constructor stub
 	}
 
@@ -33,21 +32,26 @@ public class GetServerDataHandlerPacket extends PacketHandler {
 	public void onHeaderReceived(DataInputStream in, DataOutputStream out)
 			throws IOException {
 		// TODO Auto-generated method stub
-		String user = CommunicationHelper.readString(in);
 		
-		//MainPlugin.getMainLogger().log(Level.INFO, "User Account '" + user + "' '" + pass + "' ");
+		MainPlugin.getMainLogger().log(Level.INFO, "Get Server Data");
 		
-		Player[] players = MainPlugin.getInstance().getServer().getOnlinePlayers();
+		Player[] players = MainPlugin.getBukkitServer().getOnlinePlayers();
 		String s="";
 
-		s=s+"OnlinePlayersNumber:"+players.length+",";
-		s=s+"OnlinePlayersList:";
+		s += "OnlinePlayersNumber:" + players.length + ",";
+		s += "OnlinePlayers:";
 		for(Player x:players){
-			s=s+x.getDisplayName()+";";
+			s += x.getName() + ";";
 		}
-		s=s+",";
-		s=s+"ServerId:"+MainPlugin.getInstance().getServer().getServerId()+",";
-		s=s+"ServerName:"+MainPlugin.getInstance().getServer().getServerName();
+		s += ",";
+		Plugin[] plugins = MainPlugin.getBukkitServer().getPluginManager().getPlugins();
+		s += "PluginsNumber:"+plugins.length+",";
+		s += "Plugins:";
+		
+		for(Plugin x:plugins){
+			s += x.getName()+";";
+		}
+		s += ",";
 		CommunicationHelper.writeString(out,s);
 		
 	}

@@ -181,6 +181,8 @@ public class CommunicationServer extends Thread
 			{
 				MainPlugin.getMainLogger().log(Level.WARNING, "Connection request from unauthorized address!");
 				MainPlugin.getMainLogger().log(Level.WARNING, "Address: " + skt.getInetAddress());
+				MainPlugin.getMainLogger().log(Level.WARNING, "Address: " + sockAddr.getAddress());
+				MainPlugin.getMainLogger().log(Level.WARNING, "Address: " + skt.getRemoteSocketAddress());
 				MainPlugin.getMainLogger().log(Level.WARNING, "Add this address to config.txt");
 			}
 			try

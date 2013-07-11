@@ -188,7 +188,9 @@ public class ConfigHandler
 				String value = line.replaceFirst("HOST_ADD=", "");
 				try {
 					InetAddress address = InetAddress.getByName(value);
+					address = InetAddress.getByAddress(address.getAddress());
 					settings.addHost(address);
+					MainPlugin.getMainLogger().info("Add Host '" + address + "' successfully");
 				} catch (UnknownHostException ex) {
 					// TODO Auto-generated catch block
 					MainPlugin.getMainLogger().info("Host '" + value + "' is invaild");
