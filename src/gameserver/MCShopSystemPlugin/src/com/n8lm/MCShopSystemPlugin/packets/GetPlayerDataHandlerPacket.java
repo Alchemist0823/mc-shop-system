@@ -6,7 +6,6 @@ package com.n8lm.MCShopSystemPlugin.packets;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.logging.Level;
 
 import com.n8lm.MCShopSystemPlugin.MainPlugin;
 import com.n8lm.MCShopSystemPlugin.server.CommunicationHelper;
@@ -32,17 +31,18 @@ public class GetPlayerDataHandlerPacket extends PacketHandler {
 		// TODO Auto-generated method stub
 		String user = CommunicationHelper.readString(in);
 		
-		//MainPlugin.getMainLogger().log(Level.INFO, "User Account '" + user + "' '" + pass + "' ");
+		MainPlugin.getMainLogger().info("GetPlayer Info '" + user + "'");
 		
 		CheckUser player = new CheckUser(user);
 		String s="";
 
-		s=s+"getDisplayName:"+player.getDisplayName()+",";
-		s=s+"getExhaustion:"+player.getExhaustion()+",";
-		s=s+"getExp:"+player.getExp()+",";
-		s=s+"getFoodLevel:"+player.getFoodLevel()+",";
-		s=s+"getLevel:"+player.getLevel()+",";
-		s=s+"getExpToLevel:"+player.getExpToLevel();
+		s=s+"DisplayName:"+player.getPlayer().getDisplayName()+",";
+		s=s+"PlayerTime:"+ player.getPlayer().getPlayerTime()+",";
+		s=s+"LastPlayed:"+ player.getPlayer().getLastPlayed()+",";
+		s=s+"Level:"+ player.getPlayer().getLevel()+",";
+		s=s+"Exp:"+player.getPlayer().getExp()+",";
+		s=s+"FoodLevel:"+ player.getPlayer().getFoodLevel()+",";
+		s=s+"Health:"+player.getPlayer().getHealth() +",";
 		
 		CommunicationHelper.writeString(out,s);
 		

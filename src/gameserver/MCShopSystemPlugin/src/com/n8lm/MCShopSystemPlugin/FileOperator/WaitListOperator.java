@@ -1,30 +1,30 @@
 package com.n8lm.MCShopSystemPlugin.FileOperator;
 
 /*
- * StoreOperator:
+ * WaitListOperator:
  * 
- *  boolean checkStore(String PlayerName)
- *  	check if a player has thing in store;
+ *  boolean isOnWaitList(String PlayerName)
+ *  	check if a player has thing in commands;
  *  
- *  int getStoreNumber(String PlayerName)
- *  	return number of thing in store of a player
+ *  int getCommandsNumber(String PlayerName)
+ *  	return number of thing in commands of a player
  *  
  *  String[] getAllThing(String PlayerName)
  *  	return all things of a player, commands with prefix Hash.
  *  
- *  boolean addCommand(String command)
+ *  boolean addCommand(String PlayerName, String command)
  *  	no return, throw exception
  *  
  *  boolean deleteCommand(String userName, int hash)
- *  	delete one single command in store;
+ *  	delete one single command in commands;
  *  
  *  boolean deletePlayer(String userName)
- *  	delete all things of one player in store;
+ *  	delete all things of one player in commands;
  *  
  *  !Store in form:
  *  	PlayerName MUST BE BEFORE THE FIRST " " !
  *  
- *  @author Kelym
+ *  @author Kelym and Alchemist
  *  
  */
 
@@ -61,71 +61,98 @@ public class WaitListOperator
 		loadMap();
 	}
 
-	public boolean checkStore(String userName) {
+	public boolean isOnWaitList(String userName) {
 		return commandTable.containsKey(userName);
 	}
 
-	public int getStoreNumber(String userName){
+	public int getCommandsNumber(String userName){
 
-		if(!checkStore(userName))
+		if(!isOnWaitList(userName))
 			return 0;
 
 		return commandTable.get(userName).size();
 	}
 
-	public String[] getAllThing(String userName){
+	public String[] getAllCommands(String userName){
 		
-		if(!checkStore(userName))
+		if(!isOnWaitList(userName))
 			return null;
-		String[] arg = (String[]) commandTable.get(userName).toArray();
-		return arg;
+		String[] args = {};
+		args = commandTable.get(userName).toArray(args);
+		return args;
 	}
 
-	public boolean addCommand(String arg){
+	/*
+	private boolean writeCommand(String arg){
+		try{
+			FileWriter fw = new FileWriter(bak,true);
+			fw.write(arg + "\n");
+			fw.close();
+			return true;
+		}
+		catch (IOException e){
+			return false;
+		}
+	}*/
+	
+	public boolean addCommand(String userName, String command){
 		
-		String userName = arg.substring(0, arg.indexOf(" "));
-
-		if(!writeCommand(arg)){
+		/*if(!writeCommand(userName + ' ' + command)){
 			MainPlugin.getMainLogger().log(Level.WARNING, 
 					"Couldn't write to waitlist.bak!");
 			return false;
-		}
-			
-		return addStoreCommand(userName, arg);
+		}*/
+		
+		if(loadCommand(userName, command))
+			return updateFile();
+		else
+			return false;
 	}
-
+	
+	private boolean loadCommand(String userName, String command){
+		ArrayList<String> commands;
+		if(commandTable.containsKey(userName)){
+			commands = commandTable.get(userName);
+		}
+		else{
+			commands = new ArrayList<String>();
+			commandTable.put(userName, commands);
+		}
+		return commands.add(command);
+	}
+	
 	public boolean deleteCommand(String userName, String command){
 		
-		if(getStoreNumber(userName) == 0){
+		if(getCommandsNumber(userName) == 0){
 			MainPlugin.getMainLogger().log(Level.WARNING,
-					"Could not find anything in store belong to User: " + userName);
+					"Could not find anything in commands belong to User: " + userName);
 			return false;
 		}
 		
-		ArrayList<String> store = commandTable.get(userName);
-		if(!store.remove(command)){
+		ArrayList<String> commands = commandTable.get(userName);
+		if(!commands.remove(command)){
 			MainPlugin.getMainLogger().log(Level.WARNING,
 					"Could not find command:" + command +
 					"belong to User: " + userName);
 			return false;
 		}
 		
-		if(store.isEmpty()){
+		if(commands.isEmpty()){
 			commandTable.remove(userName);
-			store.trimToSize();
+			commands.trimToSize();
 		}
 		
 		return updateFile();
 	}
 
 	public boolean deletePlayer(String userName) throws IOException {
-		if(getStoreNumber(userName) == 0){
+		if(getCommandsNumber(userName) == 0){
 			return true;
 		}
 		
-		ArrayList<String> store = commandTable.get(userName);
-		store.clear();
-		store.trimToSize();
+		ArrayList<String> commands = commandTable.get(userName);
+		commands.clear();
+		commands.trimToSize();
 		commandTable.remove(userName);
 		
 		return updateFile();
@@ -190,7 +217,7 @@ public class WaitListOperator
 			user = temp.substring(0, space);
 
 			//Put in to Table
-			addStoreCommand(user,temp);
+			loadCommand(user, temp.substring(space + 1));
 		}
 		reader.close();
 	}
@@ -203,7 +230,7 @@ public class WaitListOperator
 			for(Entry<String, ArrayList<String>> entry : commandTable.entrySet()) {
 				ArrayList<String> value = entry.getValue();
 				for(String i:value){
-					writer.write(i);
+					writer.write(entry.getKey() + " " + i);
 					writer.newLine();
 					writer.flush();
 					}
@@ -232,30 +259,6 @@ public class WaitListOperator
 			}
 		}
 		return true;
-	}
-	
-	private boolean writeCommand(String arg){
-		try{
-			FileWriter fw = new FileWriter(bak,true);
-			fw.write(arg + System.getProperty("line.separator"));
-			fw.close();
-			return true;
-		}
-		catch (IOException e){
-			return false;
-		}
-	}
-	
-	private boolean addStoreCommand(String user,String command){
-		ArrayList<String> store;
-		if(commandTable.containsKey(user)){
-			store = commandTable.get(user);
-		}
-		else{
-			store = new ArrayList<String>();
-			commandTable.put(user, store);
-		}
-		return store.add(command);
 	}
 
 	private void cleanBak() throws IOException{

@@ -6,7 +6,7 @@ package com.n8lm.MCShopSystemPlugin.packets;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.logging.Level;
 
 import com.n8lm.MCShopSystemPlugin.MainPlugin;
@@ -21,18 +21,25 @@ import com.n8lm.MCShopSystemPlugin.server.PacketHandler;
  */
 public class DoCommandPacketHandler extends PacketHandler {
 
+	private HashMap<String, String> variables;
+	private String originalCommand, parsedCommand;
+	
 	public DoCommandPacketHandler()
 	{
 		super((byte) 3);
+		
+		this.variables = new HashMap<String, String>();
 	}
 
 	@Override
 	public void onHeaderReceived(DataInputStream in, DataOutputStream out) throws IOException {
+				
+		originalCommand = CommunicationHelper.readString(in);
+		parsedCommand = parseCommand(originalCommand);
 		
-		String command = CommunicationHelper.readString(in);
-		command = convertCommand(command);
+		MainPlugin.getMainLogger().info("Receive command: " + parsedCommand);
 		
-		if (sendItem(command))
+		if (sendItem())
 		{
 			out.writeInt(1);
 		}
@@ -42,44 +49,86 @@ public class DoCommandPacketHandler extends PacketHandler {
 		}
 	}
 	
-	public static boolean sendItem(String command){
-		boolean success;
-		try
+	public boolean sendItem(){
+		boolean success = false;
+		
+		if(parsedCommand == null)
+			return success;
+		String playerName = variables.get("player");
+		if(MainPlugin.getPasswordOperator().hasPasswd(playerName))
 		{
-			success = MainPlugin.getBukkitServer().dispatchCommand(MainPlugin.getBukkitServer().getConsoleSender(), command);
-		}
-		catch(Exception ex)
-		{
-			if(MainPlugin.getSettings().isDebugMode())
+			if(MainPlugin.getBukkitServer().getPlayer(playerName) != null)
 			{
-				MainPlugin.getMainLogger().log(Level.WARNING, "MCShop caught an exception while running command '"+command+"'", ex);
+				try
+				{
+					success = MainPlugin.getBukkitServer().dispatchCommand(MainPlugin.getBukkitServer().getConsoleSender(), parsedCommand);
+				}
+				catch(Exception ex)
+				{
+					MainPlugin.getMainLogger().log(Level.WARNING, "MCShop caught an exception while running command '"+parsedCommand+"'", ex);
+					success = false;
+				}
+				if(success)
+					MainPlugin.getMainLogger().info("Send command successfully");
 			}
-			success = false;
+			else
+			{
+				MainPlugin.getMainLogger().info("Add a waitlist command \"" + parsedCommand + "\" to " + playerName);
+				success = MainPlugin.getWaitListOperator().addCommand(playerName, parsedCommand);
+			}
 		}
+		else MainPlugin.getMainLogger().log(Level.WARNING,"Command error: Can not find out the user \"" + playerName +"\"");
 		return success;
 	}
-	
-	/*public static void main(String[] arg){
-		System.out.println(convertCommand("give {player} 123 {quantity} $player(alchemist) $quantity(10)"));
-		System.out.println(convertCommand("   give {player} 123 {quantity} $player(alchemist) $quantity(10)    "));
+	/*
+	public static void main(String[] arg){
+		
+		DoCommandPacketHandler handler = new DoCommandPacketHandler();
+		
+		System.out.println(handler.parseCommand("  give {player} 123 {quantity}    $player(alchemist) $quantity(10) $pass(40)  "));
 		
 	}*/
 
-	public static String convertCommand(String command){
+	public String parseCommand(String command){
+
+		this.variables.clear();
 		
-		command = deleteSpace(command);
+		command = command.trim();
 		
-		String temp, content;
-		StringBuilder build;
-		
-		// replace {}
-		int i, j, posi, posj;
-		while((i = command.indexOf("{")) >= 0){
+		String temp, var, content;
+		int poss, posl, posr;
+
+		// Find $temp(content), get content
+		while((poss = command.indexOf("$")) >= 0){
 			
 			// Find {temp} , get temp;
 			try{
-				j = command.indexOf("}");
-				temp = command.substring(i + 1, j);
+				temp = command.substring(poss);
+				posl = temp.indexOf("(");
+				posr = temp.indexOf(")");
+				var = temp.substring(1, posl);
+				content = temp.substring(posl + 1, posr);
+				if(!this.variables.containsKey(var))
+					this.variables.put(var, content);
+				
+				temp = command.substring(poss, poss + posr + 1);
+				command = command.replace(temp, "");
+			}
+			catch (IndexOutOfBoundsException ex){
+				MainPlugin.getMainLogger().log(Level.WARNING,
+						"Failed to convert Command! " + 
+						" Cannot find ( ) for $ !" );
+				return null;
+			}
+		}
+		
+		// replace {}
+		while((posl = command.indexOf("{")) >= 0){
+			
+			// Find {temp} , get temp;
+			try{
+				posr = command.indexOf("}");
+				var = command.substring(posl + 1, posr);
 			}
 			catch (IndexOutOfBoundsException ex){
 				MainPlugin.getMainLogger().log(Level.WARNING,
@@ -88,81 +137,15 @@ public class DoCommandPacketHandler extends PacketHandler {
 				return null;
 			}
 			
-			// Find $temp(content), get content
-			try{
-				posi = command.indexOf("$"+temp+"(");
-				posj = command.indexOf(")", posi);
-				content = command.substring(posi+2+temp.length(), posj);
+			if(this.variables.containsKey(var))
+			{
+				temp = "{" + var + "}";
+				command = command.replace(temp, this.variables.get(var));
 			}
-			catch (IndexOutOfBoundsException ex){
-				//MainPlugin.getMainLogger().log(Level.WARNING,
-				//		"Failed to convert Command! " + 
-				//		" Cannot find $Variable(Value) !" );
-				return null;
-			}
-			
-			// Revise command
-			build = new StringBuilder();
-			if(i>0) build.append(command.substring(0, i));
-			build.append(content);
-			if(posi > j+1) build.append(command.substring(j+1, posi));
-			if(posj < command.length()-1)
-				build.append(command.substring(posj+1, command.length()));
-			
-			command = build.toString();
 		}
 
-		// Find $temp(content), get content
-
-		while((i = command.indexOf("$")) >= 0){
-			
-			// Find {temp} , get temp;
-			try{
-				j = command.indexOf(")");
-				temp = command.substring(i + 1, j);
-			}
-			catch (IndexOutOfBoundsException ex){
-				MainPlugin.getMainLogger().log(Level.WARNING,
-						"Failed to convert Command! " + 
-						" Cannot find ) for $ !" );
-				return null;
-			}
-			build = new StringBuilder();
-			if(i>0) build.append(command.substring(0, i));
-			build.append(command.substring(j+1, command.length()));
-		}
-		
-		command = deleteSpace(command);
+		command = command.trim();
 		
 		return command;
-	}
-	
-	public static String deleteSpace(String input){
-		
-		int begin, end ,length = input.length();
-
-		// Delete Space at head and tail
-		for(begin = 0;begin < length;begin++)
-			if(input.charAt(begin) != ' ') break;
-		if(begin >= length)
-			return null;
-		for(end = length - 1;end > begin;end --)
-			if(input.charAt(end) != ' ') break;
-		
-		// Deal with input
-		StringBuffer output = new StringBuffer();
-		char c;
-		while(begin <= end){
-			c = input.charAt(begin);
-			output.append(c);
-			if(c!= ' '){
-				begin++;
-			}
-			else{
-				while(input.charAt(begin)==' ')
-					begin++;
-			}
-		}
-		return output.toString();
 	}
 }

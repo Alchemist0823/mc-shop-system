@@ -24,7 +24,7 @@ public final class MainPlugin extends JavaPlugin {
 	private static Server bukkitServer;
 	private static CommunicationServer server;
 	
-	private final PlayerListener playerListener = new PlayerListener(this);
+	private final PlayerListener playerListener = new PlayerListener();
 	
 	private static Settings settings;
 	private static PasswordOperator passwordOperator;
@@ -94,7 +94,7 @@ public final class MainPlugin extends JavaPlugin {
 		bukkitServer.getPluginManager().registerEvents(playerListener, plugin);
 		
 		// Register Executor
-		getCommand("mcshop").setExecutor(new MCShopCommands(this));
+		getCommand("mcshop").setExecutor(new MCShopCommands());
 
 		// TODO Insert logic to be performed when the plugin is enabled
 		

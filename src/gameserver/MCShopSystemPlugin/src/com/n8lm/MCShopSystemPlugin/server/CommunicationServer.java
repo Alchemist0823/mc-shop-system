@@ -42,6 +42,7 @@ public class CommunicationServer extends Thread
 		catch (SocketException ex)
 		{
 			Debug.log(Level.INFO, "Stoping server");
+			return;
 		}
 		catch (Exception ex)
 		{
@@ -67,6 +68,7 @@ public class CommunicationServer extends Thread
 			catch (SocketException ex1)
 			{
 				Debug.log(Level.INFO, "Stoping server");
+				return;
 			}
 			catch (Exception ex1)
 			{
@@ -100,7 +102,8 @@ public class CommunicationServer extends Thread
 			}
 			
 			Debug.log(Level.INFO, "Client connected.");
-			if (MainPlugin.getSettings().isTrusted(skt.getInetAddress()))
+			InetSocketAddress sockAddr = (InetSocketAddress) skt.getRemoteSocketAddress();
+			if (MainPlugin.getSettings().isTrusted(sockAddr.getAddress()))
 			{
 				Debug.log(Level.INFO, "Client is trusted.");
 				

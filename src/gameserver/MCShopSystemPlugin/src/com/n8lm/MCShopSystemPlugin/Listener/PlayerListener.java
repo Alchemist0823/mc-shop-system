@@ -14,35 +14,32 @@ import java.util.logging.Level;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 
+import com.n8lm.MCShopSystemPlugin.Debug;
 import com.n8lm.MCShopSystemPlugin.MainPlugin;
-import com.n8lm.MCShopSystemPlugin.packets.*;
 import com.n8lm.MCShopSystemPlugin.FileOperator.WaitListOperator;
 
 public class PlayerListener implements Listener{
 	
-	private MainPlugin plugin;
-	
-	public PlayerListener(MainPlugin plugin){
-		this.plugin = plugin;
+	public PlayerListener(){
 	}
 	
 	@EventHandler //EventPriority.NORMAL by default
-	public void onPlayerLogin(PlayerLoginEvent event){
+	public void onPlayerJoin(PlayerJoinEvent event){
 		Player player = event.getPlayer();
 		String userName = player.getName();
-        WaitListOperator store = MainPlugin.getWaitListOperator();
-		if(store.checkStore(userName)){
+        WaitListOperator operator = MainPlugin.getWaitListOperator();
+		if(operator.isOnWaitList(userName)){
 			player.sendMessage("MCShop: 发现您有购买却未发货的物品!");
 			player.sendMessage("MCShop: 正在尝试发送！");
 
-			String[] arg = store.getAllThing(userName);
-			for(String command: arg){
-				if(DoCommandPacketHandler.sendItem(command)){
-					if(store.deleteCommand(userName, command)){
+			String[] args = operator.getAllCommands(userName);
+			for(String command: args){
+				if(sendCommand(command)){
+					if(operator.deleteCommand(userName, command)){
 						player.sendMessage("MCShop: 一物品发送成功！");
-						
+						MainPlugin.getMainLogger().info("Send command successfully");
 					}
 					else{
 						MainPlugin.getMainLogger().log(Level.WARNING, "Wrong when deal with User:" + userName + "'s store thing.");
@@ -51,8 +48,24 @@ public class PlayerListener implements Listener{
 				}
 				else{
 					player.sendMessage("MCShop: 一物品发送失败！");
+					MainPlugin.getMainLogger().info("Send command failed");
 				}
 			}
 		}
+	}
+	
+	private boolean sendCommand(String command)
+	{
+		boolean success;
+		try
+		{
+			success = MainPlugin.getBukkitServer().dispatchCommand(MainPlugin.getBukkitServer().getConsoleSender(), command);
+		}
+		catch(Exception ex)
+		{
+			Debug.log(Level.WARNING, "MCShop caught an exception while running command '"+command+"'", ex);
+			success = false;
+		}
+		return success;
 	}
 }

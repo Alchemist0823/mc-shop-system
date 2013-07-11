@@ -36,7 +36,7 @@ public class CheckPlayerPacketHandler extends PacketHandler {
 		String user = CommunicationHelper.readString(in);
 		String pass = CommunicationHelper.readString(in);
 		
-		MainPlugin.getMainLogger().log(Level.INFO, "User Account '" + user + "' '" + pass + "' ");
+		MainPlugin.getMainLogger().log(Level.INFO, "Check User Account '" + user + "' '" + pass + "' ");
 		
 		CheckUser player = new CheckUser(user);
 		if(player.checkPassword(pass)) out.writeInt(1);

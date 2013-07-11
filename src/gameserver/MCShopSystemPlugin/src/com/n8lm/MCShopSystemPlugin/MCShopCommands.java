@@ -9,11 +9,9 @@ import com.n8lm.MCShopSystemPlugin.FileOperator.PasswordOperator;
 
 public class MCShopCommands implements CommandExecutor {
  
-	private MainPlugin plugin;
 	private PasswordOperator operator = MainPlugin.getPasswordOperator();
  
-	public MCShopCommands(MainPlugin plugin) {
-		this.plugin = plugin;
+	public MCShopCommands() {
 	}
  
 	@Override
@@ -62,7 +60,7 @@ public class MCShopCommands implements CommandExecutor {
 				}
 				else{
 					if(params == 2)
-						if(operator.setPasswd(UserName,args[1])){
+						if(operator.changePasswd(UserName,args[1])){
 							sender.sendMessage("成功设置密码！");
 							return true;
 						}

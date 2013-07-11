@@ -10,7 +10,7 @@
  *  	checkPasswd(userName,Password);
  *  
  *  	Operate:
- *  	setPassword for player;
+ *  	changePasswd for player;
  *  	return password of a player;
  *  
  */
@@ -93,20 +93,6 @@ public class PasswordOperator
 			return false;
 		}
 		return true;
-	}
-	
-	public boolean setPasswd(String userName, String passwd) {
-		try{
-			FileWriter fw = new FileWriter(bak,true);
-			passwdMap.put(userName, passwd);
-			fw.write(userName + " " + passwd);
-			fw.close();
-			return true;
-		}
-		catch (IOException e){
-			MainPlugin.getMainLogger().log(Level.WARNING, "Couldn't add user: "+ userName +" 's password to password.dat!");
-			return false;
-		}
 	}
 	
 	private BufferedWriter openBak() throws IOException{
