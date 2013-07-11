@@ -42,7 +42,7 @@ public class GetPlayerDataPacketHandler extends PacketHandler {
 		s=s+"Level:"+ player.getPlayer().getLevel()+",";
 		s=s+"Exp:"+player.getPlayer().getExp()+",";
 		s=s+"FoodLevel:"+ player.getPlayer().getFoodLevel()+",";
-		s=s+"Health:"+player.getPlayer().getHealth() +",";
+		s=s+"Health:"+player.getPlayer().getHealth();// +",";
 		
 		CommunicationHelper.writeString(out,s);
 		

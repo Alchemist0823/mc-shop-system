@@ -41,17 +41,20 @@ public class GetServerDataPacketHandler extends PacketHandler {
 		s += "OnlinePlayersNumber:" + players.length + ",";
 		s += "OnlinePlayers:";
 		for(Player x:players){
-			s += x.getName() + ";";
+			s += x.getName() + "|";
 		}
+		s = s.substring(0,s.length()-1);
 		s += ",";
+		
 		Plugin[] plugins = MainPlugin.getBukkitServer().getPluginManager().getPlugins();
 		s += "PluginsNumber:"+plugins.length+",";
 		s += "Plugins:";
 		
 		for(Plugin x:plugins){
-			s += x.getName()+";";
+			s += x.getName() + "|";
 		}
-		s += ",";
+		s = s.substring(0,s.length()-1);
+		//s += ",";
 		CommunicationHelper.writeString(out,s);
 		
 	}

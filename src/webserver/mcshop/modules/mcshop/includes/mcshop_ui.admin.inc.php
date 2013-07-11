@@ -19,29 +19,18 @@ function _mcshop_admin_instructions($playerselected = '')
 		$mcinfo = new MCInfo();
 		variable_set('mcshop_mcinfo', $mcinfo);
 	}
-	
+
 	if($mcinfo->isNeedUpdate())
 	{
-		$connector = new MCConnector();
-		if($connector->connect()) {
-			$success = true;//$connector->getServerStatus();
-			$connector->disconnect();
-			if($success)
-				$mcinfo->update(true);
-			else
-				$mcinfo->update(false);
-		}
-		else
-			$mcinfo->update(false);
-		variable_set('mcshop_mcinfo', $mcinfo);
+	  $mcinfo->update();
+	  variable_set('mcshop_mcinfo', $mcinfo);
 	}
-
 	
 	if($playerselected == '') {      //display the list
 		$result=$result.'<div><ul>';
 		if ($mcinfo->isOnline()) {
 			foreach($mcinfo->onlineplayers as $playername) {
-				$result = $result.'<li><a href="'.$playername.'" target="_blank">'.$playername.'</a></li>';
+				$result = $result.'<li><a href="mcshop/'.$playername.'" target="_blank">'.$playername.'</a></li>';
 			}
 		}
 		else {

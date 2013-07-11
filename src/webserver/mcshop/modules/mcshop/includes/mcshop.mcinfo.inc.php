@@ -42,7 +42,8 @@
 			  );
 			  $rows[] = array(
 			      t('Plugins'),
-			      theme('item_list', array('items' => $this->plugins)),
+			      ''.count($this->plugins),
+			      //theme('item_list', array('items' => $this->plugins)),
 			  );/*
 			  $rows[] = array(
 			      t('Number of Player'),
@@ -75,7 +76,7 @@
 		 */
 		public function isNeedUpdate()
 		{
-			if(time() - $this->lasttime > 60 * 5)
+			if(time() - $this->lasttime > 60 * 1)
 				return true;
 			else
 				return false;
@@ -84,14 +85,48 @@
 		/**
 		 * @param bool $status
 		 */
-		public function update($status, $info = NULL)
+		public function update()
 		{
-			$this->online = $status;
-			$this->lasttime = time();
-			
-			if(isset($info))
-			{
-			}
+		  $connector = new MCConnector();
+		  
+		  if($connector->connect()) {
+		    $success = true;
+		    if($success)
+		    {
+		      $this->online = TRUE;
+		    }
+		    else
+		      $this->online = FALSE;
+		    
+		    $result = $connector->getServerStatus();
+		    
+		    $vars = explode(',', $result);
+		    foreach ($vars as $var)
+		    {
+		      $name = strstr($var, ':', true);
+		      $value = substr(strstr($var, ':'), 1);
+		      if($name === false)
+		        continue;
+		      if($name ==  'OnlinePlayersNumber')
+		        $this->player_num = $value;
+		      else if($name ==  'OnlinePlayers')
+		      {
+		        $this->onlineplayers = explode('|', $value);
+		      }
+		      else if($name ==  'PluginsNumber')
+		      {
+		      }
+		      else if($name ==  'Plugins')
+		      {
+		        $this->plugins = explode('|', $value);
+		      }
+		    }
+		    
+		    $connector->disconnect();
+		  }
+		  else
+		    $this->online = FALSE;
+		  $this->lasttime = time();
 		}
 		
 

@@ -89,18 +89,8 @@ function _mcshop_ui_mcinfo_content()
 	}
 	if($mcinfo->isNeedUpdate())
 	{
-		$connector = new MCConnector();
-		if($connector->connect()) {
-			$success = true;//$connector->getServerStatus();
-			$connector->disconnect();
-			if($success)
-				$mcinfo->update(true);
-			else
-				$mcinfo->update(false);
-		}
-		else
-			$mcinfo->update(false);
-		variable_set('mcshop_mcinfo', $mcinfo);
+	  $mcinfo->update();
+	  variable_set('mcshop_mcinfo', $mcinfo);
 	}
 	return $mcinfo->display();
 }

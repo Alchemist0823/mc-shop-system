@@ -200,7 +200,7 @@
 		public function getPlayerStatus($accountName) //return string message
 		{
 			$this->writeRawByte(4);
-			$this->writeRawString($accountName); //length of strings are sent in writeRawString
+			$this->writeString($accountName); //length of strings are sent in writeRawString
 			$statusMessageLen = $this->readRawInt(); //need to receive length of message
 			$statusMessage = $this->readChars($statusMessageLen);
 			

@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
 import java.util.logging.Level;
 
 /**
@@ -39,14 +38,11 @@ public class CommunicationServer extends Thread
 			Debug.log(Level.INFO, "Starting server");
 			startServer();
 		}
-		catch (SocketException ex)
-		{
-			Debug.log(Level.INFO, "Stoping server");
-			return;
-		}
 		catch (Exception ex)
 		{
+			
 			MainPlugin.getMainLogger().log(Level.SEVERE, "Server encountered an error. Attempting restart.", ex);
+				
 			running = true;
 			connected = false;
 			authenticated = false;
@@ -64,11 +60,6 @@ public class CommunicationServer extends Thread
 			try
 			{
 				startServer();
-			}
-			catch (SocketException ex1)
-			{
-				Debug.log(Level.INFO, "Stoping server");
-				return;
 			}
 			catch (Exception ex1)
 			{
@@ -99,6 +90,7 @@ public class CommunicationServer extends Thread
 			catch (Exception ex1)
 			{
 				MainPlugin.getMainLogger().info("Server Socket is forced to stop.");
+				return;
 			}
 			
 			Debug.log(Level.INFO, "Client connected.");
@@ -180,9 +172,7 @@ public class CommunicationServer extends Thread
 			else
 			{
 				MainPlugin.getMainLogger().log(Level.WARNING, "Connection request from unauthorized address!");
-				MainPlugin.getMainLogger().log(Level.WARNING, "Address: " + skt.getInetAddress());
 				MainPlugin.getMainLogger().log(Level.WARNING, "Address: " + sockAddr.getAddress());
-				MainPlugin.getMainLogger().log(Level.WARNING, "Address: " + skt.getRemoteSocketAddress());
 				MainPlugin.getMainLogger().log(Level.WARNING, "Add this address to config.txt");
 			}
 			try
