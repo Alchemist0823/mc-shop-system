@@ -6,6 +6,7 @@ package com.n8lm.MCShopSystemPlugin.packets;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Date;
 
 import org.bukkit.entity.Player;
 
@@ -40,18 +41,19 @@ public class GetPlayerDataPacketHandler extends PacketHandler {
 		{
 			Player player;
 			player = PlayerHelper.getPlayer(user);
-
-			s=s+"DisplayName:"+player.getDisplayName()+",";
-			s=s+"PlayerTime:"+ player.getPlayerTime()+",";
-			s=s+"LastPlayed:"+ player.getLastPlayed()+",";
-			s=s+"Level:"+ player.getLevel()+",";
-			s=s+"Exp:"+player.getExp()+",";
-			s=s+"FoodLevel:"+ player.getFoodLevel()+",";
-			s=s+"Health:"+player.getHealth();// +",";
+			
+			Date firstPlayed = new Date(player.getFirstPlayed());
+			
+			s = s + "Display Name:" + player.getDisplayName() + ",";
+			s = s + "First Played:" + firstPlayed + ",";
+			s = s + "Level:" + player.getLevel()+",";
+			s = s + "Exp:" + player.getExp()+",";
+			s = s + "Food Level:" + player.getFoodLevel()+",";
+			s = s + "Health:" + player.getHealth();// +",";
 		}
 		else
 		{
-			s="Message:This player is not online";
+			s = "Message:This player is not online";
 		}
 		
 		CommunicationHelper.writeString(out,s);
