@@ -90,13 +90,7 @@
 		  $connector = new MCConnector();
 		  
 		  if($connector->connect()) {
-		    $success = true;
-		    if($success)
-		    {
-		      $this->online = TRUE;
-		    }
-		    else
-		      $this->online = FALSE;
+		    $this->online = TRUE;
 		    
 		    $result = $connector->getServerStatus();
 		    
@@ -125,7 +119,12 @@
 		    $connector->disconnect();
 		  }
 		  else
+		  {
 		    $this->online = FALSE;
+		    $this->player_num = 0;
+		    $this->onlineplayers = array();
+		    $this->plugins = array();
+		  }
 		  $this->lasttime = time();
 		}
 		
