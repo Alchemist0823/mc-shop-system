@@ -7,10 +7,12 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import org.bukkit.entity.Player;
+
 import com.n8lm.MCShopSystemPlugin.MainPlugin;
 import com.n8lm.MCShopSystemPlugin.server.CommunicationHelper;
 import com.n8lm.MCShopSystemPlugin.server.PacketHandler;
-import com.n8lm.MCShopSystemPlugin.FileOperator.CheckUser;
+import com.n8lm.MCShopSystemPlugin.utils.PlayerHelper;
 
 public class GetPlayerDataPacketHandler extends PacketHandler {
 
@@ -33,16 +35,24 @@ public class GetPlayerDataPacketHandler extends PacketHandler {
 		
 		MainPlugin.getMainLogger().info("GetPlayer Info '" + user + "'");
 		
-		CheckUser player = new CheckUser(user);
 		String s="";
+		if (PlayerHelper.inOnline(user))
+		{
+			Player player;
+			player = PlayerHelper.getPlayer(user);
 
-		s=s+"DisplayName:"+player.getPlayer().getDisplayName()+",";
-		s=s+"PlayerTime:"+ player.getPlayer().getPlayerTime()+",";
-		s=s+"LastPlayed:"+ player.getPlayer().getLastPlayed()+",";
-		s=s+"Level:"+ player.getPlayer().getLevel()+",";
-		s=s+"Exp:"+player.getPlayer().getExp()+",";
-		s=s+"FoodLevel:"+ player.getPlayer().getFoodLevel()+",";
-		s=s+"Health:"+player.getPlayer().getHealth();// +",";
+			s=s+"DisplayName:"+player.getDisplayName()+",";
+			s=s+"PlayerTime:"+ player.getPlayerTime()+",";
+			s=s+"LastPlayed:"+ player.getLastPlayed()+",";
+			s=s+"Level:"+ player.getLevel()+",";
+			s=s+"Exp:"+player.getExp()+",";
+			s=s+"FoodLevel:"+ player.getFoodLevel()+",";
+			s=s+"Health:"+player.getHealth();// +",";
+		}
+		else
+		{
+			s="Message:This player is not online";
+		}
 		
 		CommunicationHelper.writeString(out,s);
 		

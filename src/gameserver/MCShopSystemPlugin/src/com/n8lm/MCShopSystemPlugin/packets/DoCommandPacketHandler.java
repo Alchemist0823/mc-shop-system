@@ -13,6 +13,7 @@ import com.n8lm.MCShopSystemPlugin.MainPlugin;
 import com.n8lm.MCShopSystemPlugin.server.CommunicationHelper;
 import com.n8lm.MCShopSystemPlugin.server.PacketHandler;
 import com.n8lm.MCShopSystemPlugin.utils.CommandHelper;
+import com.n8lm.MCShopSystemPlugin.utils.PlayerHelper;
 
 /**
  * 
@@ -57,9 +58,9 @@ public class DoCommandPacketHandler extends PacketHandler {
 		String playerName = variables.get("player");
 		if(playerName == null)
 			success = CommandHelper.sendCommand(parsedCommand);
-		else if(MainPlugin.getPasswordOperator().hasPasswd(playerName))
+		else if(PlayerHelper.hasPassword(playerName))
 		{
-			if(MainPlugin.getBukkitServer().getPlayer(playerName) != null)
+			if(PlayerHelper.inOnline(playerName))
 				success = CommandHelper.sendCommand(parsedCommand);
 			else
 			{

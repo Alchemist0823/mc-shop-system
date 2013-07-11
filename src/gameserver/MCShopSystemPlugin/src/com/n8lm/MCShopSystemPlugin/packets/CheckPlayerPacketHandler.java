@@ -11,7 +11,7 @@ import java.util.logging.Level;
 import com.n8lm.MCShopSystemPlugin.MainPlugin;
 import com.n8lm.MCShopSystemPlugin.server.CommunicationHelper;
 import com.n8lm.MCShopSystemPlugin.server.PacketHandler;
-import com.n8lm.MCShopSystemPlugin.FileOperator.CheckUser;
+import com.n8lm.MCShopSystemPlugin.utils.PlayerHelper;
 /**
  * @author Alchemist
  *
@@ -38,9 +38,10 @@ public class CheckPlayerPacketHandler extends PacketHandler {
 		
 		MainPlugin.getMainLogger().log(Level.INFO, "Check User Account '" + user + "' '" + pass + "' ");
 		
-		CheckUser player = new CheckUser(user);
-		if(player.checkPassword(pass)) out.writeInt(1);
-		else out.writeInt(0);
+		if(PlayerHelper.checkPassword(user, pass))
+			out.writeInt(1);
+		else
+			out.writeInt(0);
 	}
 
 }
