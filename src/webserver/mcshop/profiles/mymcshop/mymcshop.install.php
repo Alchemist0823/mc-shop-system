@@ -296,6 +296,7 @@ function mymcshop_install_additional_modules() {
     $modules[] = 'locale';
     $modules[] = 'i18n';
     $modules[] = 'l10n_update';
+    $modules[] = 'l10n_client';
   }
 
   $store_country = variable_get('mymcshop_store_country', 'US');
