@@ -204,7 +204,7 @@ function mymcshop_configure_site_form() { //TODO
   $form['functionality']['extras'] = array(
     '#type' => 'checkboxes',
     '#options' => $options_selection,
-    '#title' => t('Install additional functionality'),
+    '#title' => st('Install additional functionality'),
     '#states' => array(
       'visible' => array(
         ':input[name="install_demo_store"]' => array('value' => '0'),
@@ -232,7 +232,7 @@ function mymcshop_configure_site_form() { //TODO
   );
   $form['commerce_default_currency_wrapper']['commerce_default_currency'] = array(
     '#type' => 'select',
-    '#title' => t('Default store currency'),
+    '#title' => st('Default store currency'),
     '#options' => $options,
     '#default_value' => commerce_default_currency(),
   );
@@ -542,9 +542,9 @@ function mymcshop_install() {
   $types = array(
     array(
       'type' => 'page',
-      'name' => t('Basic page'),
+      'name' => st('Basic page'),
       'base' => 'node_content',
-      'description' => t("Use <em>basic pages</em> for your static content, such as an 'About us' page."),
+      'description' => st("Use <em>basic pages</em> for your static content, such as an 'About us' page."),
       'custom' => 1,
       'modified' => 1,
       'locked' => 0,
@@ -594,7 +594,7 @@ function mymcshop_install() {
 
   // Create a Home link in the main menu.
   $item = array(
-    'link_title' => t('Home'),
+    'link_title' => st('Home'),
     'link_path' => '<front>',
     'menu_name' => 'main-menu',
   );

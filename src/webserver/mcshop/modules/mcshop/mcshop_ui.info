@@ -12,8 +12,11 @@ dependencies[] = variable
 dependencies[] = commerce
 dependencies[] = commerce_checkout
 
+l10n server = www.n8lm.cn
+l10n url = http://www.n8lm.cn/product/mymcshop/l10n_server.xml
+
 ; Information 
-version = "7.x-1.x-dev"
+version = "7.x-1.0-beta1"
 core = "7.x"
 project = "mcshop"
 

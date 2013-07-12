@@ -173,9 +173,9 @@ function _mymcshop_setup_userpoint($operation, &$context) {
   if(isset($vocabulary))
   {
     $terms = array();
-    $terms[] = 'Permission';
-    $terms[] = 'Item';
-    $terms[] = 'House';
+    $terms[] = st('Permission');
+    $terms[] = st('Item');
+    $terms[] = st('House');
     foreach($terms as $name) {
       $term = new stdClass();
       $term->vid = $vocabulary->vid;
@@ -189,7 +189,7 @@ function _mymcshop_setup_userpoint($operation, &$context) {
   if(isset($vocabulary))
   {
     $terms = array();
-    $terms[] = 'MC Points';
+    $terms[] = st('MC Points');
     foreach($terms as $name) {
       $term = new stdClass();
       $term->vid = $vocabulary->vid;
