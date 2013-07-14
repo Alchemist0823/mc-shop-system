@@ -97,10 +97,11 @@
 		    $vars = explode(',', $result);
 		    foreach ($vars as $var)
 		    {
-		      $name = strstr($var, ':', true);
-		      $value = substr(strstr($var, ':'), 1);
-		      if($name === false)
+		      $pos = strpos($var, ':');
+		      if($pos === false)
 		        continue;
+		      $name = substr($var, 0, $pos);
+		      $value = substr($var, $pos + 1);
 		      if($name ==  'OnlinePlayersNumber')
 		        $this->player_num = $value;
 		      else if($name ==  'OnlinePlayers')

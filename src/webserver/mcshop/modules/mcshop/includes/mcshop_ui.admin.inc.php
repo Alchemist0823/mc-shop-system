@@ -87,10 +87,11 @@ function _mcshop_admin_instructions($playerselected = '')
 			$vars = explode(',', $playerstatus);
 			foreach ($vars as $var)
 			{
-				$name = strstr($var, ':', true);
-				$value = substr(strstr($var, ':'), 1);
-				if($name === false)
-					continue;
+		        $pos = strpos($var, ':');
+		        if($pos === false)
+		          continue;
+		        $name = substr($var, 0, $pos);
+		        $value = substr($var, $pos + 1);
 				$rows[] = array(
 					$name,
 				    $value,
