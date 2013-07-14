@@ -12,8 +12,8 @@ function mcshop_ui_menu() {
   
   $items['admin/reports/mcshop'] = array(
     'type' => MENU_NORMAL_ITEM,
-    'title' => 'MC Admin',
-    'description' => 'Administer Minecraft Content',
+    'title' => t('MC Report'),
+    'description' => t('Minecraft Content Reports'),
     'page callback' => '_mcshop_admin_instructions',
     'weight' => -8,
     // Arguments to the page callback. Here's we'll use them just to provide
@@ -69,7 +69,7 @@ function mcshop_ui_block_info() {
 function mcshop_ui_block_view($delta = '') {
   switch ($delta) {
     case 'mcshop_copyright':
-      $block['content'] = t('Powered by No.8 Lightning Man');
+      $block['content'] = t('Powered by <a href="@url">No.8 Lightning Man</a>', array('@url' => 'http://www.n8lm.cn/product/mymcshop'));
       break;
     case 'mcshop_server_info':
       $block['subject'] = t('Server Info');
@@ -101,13 +101,13 @@ function _mcshop_ui_mcinfo_content()
 function mcshop_ui_user_view($account, $view_mode, $langcode) {
   $account->content['profile_mc'] = array(
     '#type' => 'user_profile_category',
-    '#title' => 'MC Game Information',
+    '#title' => t('MC Game Information'),
 	//'#attributes' => array('class' => array('user-mc',),),
 	'#weight' => 5,
   );
   $account->content['profile_mc']['mc_name'] = array(
     '#type' => 'user_profile_item',
-    '#title' => 'Your MC Account:',
+    '#title' => t('Your MC Account:'),
 	'#markup' => '<b>'.t('!username',array('!username' => format_username($account))).'</b>',
     '#prefix' => '<a id="profile-mc"></a>',
   );
