@@ -104,7 +104,7 @@ function install_welcome($form, &$form_state, &$install_state) {
   $items[] = st('My Minecraft Shop System will collect all of payment data from your server to guarantee the fair of profit-share.');
   $items[] = st('If you have chosen the share profit plan but don not share profit with us, we will shut down your MyMCShop System.');
   $eula .= theme('item_list', array('items' => $items));
-  $eula_link = l('License and User Agreement', 'http://www.n8lm.cn/product/mymcshop/agreement', array('attributes' => array('target' => '_blank')));
+  $eula_link = l('License and User Agreement', 'http://mymcshop.com/agreement', array('attributes' => array('target' => '_blank')));
   $eula .= '<p>' . st('That is it for the main points. The full !policy can be viewed on our website.  Thank you again for choosing MyMCShop System!', array('!policy' => $eula_link)) . '</p>';
   $form = array();
   $form['welcome_message'] = array(
@@ -137,12 +137,12 @@ function install_welcome($form, &$form_state, &$install_state) {
 
 
 function install_welcome_validate($form, &$form_state) {
-  $result = mymcshop_http_request('http://www.n8lm.cn/product/mymcshop/validate');
+  $result = mymcshop_http_request('http://mymcshop.com/validate');
   if (isset($result) && isset($result->data)) {
     if($result->data == '1')
       return TRUE;
   }
-  form_set_error('', st('Please purchase MC Shop System from <a href="@url">No.8 Lightning Man Studio!</a>', array('@url' => 'http://www.n8lm.cn/product/mymcshop/')));
+  form_set_error('', st('Please purchase MC Shop System from <a href="@url">No.8 Lightning Man Studio!</a>', array('@url' => 'http://mymcshop.com/')));
   return FALSE;
 }
 
@@ -209,9 +209,9 @@ function mymcshop_configure_site_form() { //TODO
       '#title' => st('Extra Functionality'),
   );
   $options_selection = array(
-    'menus' => 'Custom <strong>admin menu</strong> designed for store owners.',
-    'forum' => 'Mincraft <strong>Forum</strong> functionality.',
-    'ga'    => '<strong>Google Analytics</strong> functionality.',
+    'menus' => st('Custom <strong>admin menu</strong> designed for store owners.'),
+    'forum' => st('Mincraft <strong>Forum</strong> functionality.'),
+    'ga'    => st('<strong>Google Analytics</strong> functionality.'),
   );
   $form['functionality']['extras'] = array(
     '#type' => 'checkboxes',
@@ -816,7 +816,7 @@ function mymcshop_http_request($url, array $options = array()) {
 
   // Merge the default headers.
   $options['headers'] += array(
-      'User-Agent' => 'MyMCShop (+http://www.n8lm.cn/product/mymcshop)',
+      'User-Agent' => 'MyMCShop (+http://mymcshop.com)',
   );
 
   // Only add Content-Length if we actually have any content or if it is a POST

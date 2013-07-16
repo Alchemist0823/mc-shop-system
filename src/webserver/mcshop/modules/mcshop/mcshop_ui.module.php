@@ -69,7 +69,7 @@ function mcshop_ui_block_info() {
 function mcshop_ui_block_view($delta = '') {
   switch ($delta) {
     case 'mcshop_copyright':
-      $block['content'] = t('Powered by <a href="@url">No.8 Lightning Man</a>', array('@url' => 'http://www.n8lm.cn/product/mymcshop'));
+      $block['content'] = t('Powered by <a href="@url">No.8 Lightning Man</a>', array('@url' => 'http://mymcshop.com'));
       break;
     case 'mcshop_server_info':
       $block['subject'] = t('Server Info');
