@@ -1,0 +1,12 @@
+command: "mcshop"
+debug: true
+url: ""
+server:
+  pass: 123456
+  hosts:
+    - "localhost"
+    - "0:0:0:0:0:0:0:1"
+    - "127.0.0.1"
+  port: 10808
+  active: true
+  salt: "abc"

@@ -9,29 +9,18 @@ import java.util.ArrayList;
  */
 public class Settings
 {
-	private String responseURL;
-	private String password;
+	private String command = "mcshop";
+	private String password = "mymcshop";
+	private String URL = "";
 	private String salt = "";
 	private String algorithm = "MD5";
-	private int port;
-	private boolean debugMode;
-	private boolean serverActive;
-	private String URL;
+	private int port = 10808;
+	private boolean debugMode = false;
+	private boolean serverActive = true;
 	private ArrayList<InetAddress> hosts = new ArrayList<InetAddress>();
 
 	public Settings()
 	{
-	}
-
-	public Settings(String responseURL, String password, String salt, int port, boolean debugMode, boolean serverActive, String URL)
-	{
-		this.responseURL = responseURL;
-		this.password = password;
-		this.salt = salt;
-		this.port = port;
-		this.debugMode = debugMode;
-		this.serverActive = serverActive;
-		this.URL = URL;
 	}
 	
 	public boolean isTrusted(InetAddress address)
@@ -59,14 +48,20 @@ public class Settings
 	
 	// getter and setter
 	
+	public boolean isDebugMode()
+	{
+		return debugMode;
+	}
+
+
 	public String getURL()
 	{
 		return URL;
 	}
-
-	public boolean isDebugMode()
+	
+	public String getCommand()
 	{
-		return debugMode;
+		return command;
 	}
 
 	public String getPassword()
@@ -77,11 +72,6 @@ public class Settings
 	public int getPort()
 	{
 		return port;
-	}
-
-	public String getResponseURL()
-	{
-		return responseURL;
 	}
 
 	public String getSalt()
@@ -103,12 +93,17 @@ public class Settings
 	{
 		this.URL = URL;
 	}
-
+	
 	public void setDebugMode(boolean debugMode)
 	{
 		this.debugMode = debugMode;
 	}
 
+	public void setCommand(String command)
+	{
+		this.command = command;
+	}
+	
 	public void setPassword(String password)
 	{
 		this.password = password;
@@ -118,12 +113,7 @@ public class Settings
 	{
 		this.port = port;
 	}
-
-	public void setResponseURL(String responseURL)
-	{
-		this.responseURL = responseURL;
-	}
-
+	
 	public void setSalt(String salt)
 	{
 		this.salt = salt;

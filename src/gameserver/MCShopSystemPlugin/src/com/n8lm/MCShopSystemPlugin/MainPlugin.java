@@ -16,6 +16,7 @@ import com.n8lm.MCShopSystemPlugin.server.CommunicationServer;
 import com.n8lm.MCShopSystemPlugin.FileOperator.PasswordOperator;
 import com.n8lm.MCShopSystemPlugin.FileOperator.WaitListOperator;
 import com.n8lm.MCShopSystemPlugin.Listener.PlayerListener;
+import com.n8lm.MCShopSystemPlugin.Listener.UserCommandListener;
 
 public final class MainPlugin extends JavaPlugin {
 	
@@ -23,8 +24,9 @@ public final class MainPlugin extends JavaPlugin {
 	private static MainPlugin plugin;
 	private static Server bukkitServer;
 	private static CommunicationServer server;
-	
+
 	private final PlayerListener playerListener = new PlayerListener();
+	private final UserCommandListener userCommandListener = new UserCommandListener();
 	
 	private static Settings settings;
 	private static PasswordOperator passwordOperator;
@@ -40,24 +42,32 @@ public final class MainPlugin extends JavaPlugin {
 		bukkitServer = this.getServer();
 		logger = this.getLogger();
 		
-		ConfigHandler configHandler = new ConfigHandler();
-		try
+		ConfigHandler configHandler = new BukkitConfigHandler();
+		if(configHandler.hasConfig())
 		{
 			settings = configHandler.loadSettings();
 		}
-		catch (FileNotFoundException ex)
+		else
 		{
 			configHandler.generateConfig();
-			logger.info("Mcshop generated a config file. Go edit it!");
-			needSetup = true;
-		}
-		catch (IOException ex)
-		{
-			logger.info("Mcshop failed to read your configuration file.");
-			logger.log(Level.SEVERE, null, ex);
-			return;
+			if(configHandler.hasConfig())
+			{
+				settings = configHandler.loadSettings();
+			}
+			else
+			{
+				logger.log(Level.SEVERE,"Configuration File Problem. Can not setup!");
+				needSetup = true;
+			}
 		}
 
+
+		if (needSetup)
+		{
+			this.getServer().getPluginManager().disablePlugin(this);
+			return;
+		}
+		
 		// Load Password File
 		try{
 			passwordOperator = new PasswordOperator();
@@ -76,12 +86,6 @@ public final class MainPlugin extends JavaPlugin {
 			needSetup = true;
 		}
 
-		if (needSetup)
-		{
-			this.getServer().getPluginManager().disablePlugin(this);
-			return;
-		}
-
 		// Start server
 		if (settings.isServerActive())
 		{
@@ -91,10 +95,13 @@ public final class MainPlugin extends JavaPlugin {
 		
 		
 		// Register Listener
-		bukkitServer.getPluginManager().registerEvents(playerListener, plugin);
+		bukkitServer.getPluginManager().registerEvents(this.playerListener, plugin);
+		bukkitServer.getPluginManager().registerEvents(this.userCommandListener, plugin);
 		
 		// Register Executor
-		getCommand("mcshop").setExecutor(new MCShopCommands());
+		MCShopCommandExecutor mcshopCommandExecutor = new MCShopCommandExecutor();
+		getCommand("mymcshop").setExecutor(mcshopCommandExecutor);
+		
 
 		// TODO Insert logic to be performed when the plugin is enabled
 		
