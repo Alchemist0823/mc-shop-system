@@ -1,5 +1,6 @@
 name = MyMCShop System
 core = 7.x
+version = "7.x-1.0-beta2"
 description = MyMCShop System Distibution is a part of MyMCShop System Project
 distribution_name = MyMCShop System
 exclusive = 1
