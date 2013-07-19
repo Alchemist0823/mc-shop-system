@@ -96,6 +96,19 @@ audio:not([controls]) {
    can add them to the font variables in the _base.scss partial.
 */
 
+@font-face {
+  font-family: "Istok Web";
+  src: url('../fonts/IstokWeb.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Montserrat";
+  src: url('../fonts/Montserrat.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
 /*
 @font-face {
   font-family: 'Example';

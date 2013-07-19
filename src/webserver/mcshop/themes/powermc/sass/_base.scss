@@ -57,12 +57,13 @@ $font-monospace: $courier;
 $link-color: #51acd2;
 $base-font-color: #3f3f3f;
 $dark-bg-color: #2e2e2e;
+$base-line-color: #dfdfdf;
 
 // The amount lists, blockquotes, and comments are indented.
 $indent-amount: 30px;
 
 // A one pixel line used in a number of places throughout Powermc.
-$divider: 1px solid #dfdfdf;
+$divider: 2px solid $base-line-color;
 
 
 //

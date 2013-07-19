@@ -40,45 +40,6 @@ li a.active {
   color: #000;
 }
 
-/*
- * User bar
- */
-.navbar {
-  position: fixed;
-  left: 0px;
-  z-index: 100;
-  width: 100%;
-  overflow: visible;
-  @include opacity(0.9);
-  @include background-image(linear-gradient(darken($dark-bg-color, 50%), $dark-bg-color));
-  
-  .container {
-    width: 1000px;
-	
-	li {
-	  float: left;
-	  line-height: 20px;
-	  padding: 5px 20px 5px;
-	}
-	
-	li a{
-	  display: block;
-	}
-	
-	li.active a{
-	  color: #fff;
-	}
-	
-	li a:hover{
-	  color: #fff;
-	}
-  }
-}
-
-.container {
-  margin-right: auto;
-  margin-left: auto;
-}
 
 /*
  * Navigation bar

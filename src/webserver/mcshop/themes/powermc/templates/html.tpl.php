@@ -79,7 +79,7 @@
   <?php print $head; ?>
   <title><?php print $head_title; ?></title>
 
-  <script type="text/javascript">
+  <!--script type="text/javascript">
   WebFontConfig = { google: { families: [ 'Montserrat', 'Istok Web' ] } };
   (function() {
     var wf = document.createElement('script');
@@ -89,7 +89,7 @@
     var s = document.getElementsByTagName('script')[0];
     s.parentNode.insertBefore(wf, s);
   })();
-  </script>
+  </script-->
 
   <?php if ($default_mobile_metatags): ?>
     <meta name="MobileOptimized" content="width">

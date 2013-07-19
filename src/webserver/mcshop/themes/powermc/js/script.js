@@ -10,10 +10,39 @@
 // wrapping it with an "anonymous closure". See:
 // - http://drupal.org/node/1446420
 // - http://www.adequatelygood.com/2010/3/JavaScript-Module-Pattern-In-Depth
+var clouds_speed = 90;
+var cloud_step = 1;
 (function ($, Drupal, window, document, undefined) {
 
 // Draw triangles across the top of the page.
 // Triangles are drawn to the <canvas> element (see: html.tpl.php).
+
+
+Drupal.behaviors.bgAnmi = {
+  attach: function (context, settings) {
+    var $win = $(window), $clouds = $('#clouds');
+	
+    function initClouds() {
+      if ($clouds.data('el-interval')) {
+        clearInterval($clouds.data('el-interval'));
+      }
+      $clouds.data('curpos', 0).data('el-interval', setInterval(moveClouds, window.clouds_speed));
+    }
+
+    function moveClouds() {
+      var cur_pos = $clouds.data('curpos');
+      cur_pos -= window.cloud_step;
+      if (cur_pos < -1150) {
+        cur_pos = 0;
+      }
+      // move the background with backgrond-position css properties
+      $clouds.css("backgroundPosition", cur_pos + "px 0").data('curpos', cur_pos);
+    }
+	
+	initClouds();
+  }
+};
+
 Drupal.behaviors.tri = {
   attach: function (context, settings) {
     $('#tri-canvas:not(.tri-processed)', context).addClass('tri-processed').each(function() {
@@ -42,7 +71,7 @@ Drupal.behaviors.tri = {
 
           // Start drawing triangles from the top left hand corner of
           // the page and keep moving across until we run out of space.
-          for (var leftCorner = 0; leftCorner < ww; leftCorner += 50) {
+          for (leftCorner = 0; leftCorner < ww; leftCorner += 50) {
 
             // Generate a random(ish) width value for the triangle.
             // Note: the extra 20 is added to avoid anything too narrow.

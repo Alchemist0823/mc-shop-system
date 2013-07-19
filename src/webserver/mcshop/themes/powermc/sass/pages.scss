@@ -9,7 +9,6 @@
 
 @import "base";
 
-
 /*
  * Toolbar
  */
@@ -27,22 +26,46 @@ body {
   padding: 0;
   font-family: $base-font-family;
   color: $base-font-color;
-  background: #F6F6F6 url('../images/bg-body.jpg') no-repeat center top fixed;
-  background-size: cover;
+  background: #F6F6F6;
 }
 
+@media all and (min-width: 768px) {
+  
+  body {
+    background: #F6F6F6 url('../images/bg-body.jpg') no-repeat center top fixed;
+    background-size: cover;
+  }
+}
+
+/*
+ * Clouds
+ */
+
+.clouds {
+  top: 20px;
+  left: 0px;
+  width: 100%;
+  z-index: -5;
+  position: absolute;
+  height: 384px;
+  background: url(../images/clouds.png) repeat-x 0 0;
+}
+
+/* Counteract the flash of unstyled text (FOUT) */
+/*
 .js h1,
-.js h2 { /* Counteract the flash of unstyled text (FOUT) */
+.js h2 { 
   opacity: 0;
   @include transition(opacity .25s ease-in-out);
-}
-
+}*/
+/* Counteract the FOUT */
+/*
 .js.wf-active h1,
 .js.wf-active h2,
 .js.wf-inactive h1,
-.js.wf-inactive h2 { /* Counteract the FOUT */
+.js.wf-inactive h2 { 
   opacity: 1;
-}
+}*/
 
 h1,
 h2 {
@@ -61,7 +84,12 @@ a:hover {
   color: $base-font-color;
   text-decoration: underline;
 }
-
+code {
+  border-radius: 3px;
+  padding: 0px 5px;
+  border: 1px solid #ccc;
+  background-color: #e4e4e4;
+}
 
 #page {
   margin: 0 auto;
@@ -88,6 +116,94 @@ a:hover {
   }
 }
 
+
+
+/*
+ * User bar
+ */
+ 
+.container {
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.navbar {
+  position: fixed;
+  left: 0px;
+  z-index: 100;
+  width: 100%;
+  overflow: visible;
+  @include opacity(0.9);
+  @include background-image(linear-gradient(darken($dark-bg-color, 50%), $dark-bg-color));
+  
+  .container {
+    width: 1000px;
+	color: $link-color;
+  }
+  
+  li {
+    float: left;
+    line-height: 20px;
+  }
+	
+  ul{
+    margin: 0px;
+    list-style-type: none;
+  }
+	
+  li a{
+    line-height: normal;
+    display: block;
+    padding: 8px 0px;
+  }
+	
+  li.active a{
+    color: #fff;
+  }
+	
+  li a:hover{
+    color: #fff;
+  }
+	
+  nav{
+    float: left;
+  }
+	
+  .region-userbar {
+    margin: 0;
+    padding: 0;
+    float: right;
+    
+	.block-title {
+	  font-size: $base-font-size;
+    }
+	  
+	.block {
+      float: left;
+	}
+	
+	#block-search-form { /* "Search form" block */
+	  input.form-text {
+	    font-size: 75%;
+	    width: 200px;
+		background-color: #eeeeee;
+		border-radius: 4px;
+	  }
+	  
+	  button, input[type="button"], input[type="reset"], input[type="submit"] {
+	    padding: 0px 12px;
+		margin: 8px 0 ;
+	  }
+    }
+
+	
+  }
+}
+
+
+
+
+
 /*
  * Header
  */
@@ -109,7 +225,7 @@ a:hover {
 
 #site-name { /* The name of the website */
   margin: 0;
-  @include text-shadow(0px 0px 5px $link-color);
+  @include text-shadow(3px 3px 5px $link-color);
 
   a:link,
   a:visited {
@@ -118,6 +234,8 @@ a:hover {
 }
 
 #site-slogan { /* The slogan (or tagline) of a website */
+  
+  @include text-shadow(3px 3px 5px $link-color);
   margin: 10px 0 0 0;
   font-size: 1.25em;
   color: #4f4f4f;
@@ -168,7 +286,7 @@ h3.title { /* Comment title */
 
 th,
 td {
-  padding: 15px;
+  padding: 10px;
 }
 
 tr.even,
@@ -466,7 +584,7 @@ input[type="submit"]:active {
 
 fieldset {
   margin: 20px 2px;
-  border-color: #dfdfdf;
+  border-color: $base-line-color;
 }
 
 fieldset legend {

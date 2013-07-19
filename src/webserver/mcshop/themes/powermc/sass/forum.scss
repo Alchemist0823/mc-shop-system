@@ -14,6 +14,17 @@
  */
 .forum-table {
   font-size: 0.875 * $base-font-size;
+  th, td {
+    padding: 5px;
+  }
+}
+  
+.forum-table-topics td.views-field-topic-icon {
+  width: 40px;
+}
+  
+.forum-table-topics span.topic-icon {
+  margin: auto;
 }
 
 .forum-node-create-links {

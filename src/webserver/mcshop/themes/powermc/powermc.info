@@ -79,6 +79,7 @@ stylesheets[all][] = css/forum.css
 
 ; Optionally add some JavaScripts to your theme.
 
+scripts[] = js/jquery.backgroundpos.min.js
 scripts[] = js/script.js
 
 
@@ -98,6 +99,7 @@ scripts[] = js/script.js
 ; And you'll use this variable in maintenance-page.tpl.php:
 ;   <?php print $header_top; ?>
 
+regions[userbar]        = User Bar
 regions[header]         = Header
 regions[navigation]     = Navigation bar
 regions[highlighted]    = Highlighted
@@ -152,6 +154,7 @@ settings[zen_wireframes]           = 0
 settings[powermc_layout]           = 1
 settings[powermc_max_width]        = 1000
 settings[powermc_display_main_menu]= 1
+settings[powermc_display_cloud]    = 1
 
 ; To make this sub-theme an admin theme with shortcut links next to titles,
 ; uncomment the line below.
@@ -162,8 +165,12 @@ settings[powermc_display_main_menu]= 1
 ; the line below and see the documentation at: http://drupal.org/node/495654
 ;plugins[panels][layouts] = layouts
 
-; Information added by drupal.org packaging script on 2013-06-11
-version = "7.x-1.0"
+
+l10n server = www.n8lm.cn
+l10n url = http://mymcshop.com/l10n_server.xml
+
+; Information 
+version = "7.x-1.0-beta2"
 core = "7.x"
 project = "powermc"
 

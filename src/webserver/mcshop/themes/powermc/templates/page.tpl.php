@@ -69,27 +69,35 @@
  * @see template_process()
  */
 ?>
-<?php if ($secondary_menu): ?>
+<?php if($display_cloud): ?>
+<div class="clouds" id="clouds"></div>
+<?php endif ?>
+<div id="page" <?php print $max_width; ?>>
+<?php 
+  $userbar  = render($page['userbar']);
+?>
+<?php if ($secondary_menu || $userbar): ?>
 <div class="navbar">
   <div class="container">
-  <nav id="secondary-menu" role="navigation">
-    <?php print theme('links__system_secondary_menu', array(
-      'links' => $secondary_menu,
-      'attributes' => array(
-        'class' => array('links', 'inline', 'clearfix'),
-      ),
-      'heading' => array(
-        'text' => $secondary_menu_heading,
-        'level' => 'h2',
-        'class' => array('element-invisible'),
-      ),
-    )); ?>
-  </nav>
+	<?php if ($secondary_menu): ?>
+	  <nav id="secondary-menu" role="navigation">
+		<?php print theme('links__system_secondary_menu', array(
+		  'links' => $secondary_menu,
+		  'attributes' => array(
+			'class' => array('links', 'inline', 'clearfix'),
+		  ),
+		  'heading' => array(
+			'text' => $secondary_menu_heading,
+			'level' => 'h2',
+			'class' => array('element-invisible'),
+		  ),
+		)); ?>
+	  </nav>
+	<?php endif; ?>
+    <?php print $userbar; ?>
   </div>
 </div>
 <?php endif; ?>
-<div id="page" <?php print $max_width; ?>>
-
   <header id="header" role="banner">
 
     <?php if ($logo): ?>
@@ -144,6 +152,7 @@
   <div id="main">
 
     <div id="content" class="column" role="main">
+      <?php print $breadcrumb; ?>
       <?php print render($page['highlighted']); ?>
       <a id="main-content"></a>
       <?php print render($title_prefix); ?>

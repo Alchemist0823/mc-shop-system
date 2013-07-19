@@ -18,7 +18,7 @@
 ul.primary,
 ul.secondary {
   @include clearfix;
-  border-bottom: 1px solid #dfdfdf;
+  border-bottom: 1px solid $base-line-color;
   list-style: none;
   margin: 1em 0 1.5em;
   padding: 0;
@@ -28,7 +28,7 @@ ul.secondary {
     float: left; /* LTR */
   }
   a {
-    border: 1px solid #dfdfdf;
+    border: 1px solid $base-line-color;
     border-right: 0;
     border-bottom: 0;
     display: block;
@@ -43,12 +43,14 @@ ul.secondary {
 
 ul.primary {
   li {
-    margin: 0 2px 0 0;
+    margin: 0 4px 0 0;
   }
   li.active {}
   a:link,
   a:visited {
-    border: 1px solid #dfdfdf;
+    color: $base-font-color;
+    background-color: $base-line-color;
+    border: 1px solid $base-line-color;
     border-bottom: none;
     padding: 0.5em 1em;
   }
@@ -81,7 +83,7 @@ ul.secondary {
   a:link,
   a:visited {
     border: none;
-    border-bottom: 3px solid #dfdfdf;
+    border-bottom: 3px solid $base-line-color;
   }
   a:hover,
   a:focus {

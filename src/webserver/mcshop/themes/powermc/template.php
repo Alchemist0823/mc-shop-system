@@ -173,6 +173,7 @@ function powermc_preprocess_page(&$variables, $hook) {
 
   // Retrieve the theme setting value for 'powermc_display_main_menu'.
   $variables['display_main_menu'] = theme_get_setting('powermc_display_main_menu');
+  $variables['display_cloud'] = theme_get_setting('powermc_display_cloud');
 }
 
 /**
@@ -241,4 +242,28 @@ function powermc_status_messages($variables) {
     $output .= "</div></div>\n";
   }
   return $output;
+}
+
+/**
+ * Processes variables for block.tpl.php.
+ *
+ * Prepares the values passed to the theme_block function to be passed
+ * into a pluggable template engine. Uses block properties to generate a
+ * series of template file suggestions. If none are found, the default
+ * block.tpl.php is used.
+ *
+ * Most themes utilize their own copy of block.tpl.php. The default is located
+ * inside "modules/block/block.tpl.php". Look in there for the full list of
+ * variables.
+ *
+ * The $variables array contains the following arguments:
+ * - $block
+ *
+ * @see block.tpl.php
+ */
+function powermc_preprocess_block(&$variables) {
+  if ($variables['block']->delta === 'menu-footer-navigation') {
+    $variables['classes_array'][] = 'clearfix';
+	// do something for this block
+  }
 }

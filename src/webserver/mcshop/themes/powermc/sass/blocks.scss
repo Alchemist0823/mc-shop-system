@@ -106,3 +106,25 @@
 
 #block-user-online { /* "Who's online" block for a list of the online users */
 }
+
+#block-menu-menu-footer-navigation ul.menu li.expanded {
+	display: inline;
+	float: left;
+	list-style: none;
+	list-style-image: none;
+	padding: 0 25px 10px 0;
+}
+
+#block-menu-menu-footer-navigation ul.menu li.expanded span{
+	font-weight: 600;
+}
+
+#block-menu-menu-footer-navigation ul.menu li.expanded ul{
+	padding: 0;
+}
+
+#block-menu-menu-footer-navigation ul.menu li.expanded ul.menu li {
+	display: block;
+	float: none;
+	padding: 0;
+}

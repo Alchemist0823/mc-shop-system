@@ -27,8 +27,6 @@ settings page (/admin/appearance/settings/powermc).
 
 Documentation
 -------------
-Please see Powermc's documentation page (http://drupal.org/node/1946144) for
-further information regarding:
 
 - theme settings (including layout and max width)
 - mobile friendly mini nav
@@ -38,13 +36,11 @@ further information regarding:
 
 Links
 -----
-Powermc project page: http://drupal.org/project/powermc
-Powermc documentation: http://drupal.org/node/1946144
-Powermc demo site: http://lhmdesign.com/powermc
+Powermc demo site: http://www.n8lm.cn/cms
 Zen project page: http://drupal.org/project/zen
 Zen documentation: http://drupal.org/documentation/theme/zen
 
 
 Maintainer
 ----------
-Laurence Mercer (laurence_m): http://drupal.org/user/96416
+No.8 Lightning Man Studio: http://www.n8lm.cn

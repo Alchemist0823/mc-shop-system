@@ -41,5 +41,11 @@ function powermc_form_system_theme_settings_alter(&$form, &$form_state, $form_id
     '#default_value' => theme_get_setting('powermc_display_main_menu'),
     '#description'   => t("You may want to uncheck this option if you're using a different method to display the main menu, e.g. the main menu block."),
   );
+  $form['custom']['powermc_display_cloud'] = array(
+    '#type'          => 'checkbox',
+    '#title'         => t("Display moving cloud"),
+    '#default_value' => theme_get_setting('powermc_display_main_menu'),
+    '#description'   => t("You may want to uncheck this option if you do not want to display the float cloud"),
+  );
   // We are editing the $form in place, so we don't need to return anything.
 }
