@@ -23,6 +23,7 @@ dependencies[] = taxonomy
 dependencies[] = forum
 dependencies[] = toolbar
 dependencies[] = search
+dependencies[] = help
 
 ; Install Commerce dependencies.
 dependencies[] = addressfield
