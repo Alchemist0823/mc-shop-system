@@ -19,7 +19,7 @@ dependencies[] = commerce_customer
 dependencies[] = commerce_line_item
 dependencies[] = commerce_order
 
-l10n server = www.n8lm.cn
+l10n server = mymcshop.com
 l10n url = http://mymcshop.com/l10n_server.xml
 
 ; Information 

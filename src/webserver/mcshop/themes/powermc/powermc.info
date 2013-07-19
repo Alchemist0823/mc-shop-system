@@ -166,7 +166,7 @@ settings[powermc_display_cloud]    = 1
 ;plugins[panels][layouts] = layouts
 
 
-l10n server = www.n8lm.cn
+l10n server = mymcshop.com
 l10n url = http://mymcshop.com/l10n_server.xml
 
 ; Information 
