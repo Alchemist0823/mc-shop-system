@@ -217,11 +217,11 @@ function mymcshop_configure_site_form() { //TODO
     '#type' => 'checkboxes',
     '#options' => $options_selection,
     '#title' => st('Install additional functionality'),
-    '#states' => array(
+    /*'#states' => array(
       'visible' => array(
         ':input[name="install_demo_store"]' => array('value' => '0'),
       ),
-    ),
+    ),*/
   );
 
   // Build a currency options list from all defined currencies.

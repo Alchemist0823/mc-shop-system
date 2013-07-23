@@ -159,13 +159,20 @@ function _mymcshop_setup_userpoint($operation, &$context) {
   $context['message'] = t('@operation', array('@operation' => $operation));
 
   //autosku
+  
+  $advanced = array(
+      'update_existing' => TRUE,
+      'hide_sku' => TRUE,
+      'case' => 0,
+  );
+  
   db_update('commerce_autosku_patterns')
-  ->fields(array('pattern' => '[commerce-product:title]-[commerce-product:created]'))
+  ->fields(array('pattern' => '[commerce-product:title]-[commerce-product:created]', 'advanced' => serialize($advanced)))
   ->condition('product_type', 'minecraft_item')
   ->execute();
 
   db_update('commerce_autosku_patterns')
-  ->fields(array('pattern' => 'recharge-card-[commerce-product:title]'))
+  ->fields(array('pattern' => 'recharge-card-[commerce-product:title]', 'advanced' => serialize($advanced)))
   ->condition('product_type', 'recharge_product')
   ->execute();
   
