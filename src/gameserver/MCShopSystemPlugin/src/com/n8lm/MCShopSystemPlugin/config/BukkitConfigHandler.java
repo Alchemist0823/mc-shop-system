@@ -39,7 +39,7 @@ public class BukkitConfigHandler extends ConfigHandler {
 		settings.setDebugMode(config.getBoolean("debug"));
 		settings.setURL(config.getString("url"));
 		settings.setCommand(config.getString("command"));
-		settings.setSalt(config.getString("server.pass"));
+		settings.setPassword(config.getString("server.pass"));
 		settings.setPort(config.getInt("server.port"));
 		settings.setServerActive(config.getBoolean("server.active"));
 		settings.setSalt(config.getString("server.salt"));
