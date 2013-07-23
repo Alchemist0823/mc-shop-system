@@ -62,6 +62,7 @@ function mcshop_commerce_checkout_complete($order) {
   $success = true;
   $connector = NULL;
   $log = '';
+  $user = user_load($order_wrapper->uid->value());
   
   foreach ($order_wrapper->commerce_line_items as $delta => $line_item_wrapper) {
   	$product_wrapper = $line_item_wrapper->commerce_product;
@@ -69,8 +70,6 @@ function mcshop_commerce_checkout_complete($order) {
     if($product_wrapper->type->value() == 'minecraft_item')
     {
    	  $cmd = $product_wrapper->field_buycmd->value();
-   	  
-   	  global $user;
    	  
    	  $args = array(
 		'player' => $user->name,
@@ -91,9 +90,9 @@ function mcshop_commerce_checkout_complete($order) {
 	else if($product_wrapper->type->value() == 'recharge_product')
     {
 
-    	global $user;
+    	//global $user;
     	// Recharge Money
-    	
+    	//
     	$points = (int)($line_item_wrapper->quantity->value() * $product_wrapper->field_recharge->value());
     	$params = array(
     			'points' => $points,
@@ -104,6 +103,7 @@ function mcshop_commerce_checkout_complete($order) {
     	//dsm($result);
     }
   }
+  //dsm($order_wrapper);
   if(isset($connector))
     $connector->disconnect();
   if ($success)
@@ -316,5 +316,54 @@ function _mcshop_get_users_purchased_products() {
 function mcshop_commerce_checkout_pane_info_alter(&$checkout_panes)
 {
   $checkout_panes['customer_profile_billing']['page'] = 'disabled';
+}
+
+
+
+
+
+/** 
+ * Alipay
+ * Implementation of hook_commerce_alipay_parameter_alter().
+ */
+function mcshop_commerce_alipay_parameter_alter(&$data, $settings, $order){
+
+  switch ($data['service']) {
+
+
+    // Payment service: DualFun (Instant Payment and Secured Transactions).
+    case 'trade_create_by_buyer':
+      // Payment service: Escrow Pay (Secured Transactions Interface).
+    case 'create_partner_trade_by_buyer':
+      global $user;
+      // Wrap the order object with the Entity Metadata Wrapper.
+      $order_wrapper = entity_metadata_wrapper('commerce_order', $order);
+      // Get the total quantity of its product line items.
+      //$quantity = commerce_line_items_quantity($order_wrapper->commerce_line_items, commerce_product_line_item_types());
+      // Override transaction amount if debug mode is enabled.
+      $amount = $settings['debug'] ? 1 : $order_wrapper->commerce_order_total->amount->value();
+      // convert to unit price
+      //$amount = $amount/$quantity;
+
+      // Override existing properties or provide support for new ones.
+      //$data['subject'] = 'Angel Subscription *' . $quantity . ' #' . $order->order_number;
+      //$data['body'] = 'Angel Subscription *' . $quantity . ' #' . $order->order_number;
+      $data['price'] = commerce_currency_amount_to_decimal($amount, 'CNY');
+      $data['quantity'] = '1';
+      $data['logistics_fee'] = '0.00';
+      $data['logistics_type'] = 'EXPRESS';
+      $data['logistics_payment'] = 'SELLER_PAY';
+      $data['receive_name'] = $user->name;
+      $data['receive_address'] = 'N/A';
+      $data['receive_zip'] = '0000';
+      $data['receive_phone'] = 'N/A';
+      $data['receive_mobile'] = 'N/A';
+
+      unset($data['total_fee']);
+
+      break;
+
+    default: break;
+  }
 }
 
