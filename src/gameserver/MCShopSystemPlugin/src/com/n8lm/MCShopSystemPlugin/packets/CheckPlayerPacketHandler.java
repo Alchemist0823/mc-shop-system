@@ -42,9 +42,9 @@ public class CheckPlayerPacketHandler extends PacketHandler {
 			if(PlayerHelper.checkPassword(user, pass))
 				out.writeInt(1);
 			else
-				out.writeInt(2);
+				out.writeInt(0);
 		else
-			out.writeInt(0);
+			out.writeInt(2);
 	}
 
 }
