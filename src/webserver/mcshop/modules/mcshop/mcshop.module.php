@@ -182,9 +182,14 @@ function _mc_user_validate($form, &$form_state) {
 			    $result = false;
 				$result = $connector->checkPlayerAccount($form_state['values']['name'], $form_state['values']['field_mcpwd']['und'][0]['value']);
 				$connector->disconnect();
-				if(!$result)
+				if($result == 0)
 				{
 					form_set_error('name', t('Your acount information is incorrect.'));
+					return FALSE;
+				}
+				else if($result == 2)
+				{
+					form_set_error('name', t('You need register your mcshop password.'));
 					return FALSE;
 				}
 			}

@@ -24,10 +24,10 @@ public class UserCommandListener implements Listener {
 			String UserName = player.getName();
 
 			PasswordOperator operator = MainPlugin.getPasswordOperator();
-			if(operator.hasPasswd(UserName)) {
+			if(operator.hasPassword(UserName)) {
 				if(params == 3) {
-					if(operator.checkPasswd(UserName,args[1])) {
-						if(operator.changePasswd(UserName,args[2])) {
+					if(operator.checkPassword(UserName,args[1])) {
+						if(operator.changePassword(UserName,args[2])) {
 							player.sendMessage("您已重设密码！");
 							// true
 						}
@@ -48,7 +48,7 @@ public class UserCommandListener implements Listener {
 			}
 			else{
 				if(params == 2)
-					if(operator.changePasswd(UserName,args[1])) {
+					if(operator.changePassword(UserName,args[1])) {
 						player.sendMessage("成功设置密码！");
 						player.sendMessage("请登陆网站注册用户 " + MainPlugin.getSettings().getURL());
 						// true

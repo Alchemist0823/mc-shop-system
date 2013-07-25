@@ -24,17 +24,17 @@
 		{
 			$this->stream = @fsockopen($this->host, $this->port, $errno, $errstr, 2);
 			if(!$this->stream)
-				return false;
+				return FALSE;
 			$this->writeRawByte(21);
 			$this->writeString($this->password);
 				
 			if($this->readRawInt() == 1)
 			{
 				variable_set('mcshop_mcconnetor', $this->stream);
-				return true;
+				return TRUE;
 			}
 			else
-				return false;
+				return FALSE;
 		}
 
 		/**
@@ -147,35 +147,28 @@
 			0x6 doBroadcast($message)
 		------------------------------------------------------------------*/
 		
-		public function checkServerConnection() //return true if successfully connected
+		public function checkServerConnection() //return TRUE if successfully connected
 		{
 			$this->writeRawByte(1);
 			
 			if($this->readRawInt() == 1)
 			{
-				return true;
+				return TRUE;
 			}
 			else
 			{
-				return false;
+				return FALSE;
 			}
 		}
 		
 		
-		public function checkPlayerAccount($accountName, $accountPass) //return true if valid
+		public function checkPlayerAccount($accountName, $accountPass) //return int  if valid return 1 if wrong return 0 if not exist 2
 		{
 			$this->writeRawByte(2);
 			$this->writeString($accountName); //length of strings are sent in writeRawString
 			$this->writeString($accountPass);
 			
-			if($this->readRawInt() == 1)
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
+			return $this->readRawInt();
 		}
 		
 		
@@ -188,11 +181,11 @@
 			
 			if($this->readRawInt() == 1)
 			{
-				return true;
+				return TRUE;
 			}
 			else
 			{
-				return false;
+				return FALSE;
 			}
 		}
 		
@@ -231,11 +224,11 @@
 
 			if($this->readRawInt() == 1)
 			{
-				return true;
+				return TRUE;
 			}
 			else
 			{
-				return false;
+				return FALSE;
 			}
 		}
 		

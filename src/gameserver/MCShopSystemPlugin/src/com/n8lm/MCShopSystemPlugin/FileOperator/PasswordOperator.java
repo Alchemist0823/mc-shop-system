@@ -50,19 +50,23 @@ public class PasswordOperator
 		return passwdMap;
 	}
 	
-	public boolean checkPasswd(String userName, String givenPass) {
-		return passwdMap.get(userName).equals(givenPass);
+	public boolean checkPassword(String userName, String givenPass) {
+		String pwd = passwdMap.get(userName);
+		if(pwd != null)
+			return pwd.equals(givenPass);
+		else
+			return false;
 	}
 	
-	public boolean hasPasswd(String userName) {
+	public boolean hasPassword(String userName) {
 		return passwdMap.containsKey(userName);
 	}
 	
-	public String getPasswd(String userName){
+	public String getPassword(String userName){
 		return passwdMap.get(userName);
 	}
 
-	public boolean changePasswd(String userName, String passwd) {
+	public boolean changePassword(String userName, String passwd) {
 		try{
 			//Write to new file
 			BufferedWriter writer = openBak();

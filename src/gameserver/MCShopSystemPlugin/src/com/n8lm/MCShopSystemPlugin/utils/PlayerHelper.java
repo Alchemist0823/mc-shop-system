@@ -16,11 +16,11 @@ public class PlayerHelper{
 	
 	// Password	
 	public static boolean hasPassword(String userName){
-		return MainPlugin.getPasswordOperator().hasPasswd(userName);
+		return MainPlugin.getPasswordOperator().hasPassword(userName);
 	}
 
 	public static boolean checkPassword(String userName, String pass){
-		return MainPlugin.getPasswordOperator().checkPasswd(userName,pass);
+		return MainPlugin.getPasswordOperator().checkPassword(userName,pass);
 	}
 	
 	public static boolean inOnline(String userName){

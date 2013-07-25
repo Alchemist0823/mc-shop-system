@@ -38,8 +38,11 @@ public class CheckPlayerPacketHandler extends PacketHandler {
 		
 		MainPlugin.getMainLogger().log(Level.INFO, "Check User Account '" + user + "' '" + pass + "' ");
 		
-		if(PlayerHelper.checkPassword(user, pass))
-			out.writeInt(1);
+		if(PlayerHelper.hasPassword(user))
+			if(PlayerHelper.checkPassword(user, pass))
+				out.writeInt(1);
+			else
+				out.writeInt(2);
 		else
 			out.writeInt(0);
 	}
