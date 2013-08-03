@@ -69,23 +69,27 @@ function mcshop_commerce_checkout_complete($order) {
     
     if($product_wrapper->type->value() == 'minecraft_item')
     {
-   	  $cmd = $product_wrapper->field_buycmd->value();
+   	  $cmdstr = $product_wrapper->field_buycmd->value();
    	  
-   	  $args = array(
-		'player' => $user->name,
-		'quantity' => (int)$line_item_wrapper->quantity->value(),
-   	  );
+   	  $cmds = explode(';', $cmdstr);
    	  
-   	  if(!isset($connector))
+   	  foreach($cmds as $cmd)
    	  {
-   	  	$connector = new MCConnector();
-   	  	$success = $success && $connector->connect();
+        $args = array(
+          'player' => $user->name,
+          'quantity' => (int)$line_item_wrapper->quantity->value(),
+        );  
+        if(!isset($connector))
+        {
+          $connector = new MCConnector();
+          $success = $success && $connector->connect();
+        }
+        if($success)
+  	    {
+  	    	$success = $connector->doCommand($cmd,$args) && $success;
+  	    	$log .= 'line item '.$delta.' send error';
+  	    }
    	  }
-	  if($success)
-	  {
-	  	$success = $connector->doCommand($cmd,$args) && $success;
-	  	$log .= 'line item '.$delta.' send error';
-	  }
     }
 	else if($product_wrapper->type->value() == 'recharge_product')
     {
