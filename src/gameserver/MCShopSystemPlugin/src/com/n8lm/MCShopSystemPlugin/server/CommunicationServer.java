@@ -72,9 +72,9 @@ public class CommunicationServer extends Thread
 	{
 		running = true;
 		
-		serverSkt = new ServerSocket();
+		serverSkt = new ServerSocket(MainPlugin.getSettings().getPort());
 		serverSkt.setReuseAddress(true);
-		serverSkt.bind(new InetSocketAddress(MainPlugin.getSettings().getPort()));
+		//serverSkt.bind(new InetSocketAddress(MainPlugin.getSettings().getPort()));
 		
 		while (running)
 		{
