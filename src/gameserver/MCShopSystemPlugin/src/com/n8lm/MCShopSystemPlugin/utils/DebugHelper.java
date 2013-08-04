@@ -1,8 +1,10 @@
-package com.n8lm.MCShopSystemPlugin;
+package com.n8lm.MCShopSystemPlugin.utils;
 
 import java.util.logging.Level;
 
-public class Debug{
+import com.n8lm.MCShopSystemPlugin.MainPlugin;
+
+public class DebugHelper{
 	public static void log(Level level, String msg){
 		if(MainPlugin.getSettings().isDebugMode()){
 			MainPlugin.getMainLogger().log(level, msg);

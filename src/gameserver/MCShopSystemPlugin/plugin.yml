@@ -1,9 +1,12 @@
 name: MCShopSystemPlugin
-main: com.n8lm.MCShopSystemPlugin.MainPlugin
-version: 1.0.2
+version: 1.1.0
 website: mymcshop.com
 author: www.n8lm.cn
 description: a part of MyMCShop System.
+
+softdepend: [Authme]
+main: com.n8lm.MCShopSystemPlugin.MainPlugin
+
 commands:
   mymcshop:
     description: Get information about this plugin.

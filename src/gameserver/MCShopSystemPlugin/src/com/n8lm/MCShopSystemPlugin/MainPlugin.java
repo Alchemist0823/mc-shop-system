@@ -12,11 +12,12 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.n8lm.MCShopSystemPlugin.config.*;
+import com.n8lm.MCShopSystemPlugin.listener.PlayerListener;
+import com.n8lm.MCShopSystemPlugin.listener.UserCommandListener;
+import com.n8lm.MCShopSystemPlugin.operator.AccountHandler;
+import com.n8lm.MCShopSystemPlugin.operator.CustomAccountHandler;
+import com.n8lm.MCShopSystemPlugin.operator.WaitListOperator;
 import com.n8lm.MCShopSystemPlugin.server.CommunicationServer;
-import com.n8lm.MCShopSystemPlugin.FileOperator.PasswordOperator;
-import com.n8lm.MCShopSystemPlugin.FileOperator.WaitListOperator;
-import com.n8lm.MCShopSystemPlugin.Listener.PlayerListener;
-import com.n8lm.MCShopSystemPlugin.Listener.UserCommandListener;
 
 public final class MainPlugin extends JavaPlugin {
 	
@@ -29,7 +30,7 @@ public final class MainPlugin extends JavaPlugin {
 	private final UserCommandListener userCommandListener = new UserCommandListener();
 	
 	private static Settings settings;
-	private static PasswordOperator passwordOperator;
+	private static AccountHandler accountHandler;
 	private static WaitListOperator waitListOperator;
 	
 	@Override
@@ -70,7 +71,7 @@ public final class MainPlugin extends JavaPlugin {
 		
 		// Load Password File
 		try{
-			passwordOperator = new PasswordOperator();
+			accountHandler = new CustomAccountHandler();
 		}
 		catch (IOException e){
 			logger.info("Mcshop failed to load password.dat file.");
@@ -145,8 +146,8 @@ public final class MainPlugin extends JavaPlugin {
 		return server;
 	}
 	
-	public static PasswordOperator getPasswordOperator(){
-		return passwordOperator;
+	public static AccountHandler getAccountHandler(){
+		return accountHandler;
 	}
 	
 	public static WaitListOperator getWaitListOperator(){

@@ -1,7 +1,7 @@
 package com.n8lm.MCShopSystemPlugin.server;
 
 import com.n8lm.MCShopSystemPlugin.MainPlugin;
-import com.n8lm.MCShopSystemPlugin.Debug;
+import com.n8lm.MCShopSystemPlugin.utils.DebugHelper;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -35,7 +35,7 @@ public class CommunicationServer extends Thread
 	{
 		try
 		{
-			Debug.log(Level.INFO, "Starting server");
+			DebugHelper.log(Level.INFO, "Starting server");
 			startServer();
 		}
 		catch (Exception ex)
@@ -78,7 +78,7 @@ public class CommunicationServer extends Thread
 		
 		while (running)
 		{
-			Debug.log(Level.INFO, "Waiting for client.");
+			DebugHelper.log(Level.INFO, "Waiting for client.");
 			
 			
 			Socket skt = null;
@@ -93,11 +93,11 @@ public class CommunicationServer extends Thread
 				return;
 			}
 			
-			Debug.log(Level.INFO, "Client connected.");
+			DebugHelper.log(Level.INFO, "Client connected.");
 			InetSocketAddress sockAddr = (InetSocketAddress) skt.getRemoteSocketAddress();
 			if (MainPlugin.getSettings().isTrusted(sockAddr.getAddress()))
 			{
-				Debug.log(Level.INFO, "Client is trusted.");
+				DebugHelper.log(Level.INFO, "Client is trusted.");
 				
 				skt.setKeepAlive(true);
 				
@@ -106,13 +106,13 @@ public class CommunicationServer extends Thread
 
 				connected = true;
 
-				Debug.log(Level.INFO, "Trying to read first byte.");
+				DebugHelper.log(Level.INFO, "Trying to read first byte.");
 
 				try
 				{
 					if (in.readByte() == 21)
 					{
-						Debug.log(Level.INFO, "First packet is password packet.");
+						DebugHelper.log(Level.INFO, "First packet is password packet.");
 						authenticated = parsePasswordPacket(in, out);
 						if (!authenticated)
 						{
@@ -121,7 +121,7 @@ public class CommunicationServer extends Thread
 						}
 						else
 						{
-							Debug.log(Level.INFO, "Password is correct! Client connected.");
+							DebugHelper.log(Level.INFO, "Password is correct! Client connected.");
 						}
 					}
 					else
@@ -135,7 +135,7 @@ public class CommunicationServer extends Thread
 						byte packetHeader = in.readByte();
 						if (packetHeader == 21)
 						{
-							Debug.log(Level.INFO, "Got packet header: Disconnect");
+							DebugHelper.log(Level.INFO, "Got packet header: Disconnect");
 							authenticated = parsePasswordPacket(in, out);
 							if (!authenticated)
 							{
@@ -145,12 +145,12 @@ public class CommunicationServer extends Thread
 						}
 						else if (packetHeader == 20)
 						{
-							Debug.log(Level.INFO, "Got packet header: Disconnect");
+							DebugHelper.log(Level.INFO, "Got packet header: Disconnect");
 							connected = false;
 						}
 						else if (PacketManager.packetHandlers.containsKey(packetHeader))
 						{
-							Debug.log(Level.INFO, "Got packet header: " + packetHeader);
+							DebugHelper.log(Level.INFO, "Got packet header: " + packetHeader);
 							PacketManager.packetHandlers.get(packetHeader).onHeaderReceived(in, out);
 						}
 						else
@@ -158,7 +158,7 @@ public class CommunicationServer extends Thread
 							MainPlugin.getMainLogger().log(Level.WARNING, "Unsupported packet header!");
 						}
 					}
-					Debug.log(Level.INFO, "Closing connection with client.");
+					DebugHelper.log(Level.INFO, "Closing connection with client.");
 					out.flush();
 					out.close();
 					in.close();

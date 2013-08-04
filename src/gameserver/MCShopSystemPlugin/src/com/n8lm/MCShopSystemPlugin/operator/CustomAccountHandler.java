@@ -14,7 +14,7 @@
  *  	return password of a player;
  *  
  */
-package com.n8lm.MCShopSystemPlugin.FileOperator;
+package com.n8lm.MCShopSystemPlugin.operator;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -29,14 +29,14 @@ import java.util.logging.Level;
 
 import com.n8lm.MCShopSystemPlugin.MainPlugin;
 
-public class PasswordOperator
+public class CustomAccountHandler extends AccountHandler
 {
 	private HashMap<String, String> passwdMap;
 	private static File folder;
 	private static File dat;
 	private static File bak;
 	
-	public PasswordOperator() throws IOException
+	public CustomAccountHandler() throws IOException
 	{
 		folder = MainPlugin.getInstance().getDataFolder();
 		dat  = new File(folder, "password.dat");
@@ -66,11 +66,22 @@ public class PasswordOperator
 		return passwdMap.get(userName);
 	}
 
-	public boolean changePassword(String userName, String passwd) {
+	public boolean register(String username, String passwd) {
+		passwdMap.put(username, passwd);
+		return updateFile();
+	}
+
+	public boolean changePassword(String username, String passwd) {
+		if(passwdMap.containsKey(username))
+			passwdMap.put(username, passwd);
+		return updateFile();
+	}
+	
+	private boolean updateFile()
+	{
 		try{
 			//Write to new file
 			BufferedWriter writer = openBak();
-			passwdMap.put(userName, passwd);
 			for(Map.Entry<String, String> entry : passwdMap.entrySet()) {
 			    String key = entry.getKey();
 			    String value = entry.getValue();

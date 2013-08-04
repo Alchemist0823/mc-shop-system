@@ -1,4 +1,4 @@
-package com.n8lm.MCShopSystemPlugin.FileOperator;
+package com.n8lm.MCShopSystemPlugin.operator;
 
 /*
  * WaitListOperator:

@@ -1,4 +1,4 @@
-package com.n8lm.MCShopSystemPlugin.Listener;
+package com.n8lm.MCShopSystemPlugin.listener;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -7,7 +7,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 import com.n8lm.MCShopSystemPlugin.MainPlugin;
-import com.n8lm.MCShopSystemPlugin.FileOperator.PasswordOperator;
+import com.n8lm.MCShopSystemPlugin.operator.AccountHandler;
+import com.n8lm.MCShopSystemPlugin.operator.CustomAccountHandler;
 
 public class UserCommandListener implements Listener {
 	
@@ -23,7 +24,7 @@ public class UserCommandListener implements Listener {
 			Player player = event.getPlayer();
 			String UserName = player.getName();
 
-			PasswordOperator operator = MainPlugin.getPasswordOperator();
+			AccountHandler operator = MainPlugin.getAccountHandler();
 			if(operator.hasPassword(UserName)) {
 				if(params == 3) {
 					if(operator.checkPassword(UserName,args[1])) {
@@ -48,7 +49,7 @@ public class UserCommandListener implements Listener {
 			}
 			else{
 				if(params == 2)
-					if(operator.changePassword(UserName,args[1])) {
+					if(operator.register(UserName,args[1])) {
 						player.sendMessage("成功设置密码！");
 						player.sendMessage("请登陆网站注册用户 " + MainPlugin.getSettings().getURL());
 						// true

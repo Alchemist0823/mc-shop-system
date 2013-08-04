@@ -7,7 +7,7 @@
  * 	or use sendItem method of DoCommandPacketHandler;
  * 
  */
-package com.n8lm.MCShopSystemPlugin.Listener;
+package com.n8lm.MCShopSystemPlugin.listener;
 
 import java.util.logging.Level;
 
@@ -17,7 +17,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import com.n8lm.MCShopSystemPlugin.MainPlugin;
-import com.n8lm.MCShopSystemPlugin.FileOperator.WaitListOperator;
+import com.n8lm.MCShopSystemPlugin.operator.WaitListOperator;
 import com.n8lm.MCShopSystemPlugin.utils.CommandHelper;
 
 public class PlayerListener implements Listener{
