@@ -14,9 +14,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.n8lm.MCShopSystemPlugin.config.*;
 import com.n8lm.MCShopSystemPlugin.listener.PlayerListener;
 import com.n8lm.MCShopSystemPlugin.listener.UserCommandListener;
-import com.n8lm.MCShopSystemPlugin.operator.AccountHandler;
-import com.n8lm.MCShopSystemPlugin.operator.CustomAccountHandler;
-import com.n8lm.MCShopSystemPlugin.operator.WaitListOperator;
+import com.n8lm.MCShopSystemPlugin.operator.*;
 import com.n8lm.MCShopSystemPlugin.server.CommunicationServer;
 
 public final class MainPlugin extends JavaPlugin {
@@ -69,12 +67,27 @@ public final class MainPlugin extends JavaPlugin {
 			return;
 		}
 		
-		// Load Password File
+		// Load Account Handler
 		try{
-			accountHandler = new CustomAccountHandler();
+			if(settings.getMode().equals(Settings.CUSTOM_MODE))
+			{
+				logger.info("Enable Custom Account Handler");
+				accountHandler = new CustomAccountHandler();
+			}
+			else if(settings.getMode().equals(Settings.AUTHME_MODE))
+			{
+				logger.info("Enable Authme Account Handler");
+				accountHandler = new AuthmeAccountHandler();
+			}
+			else if(settings.getMode().equals(Settings.XAUTH_MODE))
+			{
+				logger.info("Enable XAuth Account Handler");
+				accountHandler = new CustomAccountHandler();
+			}
+			// TODO: add the XAuth function
 		}
 		catch (IOException e){
-			logger.info("Mcshop failed to load password.dat file.");
+			logger.info("Mcshop failed to load account file.");
 			needSetup = true;
 		}
 		

@@ -137,9 +137,9 @@
 
 		
 
-		/*------------------MCShopSystem SPECIFIC (6.17)-------------------
+		/*------------------MCShopSystem SPECIFIC (8.7)-------------------
 			----Functions----
-			0x1 checkServerConnection()
+			0x1 registerAccount($accountName, $accountPass)
 			0x2 checkPlayerAccount($accountName, $accountPass)
 			0x3 doCommand($cmmd, $args)
 			0x4 getPlayerStatus($accountName)
@@ -147,18 +147,14 @@
 			0x6 doBroadcast($message)
 		------------------------------------------------------------------*/
 		
-		public function checkServerConnection() //return TRUE if successfully connected
+	
+		public function registerAccount($accountName, $accountPass) //return int  if valid return 1 if wrong return 0 if has exist 2
 		{
 			$this->writeRawByte(1);
+			$this->writeString($accountName); //length of strings are sent in writeRawString
+			$this->writeString($accountPass);
 			
-			if($this->readRawInt() == 1)
-			{
-				return TRUE;
-			}
-			else
-			{
-				return FALSE;
-			}
+			return $this->readRawInt();
 		}
 		
 		

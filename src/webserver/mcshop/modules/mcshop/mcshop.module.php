@@ -40,6 +40,18 @@ function mcshop_variable_info($options) {
 		'group' => 'mcshop_settings',
 		'token' => False,
 	);
+
+	$variables['mcshop_register_mode'] = array(
+		'name' => 'mcshop_register_mode',
+		'title' => t('MCShop Register Mode'),
+		'description' => t('Specify MCShop Register Mode'),
+		'default' => 'custom',
+		'type' => 'select',
+	    'options' => array('custom','authme','xauth'),
+		'group' => 'mcshop_settings',
+		'token' => False,
+	);
+	
 	return $variables;
 }
 
@@ -183,19 +195,52 @@ function _mc_user_validate($form, &$form_state) {
 			}
 			$connector = new MCConnector();
 			if($connector->connect()) {
-			    $result = false;
-				$result = $connector->checkPlayerAccount($form_state['values']['name'], $form_state['values']['field_mcpwd']['und'][0]['value']);
-				$connector->disconnect();
-				if($result == 0)
-				{
-					form_set_error('name', t('Your acount information is incorrect.'));
-					return FALSE;
-				}
-				else if($result == 2)
-				{
-					form_set_error('name', t('You need register your mcshop password.'));
-					return FALSE;
-				}
+			    $result = FALSE;
+			    $mode = variable_get_value('mcshop_register_mode');
+			    $name = $form_state['values']['name'];
+			    $mcpwd = $form_state['values']['field_mcpwd']['und'][0]['value'];
+			    
+			    if($mode == 'custom')
+			    {
+    				$result = $connector->checkPlayerAccount($name, $mcpwd);
+    				$connector->disconnect();
+    				if($result == 0)
+    				{
+    					form_set_error('name', t('Your acount information is incorrect.'));
+    					return FALSE;
+    				}
+    				else if($result == 2)
+    				{
+    					form_set_error('name', t('You need register your mcshop password.'));
+    					return FALSE;
+    				}
+
+    				if($result != 1)
+    				{
+    				  form_set_error('name', t('Unknown error. Please try again.'));
+    				  return FALSE;
+    				}
+			    }
+			    else
+			    {
+			        $result = $connector->registerAccount($name, $mcpwd);
+    				$connector->disconnect();
+    				if($result == 0)
+    				{
+    					form_set_error('name', t('Sorry, register failed.'));
+    					return FALSE;
+    				}
+    				else if($result == 2)
+    				{
+    				    form_set_error('name', t('This acount has been registered on game server and your game login password is incorrect.'));
+    				    return FALSE;
+    				}
+    				if($result != 1)
+    				{
+    			      form_set_error('name', t('Unknown error. Please try again.'));
+    			      return FALSE;
+    			    }	      
+			    }
 			}
 			else
 			{

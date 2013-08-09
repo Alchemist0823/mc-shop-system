@@ -30,6 +30,7 @@ public class PacketManager {
 	 */
 	public static void setupPacketHandlers()
 	{
+		addPacketHandler(new RegisterPacketHandler());
 		addPacketHandler(new DoCommandPacketHandler());
 		addPacketHandler(new CheckPlayerPacketHandler());
 		addPacketHandler(new GetPlayerDataPacketHandler());

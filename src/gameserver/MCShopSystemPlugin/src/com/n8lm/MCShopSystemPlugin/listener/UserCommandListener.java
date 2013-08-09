@@ -8,7 +8,6 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
 import com.n8lm.MCShopSystemPlugin.MainPlugin;
 import com.n8lm.MCShopSystemPlugin.operator.AccountHandler;
-import com.n8lm.MCShopSystemPlugin.operator.CustomAccountHandler;
 
 public class UserCommandListener implements Listener {
 	

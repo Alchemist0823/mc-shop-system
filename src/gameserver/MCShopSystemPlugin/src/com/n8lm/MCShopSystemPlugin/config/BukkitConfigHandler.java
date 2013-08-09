@@ -36,9 +36,11 @@ public class BukkitConfigHandler extends ConfigHandler {
 		settings.setServerActive(false);
 		
 		FileConfiguration config = MainPlugin.getInstance().getConfig();
+		
 		settings.setDebugMode(config.getBoolean("debug"));
 		settings.setURL(config.getString("url"));
 		settings.setCommand(config.getString("command"));
+		settings.setMode(config.getString("mode"));
 		settings.setPassword(config.getString("server.pass"));
 		settings.setPort(config.getInt("server.port"));
 		settings.setServerActive(config.getBoolean("server.active"));
@@ -56,6 +58,8 @@ public class BukkitConfigHandler extends ConfigHandler {
 				MainPlugin.getMainLogger().info("Host '" + value + "' is invaild");
 			}
 		}
+		
+		MainPlugin.getInstance().saveConfig();
 		// TODO Auto-generated method stub
 		return settings;
 	}

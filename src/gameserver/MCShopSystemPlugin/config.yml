@@ -1,6 +1,8 @@
+authme: false
 command: "mcshop"
 debug: true
 url: ""
+mode: custom
 server:
   pass: 123456
   hosts:

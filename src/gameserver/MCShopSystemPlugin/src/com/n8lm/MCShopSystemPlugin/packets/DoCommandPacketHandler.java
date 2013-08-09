@@ -58,7 +58,7 @@ public class DoCommandPacketHandler extends PacketHandler {
 		String playerName = variables.get("player");
 		if(playerName == null)
 			success = CommandHelper.sendCommand(parsedCommand);
-		else if(PlayerHelper.hasPassword(playerName))
+		else if(PlayerHelper.isRegistered(playerName))
 		{
 			if(PlayerHelper.inOnline(playerName))
 				success = CommandHelper.sendCommand(parsedCommand);

@@ -45,25 +45,17 @@ public class CustomAccountHandler extends AccountHandler
 		
 		loadMap();
 	}
-
-	public HashMap<String, String> getHashMap(){
-		return passwdMap;
-	}
 	
-	public boolean checkPassword(String userName, String givenPass) {
-		String pwd = passwdMap.get(userName);
+	public boolean checkPassword(String username, String givenPass) {
+		String pwd = passwdMap.get(username);
 		if(pwd != null)
 			return pwd.equals(givenPass);
 		else
 			return false;
 	}
 	
-	public boolean hasPassword(String userName) {
-		return passwdMap.containsKey(userName);
-	}
-	
-	public String getPassword(String userName){
-		return passwdMap.get(userName);
+	public boolean hasPassword(String username) {
+		return passwdMap.containsKey(username);
 	}
 
 	public boolean register(String username, String passwd) {
@@ -75,6 +67,14 @@ public class CustomAccountHandler extends AccountHandler
 		if(passwdMap.containsKey(username))
 			passwdMap.put(username, passwd);
 		return updateFile();
+	}
+
+	public HashMap<String, String> getHashMap(){
+		return passwdMap;
+	}
+	
+	public String getPassword(String username){
+		return passwdMap.get(username);
 	}
 	
 	private boolean updateFile()

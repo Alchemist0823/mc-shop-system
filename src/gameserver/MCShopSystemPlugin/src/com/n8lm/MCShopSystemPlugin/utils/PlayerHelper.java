@@ -15,19 +15,23 @@ import com.n8lm.MCShopSystemPlugin.MainPlugin;
 public class PlayerHelper{
 	
 	// Password	
-	public static boolean hasPassword(String userName){
-		return MainPlugin.getAccountHandler().hasPassword(userName);
-	}
-
-	public static boolean checkPassword(String userName, String pass){
-		return MainPlugin.getAccountHandler().checkPassword(userName,pass);
+	public static boolean isRegistered(String username){
+		return MainPlugin.getAccountHandler().hasPassword(username);
 	}
 	
-	public static boolean inOnline(String userName){
-		return (MainPlugin.getBukkitServer().getPlayerExact(userName) != null);
+	public static boolean register(String username, String pass){
+		return MainPlugin.getAccountHandler().register(username, pass);
 	}
 
-	public static Player getPlayer(String userName) {
-		return MainPlugin.getBukkitServer().getPlayerExact(userName);
+	public static boolean checkPassword(String username, String pass){
+		return MainPlugin.getAccountHandler().checkPassword(username,pass);
+	}
+	
+	public static boolean inOnline(String username){
+		return (MainPlugin.getBukkitServer().getPlayerExact(username) != null);
+	}
+
+	public static Player getPlayer(String username) {
+		return MainPlugin.getBukkitServer().getPlayerExact(username);
 	}
 }

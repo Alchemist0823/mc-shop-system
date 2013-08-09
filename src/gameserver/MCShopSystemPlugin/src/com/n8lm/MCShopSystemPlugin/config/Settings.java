@@ -9,11 +9,16 @@ import java.util.ArrayList;
  */
 public class Settings
 {
+	public final static String CUSTOM_MODE = "custom";
+	public final static String AUTHME_MODE = "authme";
+	public final static String XAUTH_MODE = "xauth";
+	
 	private String command = "mcshop";
-	private String password = "mymcshop";
+	private String password = "123456";
 	private String URL = "";
 	private String salt = "";
 	private String algorithm = "MD5";
+	private String mode = CUSTOM_MODE;
 	private int port = 10808;
 	private boolean debugMode = false;
 	private boolean serverActive = true;
@@ -84,6 +89,10 @@ public class Settings
 		return this.algorithm;
 	}
 
+	public String getMode() {
+		return mode;
+	}
+
 	public boolean isServerActive()
 	{
 		return serverActive;
@@ -127,5 +136,9 @@ public class Settings
 	public void setHashingAlgorithm(String algorithm)
 	{
 		this.algorithm = algorithm;
+	}
+	
+	public void setMode(String mode) {
+		this.mode = mode;
 	}
 }

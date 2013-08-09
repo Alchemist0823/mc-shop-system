@@ -12,20 +12,21 @@ import com.n8lm.MCShopSystemPlugin.MainPlugin;
 import com.n8lm.MCShopSystemPlugin.server.CommunicationHelper;
 import com.n8lm.MCShopSystemPlugin.server.PacketHandler;
 import com.n8lm.MCShopSystemPlugin.utils.PlayerHelper;
+
 /**
  * @author Alchemist
  *
  */
-public class CheckPlayerPacketHandler extends PacketHandler {
+public class RegisterPacketHandler extends PacketHandler {
 
 	/**
 	 * @param header
 	 */
-	public CheckPlayerPacketHandler() {
-		super((byte) 2);
+	public RegisterPacketHandler() {
+		super((byte) 1);
 		// TODO Auto-generated constructor stub
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see com.n8lm.MCShopSystemPlugin.server.PacketHandler#onHeaderReceived(java.io.DataInputStream, java.io.DataOutputStream)
 	 */
@@ -36,15 +37,22 @@ public class CheckPlayerPacketHandler extends PacketHandler {
 		String user = CommunicationHelper.readString(in);
 		String pass = CommunicationHelper.readString(in);
 		
-		MainPlugin.getMainLogger().log(Level.INFO, "Check User Account '" + user + "' '" + pass + "' ");
+		MainPlugin.getMainLogger().log(Level.INFO, "Register User Account '" + user + "' '" + pass + "' ");
 		
-		if(PlayerHelper.isRegistered(user))
-			if(PlayerHelper.checkPassword(user, pass))
+		if(!PlayerHelper.isRegistered(user))
+		{
+			if(PlayerHelper.register(user, pass))
 				out.writeInt(1);
 			else
 				out.writeInt(0);
+		}
 		else
-			out.writeInt(2);
+		{
+			if(PlayerHelper.checkPassword(user, pass))
+				out.writeInt(1);
+			else
+				out.writeInt(2);
+		}
 	}
 
 }
