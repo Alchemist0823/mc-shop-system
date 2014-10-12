@@ -1,7 +1,7 @@
 mc-shop-system
 ==============
   this is our Minecraft Shop System project.<br />
-  [WIKI部分项目说明](https://github.com/no8-lightning-man/mc-shop-system/wiki/_pages)<br />
+  [WIKI Project Instruction](https://github.com/no8-lightning-man/mc-shop-system/wiki/_pages)<br />
 File System
 --------------
   src/webserver : php Server Source<br />
@@ -9,7 +9,7 @@ File System
   
 HTTP Interface  
 --------------
-  [WIKI部分项目说明](https://github.com/no8-lightning-man/mc-shop-system/wiki/_pages)<br />
+  [WIKI Project Instruction](https://github.com/no8-lightning-man/mc-shop-system/wiki/_pages)<br />
   见群共享<br />
   
 Help
